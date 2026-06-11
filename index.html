@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Beat Dodge v3.3</title>
+<title>Beat Dodge v3.4</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;user-select:none;}
 body{background:#000;display:flex;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#fff;}
@@ -54,7 +54,7 @@ body{background:#000;display:flex;justify-content:center;font-family:-apple-syst
 </head>
 <body>
 <div id="gw">
-  <div id="ver">v3.3</div>
+  <div id="ver">v3.4</div>
   <div id="hud">
     <div class="stat">점수<b id="sv">0</b></div>
     <div class="stat">콤보<b id="cv">0</b></div>
@@ -142,7 +142,7 @@ const SONGS = [
 const DIFF = {
   easy:   {livesStart:6, bpmMult:1.0, scoreRate:0.8, desc:'목숨 6개 · 느린 속도 · 여유로운 패턴',        color:'#1D9E75'},
   normal: {livesStart:6, bpmMult:1.5, scoreRate:1.0, desc:'목숨 6개 · 빠른 속도 · 기본 패턴',            color:'#534AB7'},
-  hard:   {livesStart:6, bpmMult:2.0, scoreRate:1.5, desc:'목숨 6개 · 속도 2배 · 빡빡한 패턴 · 점수 x1.5', color:'#E24B4A'}
+  hard:   {livesStart:6, bpmMult:2.5, scoreRate:1.5, desc:'목숨 6개 · 속도 2.5배 · 빡빡한 패턴 · 점수 x1.5', color:'#E24B4A'}
 };
 
 // bad 없는 레인 중 b값 기반으로 고르게 분산
@@ -212,7 +212,12 @@ let goodCooldown = 0; // good 먹은 후 bad 스킵할 비트 수
 function spawnFromPattern(items){
   // good이 이 비트에 있으면 bad 전부 제거 (같은 비트 충돌 방지)
   const hasGood = items.some(i=>i.type==='good');
-  const filteredItems = hasGood ? items.filter(i=>i.type==='good') : items;
+  let filteredItems = hasGood ? items.filter(i=>i.type==='good') : items;
+  // bad가 2개 이상이면 1개만 남기기 (항상 피할 레인 최소 2개 보장)
+  const bads = filteredItems.filter(i=>i.type==='bad');
+  const goods = filteredItems.filter(i=>i.type==='good');
+  const safeBads = bads.length > 1 ? [bads[0]] : bads;
+  filteredItems = [...safeBads, ...goods];
   const deduped=[],seen={};
   filteredItems.forEach(i=>{
     if(seen[i.lane]===undefined){seen[i.lane]=i.type;deduped.push(i);}
@@ -346,7 +351,7 @@ function update(now){
   objects=objects.filter(o=>{
     if(o.y>H+30)return false;
     const ox=lx(o.lane),d=Math.sqrt((ox-px)**2+(o.y-PY)**2);
-    const hr=o.type==='bad'?PR*.45:o.r+PR*.4;
+    const hr=o.type==='bad'?PR*.32:o.r+PR*.4;
     if(d<hr){
       if(o.type==='bad'){
         stageHits++;lives--;document.getElementById('lv').textContent=lives;
