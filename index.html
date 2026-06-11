@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Beat Dodge v1.4</title>
+<title>Beat Dodge v1.5</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;user-select:none;}
 body{background:#000;display:flex;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#fff;}
@@ -58,7 +58,7 @@ body{background:#000;display:flex;justify-content:center;font-family:-apple-syst
 </head>
 <body>
 <div id="gw">
-  <div id="ver">v1.4</div>
+  <div id="ver">v1.5</div>
   <div id="hud">
     <div class="stat">점수<b id="sv">0</b></div>
     <div class="stat">콤보<b id="cv">0</b></div>
@@ -127,7 +127,7 @@ const SONGS = [
       // 중반(30~70%): 점점 빨라짐
       // 후반(70~100%): 절정
       const density = progress < 0.3 ? 6 : progress < 0.7 ? 4 : 3;
-      const diffMod = diff === 'easy' ? density + 2 : diff === 'hard' ? Math.max(1, density - 2) : density;
+      const diffMod = diff === 'easy' ? density + 3 : diff === 'normal' ? density : Math.max(1, density - 3);
       if (b % diffMod === 0) r.push({ lane: wave[b % 24], type: 'bad' });
       if (b % (diffMod + 1) === 1) r.push({ lane: wave[(b + 8) % 24], type: 'bad' });
       if (b % 12 === 9) r.push({ lane: freeLane(r, b), type: 'good' });
@@ -145,7 +145,7 @@ const SONGS = [
       const seq = [0,2,0,1,2,1,0,2,1,0,1,2,2,0,1,2,0,1,1,2,0,1,0,2];
       const progress = b / 360;
       const density = progress < 0.3 ? 6 : progress < 0.7 ? 4 : 2;
-      const diffMod = diff === 'easy' ? density + 2 : diff === 'hard' ? Math.max(1, density - 2) : density;
+      const diffMod = diff === 'easy' ? density + 3 : diff === 'normal' ? density : Math.max(1, density - 3);
       if (b % diffMod === 0) r.push({ lane: seq[b % 24], type: 'bad' });
       if (b % (diffMod + 2) === 1) r.push({ lane: seq[(b + 9) % 24], type: 'bad' });
       if (b % 11 === 8) r.push({ lane: freeLane(r, b), type: 'good' });
@@ -163,7 +163,7 @@ const SONGS = [
       const seq = [0,1,2,0,2,1,2,0,1,2,1,0,1,2,0,1,0,2,0,2,1,0,1,2];
       const progress = b / 380;
       const density = progress < 0.3 ? 6 : progress < 0.7 ? 4 : 3;
-      const diffMod = diff === 'easy' ? density + 2 : diff === 'hard' ? Math.max(1, density - 2) : density;
+      const diffMod = diff === 'easy' ? density + 3 : diff === 'normal' ? density : Math.max(1, density - 3);
       if (b % diffMod === 0) r.push({ lane: seq[b % 24], type: 'bad' });
       if (b % (diffMod + 1) === 2) r.push({ lane: seq[(b + 7) % 24], type: 'bad' });
       if (b % 9 === 7) r.push({ lane: freeLane(r, b), type: 'good' });
@@ -181,7 +181,7 @@ const SONGS = [
       const seq = [0,2,1,0,2,0,1,2,0,1,2,1,0,2,1,0,2,1,0,1,2,0,2,1];
       const progress = b / 420;
       const density = progress < 0.25 ? 6 : progress < 0.5 ? 4 : progress < 0.75 ? 3 : 2;
-      const diffMod = diff === 'easy' ? density + 2 : diff === 'hard' ? Math.max(1, density - 2) : density;
+      const diffMod = diff === 'easy' ? density + 3 : diff === 'normal' ? density : Math.max(1, density - 3);
       if (b % diffMod === 0) r.push({ lane: seq[b % 24], type: 'bad' });
       if (b % (diffMod + 1) === 1) r.push({ lane: seq[(b + 10) % 24], type: 'bad' });
       if (b % 8 === 6) r.push({ lane: freeLane(r, b), type: 'good' });
@@ -196,16 +196,16 @@ function freeLane(items, b) {
   const bad = items.filter(i=>i.type==='bad').map(i=>i.lane);
   const free = [0,1,2].filter(l=>!bad.includes(l));
   if (free.length === 0) return 1;
-  // 0→2→1 순환으로 가운데 쏠림 방지
-  const cycle = [0,2,1];
-  const opts = cycle.filter(l=>free.includes(l));
-  return opts[Math.floor(b/4) % opts.length];
+  // 소수 기반 시퀀스로 고루 분산
+  const primes = [0,2,1,0,1,2,2,0,1,2,1,0,1,2,0,2,0,1,0,1,2,1,0,2];
+  const opts = primes.filter(l=>free.includes(l));
+  return opts[b % opts.length];
 }
 
 const DIFF = {
   easy:   {livesStart:6, bpmMult:1.0,  scoreRate:0.8,  desc:'목숨 6개 · 느린 속도 · 여유로운 패턴',      color:'#1D9E75'},
   normal: {livesStart:6, bpmMult:1.4,  scoreRate:1.0,  desc:'목숨 6개 · 빠른 속도 · 기본 패턴',          color:'#534AB7'},
-  hard:   {livesStart:6, bpmMult:2.4,  scoreRate:1.5,  desc:'목숨 6개 · 속도 2.4배 · 매우 빽빽 · x1.5',   color:'#E24B4A'}
+  hard:   {livesStart:6, bpmMult:3.0,  scoreRate:1.5,  desc:'목숨 6개 · 속도 3배 · 극한 패턴 · x1.5',     color:'#E24B4A'}
 };
 
 const canvas = document.getElementById('canvas');
