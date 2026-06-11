@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Beat Dodge v4.0</title>
+<title>Beat Dodge v4.1</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;user-select:none;}
 body{background:#000;display:flex;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#fff;}
@@ -54,7 +54,7 @@ body{background:#000;display:flex;justify-content:center;font-family:-apple-syst
 </head>
 <body>
 <div id="gw">
-  <div id="ver">v4.0</div>
+  <div id="ver">v4.1</div>
   <div id="hud">
     <div class="stat">점수<b id="sv">0</b></div>
     <div class="stat">콤보<b id="cv">0</b></div>
@@ -101,37 +101,37 @@ body{background:#000;display:flex;justify-content:center;font-family:-apple-syst
 
 <script>
 const SONGS = [
-  { title:'Hugo 번외곡 | Melting down', ytId:'p4spKijRcAw', bpm:96, color:'#F4A0A0', totalBeats:404,
-    pattern(b,diff){const r=[],w=[0,1,2,1,0,2,0,1,2,0,2,1,2,0,1,0,2,1,1,0,2,1,2,0];const prog=b/404,base=prog<0.3?8:prog<0.7?6:4;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%16===13);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
-  { title:'Eden 번외곡 | Freedomless', ytId:'3PpedpOIW28', bpm:112, color:'#7DD3FC', totalBeats:573,
-    pattern(b,diff){const r=[],w=[0,2,1,0,2,1,2,0,1,0,1,2,1,2,0,2,0,1,1,0,2,1,0,2];const prog=b/573,base=prog<0.3?8:prog<0.7?5:3;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%14===11);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
-  { title:'Liam 번외곡 | Word', ytId:'KvWs7PzYgwY', bpm:118, color:'#1D9E75', totalBeats:477,
-    pattern(b,diff){const r=[],w=[0,1,2,0,2,1,2,0,1,2,1,0,1,2,0,1,0,2,0,2,1,0,1,2];const prog=b/477,base=prog<0.3?8:prog<0.7?6:4;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%12===9);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
-  { title:'Ash 번외곡 | 가까이 오지 말라고 말했잖아!', ytId:'umx2NvAX1qY', bpm:135, color:'#DC2626', totalBeats:463,
-    pattern(b,diff){const r=[],w=[0,2,1,0,2,0,1,2,0,1,2,1,0,2,1,0,2,1,0,1,2,0,2,1];const prog=b/463,base=prog<0.25?8:prog<0.5?5:prog<0.75?4:3;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%10===8);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
-  { title:'Santa 번외곡 | AWAKE', ytId:'590xIhxAoiU', bpm:128, color:'#F5C842', totalBeats:486,
-    pattern(b,diff){const r=[],w=[0,1,2,0,1,2,1,0,2,1,2,0,0,2,1,0,2,1,2,0,1,2,1,0];const prog=b/486,base=prog<0.3?8:prog<0.7?6:4;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%13===10);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
-  { title:'Syndrome 번외곡 | Set me free', ytId:'C2ccLTTkgIE', bpm:124, color:'#991B1B', totalBeats:566,
-    pattern(b,diff){const r=[],w=[2,0,1,2,0,2,1,0,2,0,1,2,1,2,0,1,0,2,0,1,2,1,0,2];const prog=b/566,base=prog<0.3?8:prog<0.7?6:4;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%12===9);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
-  { title:'Pure 번외곡 | 맞아, 난 네가 좋아', ytId:'9teD-_Yx1Cg', bpm:102, color:'#F9A8D4', totalBeats:372,
-    pattern(b,diff){const r=[],w=[1,0,2,1,2,0,0,1,2,0,2,1,2,1,0,2,0,1,1,2,0,1,0,2];const prog=b/372,base=prog<0.3?9:prog<0.7?7:5;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%14===11);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
-  { title:'Amore 번외곡 | ROSA NERA', ytId:'HYcXDO0U1zY', bpm:118, color:'#84A840', totalBeats:523,
-    pattern(b,diff){const r=[],w=[0,2,0,1,2,1,2,0,1,0,2,1,1,0,2,1,2,0,2,1,0,2,0,1];const prog=b/523,base=prog<0.3?8:prog<0.7?6:4;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%13===10);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
-  { title:'Overload 번외곡 | Feel it, electricity', ytId:'f-eWzfmaJlo', bpm:138, color:'#FDE047', totalBeats:517,
-    pattern(b,diff){const r=[],w=[0,2,1,2,0,1,0,1,2,1,0,2,2,0,1,0,2,1,1,2,0,2,1,0];const prog=b/517,base=prog<0.25?7:prog<0.6?5:3;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%11===8);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
-  { title:'Stray 번외곡 | 아직은 아니야', ytId:'gkaB51mPqhA', bpm:95, color:'#C5B358', totalBeats:394,
-    pattern(b,diff){const r=[],w=[1,2,0,1,0,2,2,1,0,2,0,1,0,1,2,0,2,1,1,0,2,1,2,0];const prog=b/394,base=prog<0.4?9:prog<0.75?7:5;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%15===12);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
-  { title:'Vibe 번외곡 | Home sweet home', ytId:'juWw7PqGZiI', bpm:100, color:'#34D399', totalBeats:433,
-    pattern(b,diff){const r=[],w=[0,1,2,1,0,1,2,0,1,0,2,1,1,2,0,2,1,0,0,2,1,2,0,1];const prog=b/433,base=prog<0.3?9:prog<0.7?7:5;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%14===11);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
-  { title:'Pika 번외곡', ytId:'HFl4VqD4IcQ', bpm:110, color:'#FACC15', totalBeats:359,
-    pattern(b,diff){const r=[],w=[0,1,2,0,2,1,1,0,2,1,2,0,2,0,1,2,1,0,0,2,1,0,1,2];const prog=b/359,base=prog<0.3?8:prog<0.7?6:4;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%13===10);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
-  { title:'Icarus | smiling', ytId:'y1gs8sPRe8s', bpm:105, color:'#7DD3FC', totalBeats:455,
-    pattern(b,diff){const r=[],w=[1,0,2,1,0,2,0,2,1,0,1,2,2,1,0,1,2,0,0,1,2,1,0,2];const prog=b/455,base=prog<0.35?9:prog<0.7?7:5;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%15===12);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
-  { title:'Oasis 번외곡 | 오아시스', ytId:'2hpwi4MzPfg', bpm:108, color:'#38BDF8', totalBeats:360,
-    pattern(b,diff){const r=[],w=[0,2,1,0,1,2,2,0,1,2,0,1,1,2,0,0,1,2,1,0,2,0,2,1];const prog=b/360,base=prog<0.3?8:prog<0.7?6:4;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%12===9);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
-  { title:'Kato 번외곡 | Losing control', ytId:'hO3oQ7pmssQ', bpm:120, color:'#22C55E', totalBeats:490,
-    pattern(b,diff){const r=[],w=[2,0,1,2,1,0,0,2,1,0,1,2,1,0,2,1,2,0,2,1,0,1,2,0];const prog=b/490,base=prog<0.25?8:prog<0.6?6:4;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%13===10);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
-  { title:'Karma 번외곡 | ただの Karma', ytId:'weCSq9xCDEk', bpm:148, color:'#EAB308', totalBeats:614,
+  { title:'Hugo 번외곡 | Melting down', ytId:'p4spKijRcAw', bpm:96, color:'#F4A0A0', totalBeats:595,
+    pattern(b,diff){const r=[],w=[0,1,2,1,0,2,0,1,2,0,2,1,2,0,1,0,2,1,1,0,2,1,2,0];const prog=b/595,base=prog<0.3?8:prog<0.7?6:4;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%16===13);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
+  { title:'Eden 번외곡 | Freedomless', ytId:'3PpedpOIW28', bpm:112, color:'#7DD3FC', totalBeats:845,
+    pattern(b,diff){const r=[],w=[0,2,1,0,2,1,2,0,1,0,1,2,1,2,0,2,0,1,1,0,2,1,0,2];const prog=b/845,base=prog<0.3?8:prog<0.7?5:3;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%14===11);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
+  { title:'Liam 번외곡 | Word', ytId:'KvWs7PzYgwY', bpm:118, color:'#1D9E75', totalBeats:702,
+    pattern(b,diff){const r=[],w=[0,1,2,0,2,1,2,0,1,2,1,0,1,2,0,1,0,2,0,2,1,0,1,2];const prog=b/702,base=prog<0.3?8:prog<0.7?6:4;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%12===9);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
+  { title:'Ash 번외곡 | 가까이 오지 말라고 말했잖아!', ytId:'umx2NvAX1qY', bpm:135, color:'#DC2626', totalBeats:678,
+    pattern(b,diff){const r=[],w=[0,2,1,0,2,0,1,2,0,1,2,1,0,2,1,0,2,1,0,1,2,0,2,1];const prog=b/678,base=prog<0.25?8:prog<0.5?5:prog<0.75?4:3;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%10===8);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
+  { title:'Santa 번외곡 | AWAKE', ytId:'590xIhxAoiU', bpm:128, color:'#F5C842', totalBeats:713,
+    pattern(b,diff){const r=[],w=[0,1,2,0,1,2,1,0,2,1,2,0,0,2,1,0,2,1,2,0,1,2,1,0];const prog=b/713,base=prog<0.3?8:prog<0.7?6:4;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%13===10);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
+  { title:'Syndrome 번외곡 | Set me free', ytId:'C2ccLTTkgIE', bpm:124, color:'#991B1B', totalBeats:833,
+    pattern(b,diff){const r=[],w=[2,0,1,2,0,2,1,0,2,0,1,2,1,2,0,1,0,2,0,1,2,1,0,2];const prog=b/833,base=prog<0.3?8:prog<0.7?6:4;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%12===9);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
+  { title:'Pure 번외곡 | 맞아, 난 네가 좋아', ytId:'9teD-_Yx1Cg', bpm:102, color:'#F9A8D4', totalBeats:545,
+    pattern(b,diff){const r=[],w=[1,0,2,1,2,0,0,1,2,0,2,1,2,1,0,2,0,1,1,2,0,1,0,2];const prog=b/545,base=prog<0.3?9:prog<0.7?7:5;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%14===11);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
+  { title:'Amore 번외곡 | ROSA NERA', ytId:'HYcXDO0U1zY', bpm:118, color:'#84A840', totalBeats:769,
+    pattern(b,diff){const r=[],w=[0,2,0,1,2,1,2,0,1,0,2,1,1,0,2,1,2,0,2,1,0,2,0,1];const prog=b/769,base=prog<0.3?8:prog<0.7?6:4;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%13===10);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
+  { title:'Overload 번외곡 | Feel it, electricity', ytId:'f-eWzfmaJlo', bpm:138, color:'#FDE047', totalBeats:759,
+    pattern(b,diff){const r=[],w=[0,2,1,2,0,1,0,1,2,1,0,2,2,0,1,0,2,1,1,2,0,2,1,0];const prog=b/759,base=prog<0.25?7:prog<0.6?5:3;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%11===8);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
+  { title:'Stray 번외곡 | 아직은 아니야', ytId:'gkaB51mPqhA', bpm:95, color:'#C5B358', totalBeats:579,
+    pattern(b,diff){const r=[],w=[1,2,0,1,0,2,2,1,0,2,0,1,0,1,2,0,2,1,1,0,2,1,2,0];const prog=b/579,base=prog<0.4?9:prog<0.75?7:5;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%15===12);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
+  { title:'Vibe 번외곡 | Home sweet home', ytId:'juWw7PqGZiI', bpm:100, color:'#34D399', totalBeats:637,
+    pattern(b,diff){const r=[],w=[0,1,2,1,0,1,2,0,1,0,2,1,1,2,0,2,1,0,0,2,1,2,0,1];const prog=b/637,base=prog<0.3?9:prog<0.7?7:5;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%14===11);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
+  { title:'Pika 번외곡', ytId:'HFl4VqD4IcQ', bpm:110, color:'#FACC15', totalBeats:525,
+    pattern(b,diff){const r=[],w=[0,1,2,0,2,1,1,0,2,1,2,0,2,0,1,2,1,0,0,2,1,0,1,2];const prog=b/525,base=prog<0.3?8:prog<0.7?6:4;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%13===10);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
+  { title:'Icarus | smiling', ytId:'y1gs8sPRe8s', bpm:105, color:'#7DD3FC', totalBeats:669,
+    pattern(b,diff){const r=[],w=[1,0,2,1,0,2,0,2,1,0,1,2,2,1,0,1,2,0,0,1,2,1,0,2];const prog=b/669,base=prog<0.35?9:prog<0.7?7:5;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%15===12);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
+  { title:'Oasis 번외곡 | 오아시스', ytId:'2hpwi4MzPfg', bpm:108, color:'#38BDF8', totalBeats:526,
+    pattern(b,diff){const r=[],w=[0,2,1,0,1,2,2,0,1,2,0,1,1,2,0,0,1,2,1,0,2,0,2,1];const prog=b/526,base=prog<0.3?8:prog<0.7?6:4;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%12===9);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
+  { title:'Kato 번외곡 | Losing control', ytId:'hO3oQ7pmssQ', bpm:120, color:'#22C55E', totalBeats:720,
+    pattern(b,diff){const r=[],w=[2,0,1,2,1,0,0,2,1,0,1,2,1,0,2,1,2,0,2,1,0,1,2,0];const prog=b/720,base=prog<0.25?8:prog<0.6?6:4;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%13===10);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
+  { title:'Karma 번외곡 | ただの Karma', ytId:'weCSq9xCDEk', bpm:148, color:'#EAB308', totalBeats:902,
     pattern(b, diff) {
       const r = [];
       if(b===1) r.push({lane:1,type:'good'});
@@ -312,8 +312,8 @@ const SONGS = [
       return r;
     }
   },
-  { title:'Shane 번외곡 | Come closer, if you want', ytId:'8EogmcRw0UI', bpm:98, color:'#16A34A', totalBeats:449,
-    pattern(b,diff){const r=[],w=[0,2,1,0,2,0,1,2,1,0,2,1,2,0,1,2,1,0,0,1,2,0,2,1];const prog=b/449,base=prog<0.3?9:prog<0.65?7:5;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%14===11);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}}
+  { title:'Shane 번외곡 | Come closer, if you want', ytId:'8EogmcRw0UI', bpm:98, color:'#16A34A', totalBeats:661,
+    pattern(b,diff){const r=[],w=[0,2,1,0,2,0,1,2,1,0,2,1,2,0,1,2,1,0,0,1,2,0,2,1];const prog=b/661,base=prog<0.3?9:prog<0.65?7:5;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%14===11);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}}
 ];
 
 const DIFF = {
