@@ -8,19 +8,19 @@
 *{box-sizing:border-box;margin:0;padding:0;user-select:none;}
 body{background:#000;display:flex;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;}
 #gw{width:100%;max-width:640px;}
-#canvas-wrap{position:relative;width:100%;aspect-ratio:16/9;background:#000;overflow:hidden;}
-#yt-bg-player{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100%;height:100%;z-index:1;pointer-events:none;}
-#yt-bg-player iframe{width:100%;height:100%;border:none;}
-#canvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:2;background:transparent;}
 #hud{display:flex;justify-content:space-between;padding:10px 18px;background:#111;}
 .stat{font-size:12px;color:#888;}.stat b{font-size:18px;font-weight:500;color:#fff;margin-right:2px;}
+#canvas-wrap{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;background:#000;}
+#yt-iframe-container{position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none;}
+#yt-iframe-container iframe{width:100%;height:100%;border:none;display:block;}
+#canvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:2;}
 #yt-bar{padding:10px 12px;display:flex;gap:8px;background:#111;border-top:1px solid #222;}
 #yt-bar input{flex:1;font-size:12px;padding:7px 11px;background:#1a1a1a;border:1px solid #333;border-radius:8px;color:#fff;outline:none;}
 #yt-bar input::placeholder{color:#555;}
 #yt-bar input:focus{border-color:#534AB7;}
 #yt-bar button{font-size:12px;padding:7px 14px;background:#534AB7;border:none;border-radius:8px;color:#fff;cursor:pointer;}
 #yt-bar button:hover{background:#7F77DD;}
-#msg{text-align:center;padding:7px;font-size:12px;color:#666;background:#111;}
+#msg{text-align:center;padding:7px;font-size:12px;color:#666;background:#111;min-height:26px;}
 #ctrl{display:flex;gap:8px;padding:8px 12px 10px;background:#111;}
 #ctrl button{flex:1;padding:10px;font-size:14px;font-weight:500;background:rgba(83,74,183,.3);border:1px solid rgba(83,74,183,.6);border-radius:8px;color:#AFA9EC;cursor:pointer;}
 #ctrl button:hover{background:rgba(83,74,183,.5);}
@@ -36,7 +36,7 @@ body{background:#000;display:flex;justify-content:center;font-family:-apple-syst
     <div class="stat">BPM <b id="bv">90</b></div>
   </div>
   <div id="canvas-wrap">
-    <div id="yt-bg-player"></div>
+    <div id="yt-iframe-container"></div>
     <canvas id="canvas"></canvas>
   </div>
   <div id="yt-bar">
@@ -72,7 +72,7 @@ let playerLane=1, objects=[], particles=[];
 let beat=0, lastBeat=0, beatInt=60000/bpm;
 let hitFlash=0, shakeX=0, shakeY=0, bgPulse=0;
 let animId, touchStartX=0, lastMoveTime=0;
-let ytBgPlayer=null, ytBgReady=false, ytActive=false;
+let ytPlayer=null, ytReady=false, ytActive=false;
 let audioCtx=null, beatTimer=null, beatCount=0, pendingVideoId=null;
 
 function lx(l){return LW*l+LW/2;}
@@ -92,9 +92,10 @@ function spawnParts(x,y,col,n=8){
 }
 
 function drawBg(){
-  // 핵심: 유튜브 배경이 보이도록 반투명 오버레이만 그림
+  // 캔버스 투명하게 지운 뒤 반투명 오버레이만
   ctx.clearRect(0,0,W,H);
-  ctx.fillStyle = ytActive ? 'rgba(5,5,25,0.55)' : 'rgba(13,13,26,1.0)';
+  // ytActive 여부와 무관하게 항상 반투명 — 유튜브 없으면 배경이 #000(body)
+  ctx.fillStyle = ytActive ? 'rgba(5,5,25,0.60)' : 'rgba(13,13,26,0.96)';
   ctx.fillRect(0,0,W,H);
 
   for(let l=0;l<LANES;l++){
@@ -115,10 +116,8 @@ function drawBg(){
 function drawPlayer(){
   const x=lx(playerLane), p=1+bgPulse*.1;
   ctx.save(); ctx.shadowColor='#534AB7'; ctx.shadowBlur=14+bgPulse*8;
-  ctx.beginPath(); ctx.moveTo(x,PY-PR*1.4*p); ctx.lineTo(x+PR*p,PY+PR*.7*p); ctx.lineTo(x-PR*p,PY+PR*.7*p); ctx.closePath();
-  ctx.fillStyle='#7F77DD'; ctx.fill();
-  ctx.beginPath(); ctx.moveTo(x,PY-PR*1.1*p); ctx.lineTo(x+PR*.6*p,PY+PR*.4*p); ctx.lineTo(x-PR*.6*p,PY+PR*.4*p); ctx.closePath();
-  ctx.fillStyle='#AFA9EC'; ctx.fill();
+  ctx.beginPath(); ctx.moveTo(x,PY-PR*1.4*p); ctx.lineTo(x+PR*p,PY+PR*.7*p); ctx.lineTo(x-PR*p,PY+PR*.7*p); ctx.closePath(); ctx.fillStyle='#7F77DD'; ctx.fill();
+  ctx.beginPath(); ctx.moveTo(x,PY-PR*1.1*p); ctx.lineTo(x+PR*.6*p,PY+PR*.4*p); ctx.lineTo(x-PR*.6*p,PY+PR*.4*p); ctx.closePath(); ctx.fillStyle='#AFA9EC'; ctx.fill();
   ctx.restore();
 }
 
@@ -131,7 +130,8 @@ function drawObjs(){
       for(let i=0;i<10;i++){const a=Math.PI/5*i-Math.PI/2,r=i%2===0?o.r:o.r*.42; i===0?ctx.moveTo(x+Math.cos(a)*r,o.y+Math.sin(a)*r):ctx.lineTo(x+Math.cos(a)*r,o.y+Math.sin(a)*r);}
       ctx.closePath(); ctx.fillStyle=o.color; ctx.fill();
       ctx.strokeStyle='rgba(255,255,255,.6)'; ctx.lineWidth=1.5;
-      const s=o.r*.3; ctx.beginPath(); ctx.moveTo(x-s,o.y-s); ctx.lineTo(x+s,o.y+s); ctx.stroke();
+      const s=o.r*.3;
+      ctx.beginPath(); ctx.moveTo(x-s,o.y-s); ctx.lineTo(x+s,o.y+s); ctx.stroke();
       ctx.beginPath(); ctx.moveTo(x+s,o.y-s); ctx.lineTo(x-s,o.y+s); ctx.stroke();
     } else {
       ctx.shadowColor='#1D9E75'; ctx.shadowBlur=10;
@@ -193,19 +193,20 @@ function draw(){
 }
 
 function loop(now){if(state!=='playing')return; update(now); draw(); animId=requestAnimationFrame(loop);}
-
 function setMsg(t){document.getElementById('msg').textContent=t;}
 
 function startGame(){
-  resizeCanvas(); score=0; combo=0; lives=3; beat=0; bpm=90; beatInt=60000/bpm;
+  resizeCanvas();
+  score=0; combo=0; lives=3; beat=0; bpm=90; beatInt=60000/bpm;
   objects=[]; particles=[]; playerLane=1; hitFlash=0; shakeX=0; shakeY=0; bgPulse=0;
   ['sv','cv','lv'].forEach((id,i)=>document.getElementById(id).textContent=[0,0,3][i]);
   document.getElementById('bv').textContent=90;
   setMsg('★ 별은 피하고   ● 초록 원은 먹으세요!');
   document.getElementById('start-btn').textContent='재시작';
   document.getElementById('stop-btn').style.display='inline-block';
-  state='playing'; lastBeat=performance.now(); startAudio();
-  if(ytBgPlayer&&ytBgReady)ytBgPlayer.playVideo();
+  state='playing'; lastBeat=performance.now();
+  startAudio();
+  if(ytPlayer&&ytReady) ytPlayer.playVideo();
   requestAnimationFrame(loop);
 }
 
@@ -215,7 +216,7 @@ function endGame(){
   ctx.fillStyle='rgba(0,0,0,.7)'; ctx.fillRect(0,0,W,H); ctx.textAlign='center';
   ctx.fillStyle='#AFA9EC'; ctx.font=`500 ${Math.round(W*.06)}px sans-serif`; ctx.fillText('GAME OVER',W/2,H/2-H*.05);
   ctx.fillStyle='#7F77DD'; ctx.font=`${Math.round(W*.045)}px sans-serif`; ctx.fillText(`${score}점`,W/2,H/2+H*.04);
-  stopAudio(); if(ytBgPlayer&&ytBgReady)ytBgPlayer.pauseVideo();
+  stopAudio(); if(ytPlayer&&ytReady) ytPlayer.pauseVideo();
 }
 
 document.getElementById('start-btn').addEventListener('click',startGame);
@@ -236,26 +237,27 @@ function extractYtId(input){
   const iframeSrc=input.match(/src="([^"]+)"/); const url=iframeSrc?iframeSrc[1]:input;
   const m=url.match(/(?:v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/); return m?m[1]:null;
 }
+
 document.getElementById('yt-btn').addEventListener('click',()=>{
   const input=document.getElementById('yt-url').value.trim();
   if(!input){setMsg('URL을 입력해주세요'); return;}
   const id=extractYtId(input); if(!id){setMsg('유효한 유튜브 URL이 아닙니다'); return;}
   pendingVideoId=id;
-  if(ytBgPlayer){ytBgPlayer.loadVideoById(id); ytActive=true; setMsg('연동됨! 시작하면 배경에 영상이 재생됩니다.');}
-  else setMsg('유튜브 API 연결 중...');
+  loadYouTube(id);
 });
 
-window.onYouTubeIframeAPIReady=function(){
-  ytBgPlayer=new YT.Player('yt-bg-player',{
-    height:'100%',width:'100%',videoId:pendingVideoId||'',
-    playerVars:{autoplay:0,controls:0,disablekb:1,fs:0,rel:0,playsinline:1,modestbranding:1},
-    events:{
-      onReady:()=>{ytBgReady=true; if(pendingVideoId){ytActive=true; setMsg('연동됨! 시작하면 배경에 영상이 재생됩니다.');}},
-      onError:()=>{setMsg('로드 실패. 임베드 허용된 영상을 써주세요.'); ytActive=false;}
-    }
-  });
-};
-const tag=document.createElement('script'); tag.src='https://www.youtube.com/iframe_api'; document.head.appendChild(tag);
+function loadYouTube(videoId){
+  // 기존 iframe 제거하고 새로 만들기
+  const container = document.getElementById('yt-iframe-container');
+  container.innerHTML = '';
+  const iframe = document.createElement('iframe');
+  iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=0&disablekb=1&fs=0&rel=0&playsinline=1&modestbranding=1&mute=0&loop=1&playlist=${videoId}`;
+  iframe.allow = 'autoplay; encrypted-media';
+  iframe.allowFullscreen = false;
+  container.appendChild(iframe);
+  ytActive = true;
+  setMsg('연동됨! 시작하면 영상이 배경에 재생됩니다.');
+}
 
 function startAudio(){try{audioCtx=new(window.AudioContext||window.webkitAudioContext)(); beatCount=0; scheduleBeat();}catch(e){}}
 function stopAudio(){if(beatTimer)clearTimeout(beatTimer); if(audioCtx){audioCtx.close(); audioCtx=null;}}
