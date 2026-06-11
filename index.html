@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Beat Dodge v0.8</title>
+<title>Beat Dodge v1.0</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;user-select:none;}
 body{background:#000;display:flex;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#fff;}
 #gw{width:100%;max-width:640px;}
-#ver{text-align:right;padding:2px 10px;background:#0a0a0f;font-size:10px;color:#333;}
+#ver{text-align:right;padding:2px 10px;background:#0a0a0f;font-size:11px;color:#888;font-weight:600;}
 #hud{display:flex;justify-content:space-between;align-items:center;padding:6px 14px;background:#0a0a0f;}
 .stat{font-size:11px;color:#555;text-align:center;}.stat b{display:block;font-size:15px;font-weight:600;color:#fff;}
 #grade-display{font-size:24px;font-weight:700;min-width:30px;text-align:center;color:#fff;}
@@ -64,7 +64,7 @@ body{background:#000;display:flex;justify-content:center;font-family:-apple-syst
 </head>
 <body>
 <div id="gw">
-  <div id="ver">v0.8</div>
+  <div id="ver">v1.0</div>
   <div id="hud">
     <div class="stat">점수<b id="sv">0</b></div>
     <div class="stat">스테이지<b id="stv">1</b></div>
@@ -156,7 +156,7 @@ const SONGS = [
     ytId: 'p4spKijRcAw',
     bpm: 96,
     stages: [
-      { name: 'Stage 1', color: '#85B7EB', totalBeats: 64,
+      { name: 'Stage 1', color: '#85B7EB', totalBeats: 96,
         // 물결: 천천히 한 칸씩 흐름
         pattern(b, diff) {
           const r = [];
@@ -174,7 +174,7 @@ const SONGS = [
           return r;
         }
       },
-      { name: 'Stage 2', color: '#378ADD', totalBeats: 80,
+      { name: 'Stage 2', color: '#378ADD', totalBeats: 96,
         pattern(b, diff) {
           const r = [];
           const seq = [0,2,0,1,2,1,0,2,1,0,1,2];
@@ -191,7 +191,7 @@ const SONGS = [
           return r;
         }
       },
-      { name: 'Stage 3', color: '#0C447C', totalBeats: 96,
+      { name: 'Stage 3', color: '#0C447C', totalBeats: 112,
         pattern(b, diff) {
           const r = [];
           const seq = [2,0,1,2,1,0,0,2,1,0,1,2,1,0,2,1];
@@ -215,7 +215,7 @@ const SONGS = [
     ytId: '3PpedpOIW28',
     bpm: 112,
     stages: [
-      { name: 'Stage 1', color: '#7A7874', totalBeats: 64,
+      { name: 'Stage 1', color: '#7A7874', totalBeats: 96,
         // 좌우 교차
         pattern(b, diff) {
           const r = [];
@@ -234,7 +234,7 @@ const SONGS = [
           return r;
         }
       },
-      { name: 'Stage 2', color: '#5C5B58', totalBeats: 80,
+      { name: 'Stage 2', color: '#5C5B58', totalBeats: 112,
         pattern(b, diff) {
           const r = [];
           const seq = [2,0,1,0,2,1,0,2,1,2,0,1];
@@ -251,7 +251,7 @@ const SONGS = [
           return r;
         }
       },
-      { name: 'Stage 3', color: '#3A3A38', totalBeats: 96,
+      { name: 'Stage 3', color: '#3A3A38', totalBeats: 128,
         pattern(b, diff) {
           const r = [];
           const seq = [1,0,2,0,1,2,0,2,1,0,1,2,2,0,1,2];
@@ -275,7 +275,7 @@ const SONGS = [
     ytId: 'KvWs7PzYgwY',
     bpm: 118,
     stages: [
-      { name: 'Stage 1', color: '#5DCAA5', totalBeats: 64,
+      { name: 'Stage 1', color: '#5DCAA5', totalBeats: 96,
         // 규칙적 정박
         pattern(b, diff) {
           const r = [];
@@ -293,7 +293,7 @@ const SONGS = [
           return r;
         }
       },
-      { name: 'Stage 2', color: '#1D9E75', totalBeats: 80,
+      { name: 'Stage 2', color: '#1D9E75', totalBeats: 112,
         pattern(b, diff) {
           const r = [];
           const seq = [0,2,1,0,1,2,2,0,1,2,1,0];
@@ -310,7 +310,7 @@ const SONGS = [
           return r;
         }
       },
-      { name: 'Stage 3', color: '#0F6E56', totalBeats: 96,
+      { name: 'Stage 3', color: '#0F6E56', totalBeats: 128,
         pattern(b, diff) {
           const r = [];
           const seq = [2,1,0,2,0,1,0,2,1,0,1,2,1,2,0,1];
@@ -334,7 +334,7 @@ const SONGS = [
     ytId: 'umx2NvAX1qY',
     bpm: 135,
     stages: [
-      { name: 'Stage 1', color: '#F0997B', totalBeats: 64,
+      { name: 'Stage 1', color: '#F0997B', totalBeats: 112,
         // 경고: 불규칙 교차
         pattern(b, diff) {
           const r = [];
@@ -352,7 +352,7 @@ const SONGS = [
           return r;
         }
       },
-      { name: 'Stage 2', color: '#D85A30', totalBeats: 80,
+      { name: 'Stage 2', color: '#D85A30', totalBeats: 128,
         // 분노: 빠르고 공격적
         pattern(b, diff) {
           const r = [];
@@ -370,7 +370,7 @@ const SONGS = [
           return r;
         }
       },
-      { name: 'Stage 3 — 폭발', color: '#993C1D', totalBeats: 112,
+      { name: 'Stage 3 — 폭발', color: '#993C1D', totalBeats: 160,
         // 보스: 매 비트 한 칸, 숨막히는 속도
         pattern(b, diff) {
           const r = [];
@@ -403,9 +403,9 @@ function freeLane(items, b) {
 }
 
 const DIFF = {
-  easy:   {livesStart:5, bpmMult:1.0,  scoreRate:0.8,  desc:'목숨 5개 · 느린 속도 · 여유로운 패턴',      color:'#1D9E75'},
-  normal: {livesStart:3, bpmMult:1.4,  scoreRate:1.0,  desc:'목숨 3개 · 빠른 속도 · 기본 패턴',          color:'#534AB7'},
-  hard:   {livesStart:2, bpmMult:1.9,  scoreRate:1.5,  desc:'목숨 2개 · 속도 1.9배 · 빽빽한 패턴 · x1.5', color:'#E24B4A'}
+  easy:   {livesStart:6, bpmMult:1.0,  scoreRate:0.8,  desc:'목숨 6개 · 느린 속도 · 여유로운 패턴',      color:'#1D9E75'},
+  normal: {livesStart:6, bpmMult:1.4,  scoreRate:1.0,  desc:'목숨 6개 · 빠른 속도 · 기본 패턴',          color:'#534AB7'},
+  hard:   {livesStart:6, bpmMult:1.9,  scoreRate:1.5,  desc:'목숨 6개 · 속도 1.9배 · 빽빽한 패턴 · x1.5', color:'#E24B4A'}
 };
 
 const canvas = document.getElementById('canvas');
