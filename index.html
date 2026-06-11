@@ -557,8 +557,27 @@ function endGame(clear=false){
   ctx.font=`${Math.round(W*.038)}px sans-serif`;ctx.fillStyle='#aaa';ctx.fillText(`${score}점`,W/2,H/2+H*.1);
   stopAudio();
 }
-function stopYouTube(){const f=document.querySelector('#yt-iframe-container iframe');if(f){f._src=f.src;f.src='';}}
-function resumeYouTube(){const f=document.querySelector('#yt-iframe-container iframe');if(f&&f._src)f.src=f._src;}
+function stopYouTube(){
+  const container=document.getElementById('yt-iframe-container');
+  container.innerHTML='';
+  if(selectedSong&&selectedSong.ytId){
+    const iframe=document.createElement('iframe');
+    iframe.src=`https://www.youtube.com/embed/${selectedSong.ytId}?autoplay=0&controls=0&disablekb=1&fs=0&rel=0&playsinline=1&modestbranding=1&loop=1&playlist=${selectedSong.ytId}`;
+    iframe.allow='autoplay; encrypted-media';
+    container.appendChild(iframe);
+    ytActive=true;
+  }
+}
+function resumeYouTube(){
+  if(!selectedSong||!selectedSong.ytId)return;
+  const container=document.getElementById('yt-iframe-container');
+  container.innerHTML='';
+  const iframe=document.createElement('iframe');
+  iframe.src=`https://www.youtube.com/embed/${selectedSong.ytId}?autoplay=1&controls=0&disablekb=1&fs=0&rel=0&playsinline=1&modestbranding=1&loop=1&playlist=${selectedSong.ytId}`;
+  iframe.allow='autoplay; encrypted-media';
+  container.appendChild(iframe);
+  ytActive=true;
+}
 
 // ─── 조작 ───
 function move(dir){
@@ -635,7 +654,7 @@ function selectSong(idx){
   const container=document.getElementById('yt-iframe-container');container.innerHTML='';
   if(selectedSong.ytId){
     const iframe=document.createElement('iframe');
-    iframe.src=`https://www.youtube.com/embed/${selectedSong.ytId}?autoplay=1&controls=0&disablekb=1&fs=0&rel=0&playsinline=1&modestbranding=1&loop=1&playlist=${selectedSong.ytId}`;
+    iframe.src=`https://www.youtube.com/embed/${selectedSong.ytId}?autoplay=0&controls=0&disablekb=1&fs=0&rel=0&playsinline=1&modestbranding=1&loop=1&playlist=${selectedSong.ytId}`;
     iframe.allow='autoplay; encrypted-media';container.appendChild(iframe);ytActive=true;
   } else ytActive=false;
   document.getElementById('start-btn').disabled=false;document.getElementById('start-btn').style.opacity='1';
