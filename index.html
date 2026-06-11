@@ -329,7 +329,7 @@ const BUILTIN_SONGS = [
           else if (p === 1) r.push({ lane: 1, type: 'bad' });
           else if (p === 2) { r.push({ lane: 0, type: 'bad' }); r.push({ lane: 1, type: 'bad' }); }
           else if (p === 3) r.push({ lane: 2, type: 'bad' });
-          else if (p === 4) { for(let l=0;l<3;l++) r.push({ lane: l, type: 'bad' }); } // 전체 막기
+          else if (p === 4) { r.push({ lane: 0, type: 'bad' }); r.push({ lane: 2, type: 'bad' }); } // 양쪽만
           else if (p === 5) r.push({ lane: b % 3, type: 'good' }); // 잠깐 숨통
           else if (p === 6) { r.push({ lane: 1, type: 'bad' }); r.push({ lane: 2, type: 'bad' }); }
           else if (p === 7) r.push({ lane: 0, type: 'bad' });
@@ -670,7 +670,7 @@ function selectSong(idx){
   const container=document.getElementById('yt-iframe-container');container.innerHTML='';
   if(selectedSong.ytId){
     const iframe=document.createElement('iframe');
-    iframe.src=`https://www.youtube.com/embed/${selectedSong.ytId}?autoplay=0&controls=0&disablekb=1&fs=0&rel=0&playsinline=1&modestbranding=1&loop=1&playlist=${selectedSong.ytId}`;
+    iframe.src=`https://www.youtube.com/embed/${selectedSong.ytId}?autoplay=1&controls=0&disablekb=1&fs=0&rel=0&playsinline=1&modestbranding=1&loop=1&playlist=${selectedSong.ytId}`;
     iframe.allow='autoplay; encrypted-media';container.appendChild(iframe);ytActive=true;
   } else ytActive=false;
   document.getElementById('start-btn').disabled=false;document.getElementById('start-btn').style.opacity='1';
