@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Beat Dodge v0.7</title>
+<title>Beat Dodge v0.8</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;user-select:none;}
 body{background:#000;display:flex;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#fff;}
@@ -64,7 +64,7 @@ body{background:#000;display:flex;justify-content:center;font-family:-apple-syst
 </head>
 <body>
 <div id="gw">
-  <div id="ver">v0.7</div>
+  <div id="ver">v0.8</div>
   <div id="hud">
     <div class="stat">점수<b id="sv">0</b></div>
     <div class="stat">스테이지<b id="stv">1</b></div>
@@ -474,7 +474,12 @@ function addFT(x,y,t,c){floatTexts.push({x,y,t,c,life:1,vy:-1.5});}
 
 function drawBg(){
   ctx.clearRect(0,0,W,H);
-  ctx.fillStyle=ytActive?'rgba(5,5,20,0.60)':'rgba(10,10,20,0.97)';
+  // idle: 썸네일이 보이도록 반투명, playing: ytActive면 반투명 아니면 불투명
+  if(state==='idle'){
+    ctx.fillStyle='rgba(0,0,0,0)';
+  } else {
+    ctx.fillStyle=ytActive?'rgba(5,5,20,0.60)':'rgba(10,10,20,0.97)';
+  }
   ctx.fillRect(0,0,W,H);
   const sc=activeStages[stageIdx]?.color||'#534AB7';
   for(let l=0;l<LANES;l++){
@@ -676,9 +681,8 @@ function endGame(clear=false){
   document.getElementById('diff-bar').style.display='flex';
   document.getElementById('diff-desc').style.display='block';
   document.getElementById('song-section').style.display='block';
-  // 캔버스 초기화
+  // 캔버스 투명하게 — 썸네일이 보임
   ctx.clearRect(0,0,W,H);
-  ctx.fillStyle='#000';ctx.fillRect(0,0,W,H);
   showResult(clear);
   stopAudio();
 }
@@ -746,6 +750,8 @@ function selectSong(idx,allSongs){
     document.getElementById('yt-bg').innerHTML='';ytActive=false;
   }
   hideResult();
+  // 캔버스 초기화 (썸네일이 비치도록)
+  ctx.clearRect(0,0,W,H);
   document.getElementById('start-btn').disabled=false;document.getElementById('start-btn').style.opacity='1';
   setMsg(`"${selectedSong.title}" 선택됨. 난이도 고르고 시작!`);
 }
