@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Beat Dodge v3.0</title>
+<title>Beat Dodge v3.1</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;user-select:none;}
 body{background:#000;display:flex;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#fff;}
@@ -54,7 +54,7 @@ body{background:#000;display:flex;justify-content:center;font-family:-apple-syst
 </head>
 <body>
 <div id="gw">
-  <div id="ver">v3.0</div>
+  <div id="ver">v3.1</div>
   <div id="hud">
     <div class="stat">점수<b id="sv">0</b></div>
     <div class="stat">콤보<b id="cv">0</b></div>
@@ -201,9 +201,13 @@ function lx(l){return LW*l+LW/2;}
 function setMsg(t){document.getElementById('msg').textContent=t;}
 function showBanner(t,s,c,d=2000){bannerData={t,s,c};bannerAlpha=1;clearTimeout(bannerTid);bannerTid=setTimeout(()=>bannerData=null,d);}
 
+let goodCooldown = 0; // good 먹은 후 bad 스킵할 비트 수
+
 function spawnFromPattern(items){
   const deduped=[],seen={};
   items.forEach(i=>{
+    // good 쿨다운 중이면 bad 스킵 (이동 시간 확보)
+    if(goodCooldown>0&&i.type==='bad')return;
     if(seen[i.lane]===undefined){seen[i.lane]=i.type;deduped.push(i);}
     else if(i.type==='good'){const idx=deduped.findIndex(d=>d.lane===i.lane);if(idx>=0)deduped[idx]=i;}
   });
@@ -315,6 +319,7 @@ function update(now){
   if(bannerAlpha>0)bannerAlpha=Math.max(0,bannerAlpha-.007);
   if(!stageClearing&&now-lastBeat>beatInt){
     lastBeat=now;stageBeat++;bgPulse=1;
+    if(goodCooldown>0)goodCooldown--;
     const items=selectedSong.pattern(stageBeat,difficulty);
     if(items.length>0)spawnFromPattern(items);
     if(stageBeat>=selectedSong.totalBeats){stageClearing=true;setTimeout(()=>endGame(true),1200);}
@@ -380,7 +385,7 @@ function startGame(){
   if(!selectedSong)return;
   cancelAnimationFrame(animId);hideResult();resizeCanvas();
   score=0;combo=0;multiplier=1;lives=DIFF[difficulty].livesStart;
-  stageBeat=0;stageClearing=false;stageHits=0;stageTotal=0;
+  stageBeat=0;stageClearing=false;stageHits=0;stageTotal=0;goodCooldown=0;
   objects=[];particles=[];floatTexts=[];playerLane=1;
   hitFlash=0;shakeX=0;shakeY=0;bgPulse=0;bannerData=null;
   document.getElementById('sv').textContent=0;
