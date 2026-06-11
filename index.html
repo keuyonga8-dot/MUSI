@@ -78,7 +78,7 @@ function resizeCanvas(){
   const wrap = document.getElementById('canvas-wrap');
   W = wrap.clientWidth; H = wrap.clientHeight;
   canvas.width = W; canvas.height = H;
-  LW = W/LANES; PR = Math.round(W*0.044); PY = H - Math.round(H*0.17);
+  LW = W/LANES; PR = Math.round(W*0.028); PY = H - Math.round(H*0.17);
 }
 window.addEventListener('load', resizeCanvas);
 window.addEventListener('resize', resizeCanvas);
@@ -632,3 +632,180 @@ function scheduleSingleBeat() {
 </script>
 </body>
 </html>
+<!-- PATTERN EDITOR -->
+<script>
+// ───────────────────────────────────────────
+// PATTERN EDITOR
+// ───────────────────────────────────────────
+let editorOpen = false;
+let editorPattern = []; // [{beat, lane, type}]
+let editorBeats = 32;
+let editorBpm = 120;
+let editorPreviewTimer = null;
+let customStageActive = false;
+
+function openEditor() {
+  editorOpen = true;
+  if (state === 'playing') endGame(false);
+  renderEditor();
+  document.getElementById('editor-overlay').style.display = 'flex';
+}
+function closeEditor() {
+  editorOpen = false;
+  document.getElementById('editor-overlay').style.display = 'none';
+}
+
+function renderEditor() {
+  const grid = document.getElementById('ed-grid');
+  grid.innerHTML = '';
+  grid.style.gridTemplateColumns = `repeat(${editorBeats}, 1fr)`;
+
+  for (let b = 0; b < editorBeats; b++) {
+    for (let l = 0; l < 3; l++) {
+      const cell = document.createElement('div');
+      cell.className = 'ed-cell';
+      cell.dataset.beat = b;
+      cell.dataset.lane = l;
+      const item = editorPattern.find(p => p.beat === b && p.lane === l);
+      if (item) {
+        cell.classList.add(item.type === 'bad' ? 'ed-bad' : 'ed-good');
+        cell.textContent = item.type === 'bad' ? '★' : '●';
+      }
+      cell.addEventListener('click', () => toggleCell(b, l, cell));
+      cell.addEventListener('contextmenu', e => { e.preventDefault(); toggleCellType(b, l, cell); });
+      grid.appendChild(cell);
+    }
+  }
+  // beat numbers
+  const nums = document.getElementById('ed-nums');
+  nums.innerHTML = '';
+  nums.style.gridTemplateColumns = `repeat(${editorBeats}, 1fr)`;
+  for (let b = 0; b < editorBeats; b++) {
+    const n = document.createElement('div');
+    n.style.cssText = 'font-size:9px;color:#444;text-align:center;line-height:16px;';
+    n.textContent = (b + 1) % 4 === 1 ? b + 1 : '';
+    nums.appendChild(n);
+  }
+}
+
+function toggleCell(b, l, cell) {
+  const idx = editorPattern.findIndex(p => p.beat === b && p.lane === l);
+  if (idx === -1) {
+    editorPattern.push({ beat: b, lane: l, type: 'bad' });
+    cell.classList.add('ed-bad'); cell.textContent = '★';
+  } else {
+    editorPattern.splice(idx, 1);
+    cell.classList.remove('ed-bad', 'ed-good'); cell.textContent = '';
+  }
+}
+
+function toggleCellType(b, l, cell) {
+  const item = editorPattern.find(p => p.beat === b && p.lane === l);
+  if (!item) return;
+  item.type = item.type === 'bad' ? 'good' : 'bad';
+  cell.classList.toggle('ed-bad', item.type === 'bad');
+  cell.classList.toggle('ed-good', item.type === 'good');
+  cell.textContent = item.type === 'bad' ? '★' : '●';
+}
+
+function applyCustomStage() {
+  if (editorPattern.length === 0) {
+    alert('패턴을 하나 이상 추가해주세요!'); return;
+  }
+  const snap = [...editorPattern];
+  const totalB = editorBeats;
+  const bpmVal = editorBpm;
+
+  // 커스텀 스테이지를 STAGES[0] 자리에 삽입
+  STAGES.unshift({
+    name: '내 패턴',
+    bpm: bpmVal,
+    totalBeats: totalB,
+    color: '#EF9F27',
+    pattern: (beat) => snap.filter(p => p.beat === beat).map(p => ({ lane: p.lane, type: p.type }))
+  });
+  customStageActive = true;
+  closeEditor();
+  setMsg('커스텀 패턴 적용됨! 시작하면 내 패턴으로 플레이됩니다.');
+}
+
+function clearEditor() {
+  editorPattern = [];
+  renderEditor();
+}
+
+// Build editor DOM
+const overlay = document.createElement('div');
+overlay.id = 'editor-overlay';
+overlay.style.cssText = 'display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.92);z-index:1000;flex-direction:column;align-items:center;justify-content:center;padding:16px;';
+
+overlay.innerHTML = `
+<div style="width:100%;max-width:660px;background:#0d0d18;border:1px solid #222;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;">
+    <span style="font-size:15px;font-weight:600;color:#fff;">패턴 에디터</span>
+    <button id="ed-close" style="background:none;border:none;color:#666;font-size:18px;cursor:pointer;">✕</button>
+  </div>
+
+  <div style="font-size:11px;color:#555;line-height:1.6;">
+    <b style="color:#aaa">왼쪽 클릭</b> — 셀 추가/제거 &nbsp;|&nbsp;
+    <b style="color:#aaa">오른쪽 클릭</b> — ★ 피하기 ↔ ● 먹기 전환<br>
+    레인: 위=왼쪽 &nbsp; 가운데=중앙 &nbsp; 아래=오른쪽
+  </div>
+
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+    <label style="font-size:11px;color:#666;">비트 수</label>
+    <input id="ed-beats" type="number" min="8" max="64" value="32" style="width:56px;font-size:12px;padding:5px 8px;background:#111;border:1px solid #222;border-radius:6px;color:#fff;outline:none;"/>
+    <label style="font-size:11px;color:#666;">BPM</label>
+    <input id="ed-bpm" type="number" min="60" max="220" value="120" style="width:64px;font-size:12px;padding:5px 8px;background:#111;border:1px solid #222;border-radius:6px;color:#fff;outline:none;"/>
+    <button id="ed-resize" style="font-size:11px;padding:5px 10px;background:#222;border:1px solid #333;border-radius:6px;color:#aaa;cursor:pointer;">그리드 갱신</button>
+    <div style="display:flex;gap:4px;margin-left:auto;">
+      <span style="font-size:10px;color:#555;line-height:26px;margin-right:4px;">범례</span>
+      <span style="font-size:11px;padding:3px 8px;background:rgba(216,90,48,.3);border:1px solid #D85A30;border-radius:5px;color:#D85A30;">★ 피하기</span>
+      <span style="font-size:11px;padding:3px 8px;background:rgba(29,158,117,.3);border:1px solid #1D9E75;border-radius:5px;color:#1D9E75;">● 먹기</span>
+    </div>
+  </div>
+
+  <div style="overflow-x:auto;background:#080810;border:1px solid #1a1a2e;border-radius:8px;padding:8px;">
+    <div style="font-size:10px;color:#444;margin-bottom:4px;padding-left:2px;">← 비트 순서 →</div>
+    <div id="ed-grid" style="display:grid;gap:3px;min-width:100%;"></div>
+    <div id="ed-nums" style="display:grid;gap:3px;margin-top:4px;min-width:100%;"></div>
+  </div>
+
+  <div style="display:flex;gap:8px;justify-content:flex-end;">
+    <button id="ed-clear" style="font-size:12px;padding:8px 16px;background:#1a1a2e;border:1px solid #333;border-radius:8px;color:#666;cursor:pointer;">초기화</button>
+    <button id="ed-apply" style="font-size:13px;padding:8px 20px;background:#EF9F27;border:none;border-radius:8px;color:#000;font-weight:600;cursor:pointer;">적용 후 플레이</button>
+  </div>
+</div>`;
+
+document.body.appendChild(overlay);
+
+// Editor button in ctrl area
+const edBtn = document.createElement('button');
+edBtn.textContent = '패턴 편집';
+edBtn.style.cssText = 'flex:1;padding:9px;font-size:13px;font-weight:500;background:rgba(239,159,39,.18);border:1px solid rgba(239,159,39,.45);border-radius:8px;color:#EF9F27;cursor:pointer;';
+edBtn.addEventListener('click', openEditor);
+document.getElementById('ctrl').appendChild(edBtn);
+
+// Editor CSS
+const edStyle = document.createElement('style');
+edStyle.textContent = `
+.ed-cell{width:100%;aspect-ratio:1;min-width:14px;border-radius:3px;border:1px solid #1a1a2e;background:#111;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:8px;transition:background .1s;}
+.ed-cell:hover{background:#1a1a2e;}
+.ed-bad{background:rgba(216,90,48,.35)!important;border-color:#D85A30!important;color:#D85A30;}
+.ed-good{background:rgba(29,158,117,.35)!important;border-color:#1D9E75!important;color:#1D9E75;}
+`;
+document.head.appendChild(edStyle);
+
+document.getElementById('ed-close').addEventListener('click', closeEditor);
+document.getElementById('ed-clear').addEventListener('click', clearEditor);
+document.getElementById('ed-apply').addEventListener('click', applyCustomStage);
+document.getElementById('ed-resize').addEventListener('click', () => {
+  editorBeats = Math.max(8, Math.min(64, parseInt(document.getElementById('ed-beats').value) || 32));
+  editorBpm   = Math.max(60, Math.min(220, parseInt(document.getElementById('ed-bpm').value) || 120));
+  editorPattern = editorPattern.filter(p => p.beat < editorBeats);
+  document.getElementById('ed-beats').value = editorBeats;
+  renderEditor();
+});
+
+renderEditor();
+</script>
