@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Beat Dodge v3.8</title>
+<title>Beat Dodge v3.9</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;user-select:none;}
 body{background:#000;display:flex;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#fff;}
@@ -63,7 +63,7 @@ body{background:#000;display:flex;justify-content:center;font-family:-apple-syst
 </head>
 <body>
 <div id="gw">
-  <div id="ver">v3.8</div>
+  <div id="ver">v3.9</div>
   <div id="hud">
     <div class="stat">점수<b id="sv">0</b></div>
     <div class="stat">콤보<b id="cv">0</b></div>
@@ -657,6 +657,7 @@ function update(now){
   if(bannerAlpha>0)bannerAlpha=Math.max(0,bannerAlpha-.007);
   if(!stageClearing&&now-lastBeat>beatInt){
     lastBeat=now;stageBeat++;bgPulse=1;
+    const items=selectedSong.pattern(stageBeat,difficulty);
     if(items.length>0)spawnFromPattern(items);
     if(stageBeat>=selectedSong.totalBeats){stageClearing=true;setTimeout(()=>endGame(true),1200);}
     scheduleBeat();
