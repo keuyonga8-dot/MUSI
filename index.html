@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Beat Dodge v1.5</title>
+<title>Beat Dodge v2.0</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;user-select:none;}
 body{background:#000;display:flex;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#fff;}
@@ -18,33 +18,29 @@ body{background:#000;display:flex;justify-content:center;font-family:-apple-syst
 #yt-thumb{position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;background:#000;overflow:hidden;}
 #yt-thumb img{width:100%;height:100%;object-fit:cover;opacity:0.35;}
 #canvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:2;}
-/* 결과창 */
-#result-overlay{display:none;position:absolute;top:0;left:0;width:100%;height:100%;z-index:10;background:rgba(0,0,0,.82);align-items:center;justify-content:center;flex-direction:column;gap:8px;}
-#result-grade{font-size:72px;font-weight:700;}
-#result-title{font-size:13px;color:#aaa;}
-#result-score{font-size:28px;font-weight:600;}
-#result-detail{font-size:12px;color:#666;}
-/* 곡 목록 */
+#result-overlay{display:none;position:absolute;top:0;left:0;width:100%;height:100%;z-index:10;background:rgba(0,0,0,.85);flex-direction:column;align-items:center;justify-content:center;gap:6px;}
+#result-title{font-size:14px;color:#aaa;letter-spacing:.05em;}
+#result-grade{font-size:72px;font-weight:700;line-height:1;}
+#result-score{font-size:26px;font-weight:600;}
+#result-detail{font-size:12px;color:#555;margin-top:4px;}
 #song-section{background:#0a0a0f;border-top:1px solid #1a1a2e;padding:12px;}
 #song-label{font-size:11px;color:#444;margin-bottom:8px;letter-spacing:.04em;}
-#song-list{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;scroll-snap-type:x mandatory;}
+#song-list{display:flex;gap:8px;overflow-x:auto;overflow-y:hidden;padding-bottom:8px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;touch-action:pan-x;cursor:grab;}
 #song-list::-webkit-scrollbar{height:3px;}
 #song-list::-webkit-scrollbar-track{background:transparent;}
 #song-list::-webkit-scrollbar-thumb{background:#2a2a3a;border-radius:2px;}
-.sc{flex:0 0 auto;width:120px;cursor:pointer;border-radius:10px;border:1px solid #1e1e2e;background:#111;overflow:hidden;transition:border-color .15s,transform .15s;scroll-snap-align:start;}
+.sc{flex:0 0 auto;width:90px;cursor:pointer;border-radius:8px;border:1px solid #1e1e2e;background:#111;overflow:hidden;transition:border-color .15s,transform .15s;scroll-snap-align:start;-webkit-tap-highlight-color:transparent;}
 .sc:hover{border-color:#534AB7;transform:translateY(-2px);}
 .sc.active{border:1.5px solid #7F77DD;background:#15152a;}
 .sc img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:#1a1a2e;}
-.sc-title{font-size:10px;color:#ccc;padding:6px 7px 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
-.sc-meta{font-size:9px;color:#4a4a6a;padding:0 7px 6px;}
+.sc-title{font-size:9px;color:#ccc;padding:5px 5px 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
+.sc-meta{font-size:8px;color:#4a4a6a;padding:0 5px 5px;}
 #song-preview{display:none;margin-top:8px;background:#111;border:1px solid #1a1a2e;border-radius:8px;padding:10px;gap:10px;align-items:center;}
 #pv-img{width:88px;flex:0 0 88px;border-radius:6px;overflow:hidden;}
 #pv-img img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;}
 #pv-info{flex:1;min-width:0;}
 #pv-title{font-size:13px;font-weight:600;margin-bottom:3px;line-height:1.3;}
-#pv-bpm{font-size:11px;color:#666;margin-bottom:5px;}
-#pv-stages{font-size:10px;color:#555;line-height:1.6;}
-/* 난이도 */
+#pv-bpm{font-size:11px;color:#666;}
 #diff-bar{display:flex;gap:6px;padding:8px 12px 0;background:#0a0a0f;}
 #diff-bar>span{font-size:11px;color:#555;line-height:28px;white-space:nowrap;}
 .diff-btn{flex:1;padding:5px;font-size:12px;font-weight:500;border-radius:7px;border:1px solid #222;background:rgba(255,255,255,.04);color:#555;cursor:pointer;}
@@ -58,7 +54,7 @@ body{background:#000;display:flex;justify-content:center;font-family:-apple-syst
 </head>
 <body>
 <div id="gw">
-  <div id="ver">v1.5</div>
+  <div id="ver">v2.0</div>
   <div id="hud">
     <div class="stat">점수<b id="sv">0</b></div>
     <div class="stat">콤보<b id="cv">0</b></div>
@@ -85,7 +81,6 @@ body{background:#000;display:flex;justify-content:center;font-family:-apple-syst
       <div id="pv-info">
         <div id="pv-title"></div>
         <div id="pv-bpm"></div>
-        <div id="pv-stages"></div>
       </div>
     </div>
   </div>
@@ -100,17 +95,13 @@ body{background:#000;display:flex;justify-content:center;font-family:-apple-syst
   <div id="ctrl">
     <button id="start-btn" disabled style="opacity:.35;">시작</button>
     <button id="stop-btn" style="display:none">종료</button>
-
   </div>
   <div id="key-hint">1 2 3 · Z X C · ← → · A D · 스와이프 · 탭</div>
 </div>
 
 <script>
 // ══════════════════════════════════════════
-// ★ 곡 목록 — 여기만 편집
-// pattern(b, diff): b=비트번호(0~), diff='easy'|'normal'|'hard'
-// return [{lane:0~2, type:'bad'|'good'}, ...]
-// 규칙: 한 비트에 같은 레인 중복 금지, bad는 최대 2개(빈 레인 1개 이상 보장)
+// ★ 곡 목록 — 여기만 편집하세요
 // ══════════════════════════════════════════
 const SONGS = [
   {
@@ -118,19 +109,16 @@ const SONGS = [
     ytId: 'p4spKijRcAw',
     bpm: 96,
     color: '#378ADD',
-    totalBeats: 320,
+    totalBeats: 512,
     pattern(b, diff) {
       const r = [];
-      const wave = [0,1,2,1,0,2,0,1,2,0,2,1,2,0,1,0,2,1,1,0,2,1,2,0];
-      const progress = b / 320;
-      // 초반(0~30%): 여유롭게
-      // 중반(30~70%): 점점 빨라짐
-      // 후반(70~100%): 절정
-      const density = progress < 0.3 ? 6 : progress < 0.7 ? 4 : 3;
-      const diffMod = diff === 'easy' ? density + 3 : diff === 'normal' ? density : Math.max(1, density - 3);
-      if (b % diffMod === 0) r.push({ lane: wave[b % 24], type: 'bad' });
-      if (b % (diffMod + 1) === 1) r.push({ lane: wave[(b + 8) % 24], type: 'bad' });
-      if (b % 12 === 9) r.push({ lane: freeLane(r, b), type: 'good' });
+      const w = [0,1,2,1,0,2,0,1,2,0,2,1,2,0,1,0,2,1,1,0,2,1,2,0];
+      const prog = b / 512;
+      const base = prog < 0.3 ? 6 : prog < 0.7 ? 4 : 3;
+      const gap = diff==='easy' ? base+3 : diff==='hard' ? Math.max(1,base-2) : base;
+      if (b % gap === 0) r.push({lane:w[b%24], type:'bad'});
+      if (diff !== 'easy' && b % (gap+1) === Math.floor(gap/2)) r.push({lane:w[(b+8)%24], type:'bad'});
+      if (b % 12 === 9) r.push({lane:freeLane(r,b), type:'good'});
       return r;
     }
   },
@@ -139,16 +127,16 @@ const SONGS = [
     ytId: '3PpedpOIW28',
     bpm: 112,
     color: '#5C5B58',
-    totalBeats: 360,
+    totalBeats: 448,
     pattern(b, diff) {
       const r = [];
-      const seq = [0,2,0,1,2,1,0,2,1,0,1,2,2,0,1,2,0,1,1,2,0,1,0,2];
-      const progress = b / 360;
-      const density = progress < 0.3 ? 6 : progress < 0.7 ? 4 : 2;
-      const diffMod = diff === 'easy' ? density + 3 : diff === 'normal' ? density : Math.max(1, density - 3);
-      if (b % diffMod === 0) r.push({ lane: seq[b % 24], type: 'bad' });
-      if (b % (diffMod + 2) === 1) r.push({ lane: seq[(b + 9) % 24], type: 'bad' });
-      if (b % 11 === 8) r.push({ lane: freeLane(r, b), type: 'good' });
+      const w = [0,2,0,1,2,1,0,2,1,0,1,2,2,0,1,2,0,1,1,2,0,1,0,2];
+      const prog = b / 448;
+      const base = prog < 0.3 ? 6 : prog < 0.7 ? 4 : 2;
+      const gap = diff==='easy' ? base+3 : diff==='hard' ? Math.max(1,base-2) : base;
+      if (b % gap === 0) r.push({lane:w[b%24], type:'bad'});
+      if (diff !== 'easy' && b % (gap+1) === Math.floor(gap/2)) r.push({lane:w[(b+9)%24], type:'bad'});
+      if (b % 11 === 8) r.push({lane:freeLane(r,b), type:'good'});
       return r;
     }
   },
@@ -157,16 +145,16 @@ const SONGS = [
     ytId: 'KvWs7PzYgwY',
     bpm: 118,
     color: '#1D9E75',
-    totalBeats: 380,
+    totalBeats: 472,
     pattern(b, diff) {
       const r = [];
-      const seq = [0,1,2,0,2,1,2,0,1,2,1,0,1,2,0,1,0,2,0,2,1,0,1,2];
-      const progress = b / 380;
-      const density = progress < 0.3 ? 6 : progress < 0.7 ? 4 : 3;
-      const diffMod = diff === 'easy' ? density + 3 : diff === 'normal' ? density : Math.max(1, density - 3);
-      if (b % diffMod === 0) r.push({ lane: seq[b % 24], type: 'bad' });
-      if (b % (diffMod + 1) === 2) r.push({ lane: seq[(b + 7) % 24], type: 'bad' });
-      if (b % 9 === 7) r.push({ lane: freeLane(r, b), type: 'good' });
+      const w = [0,1,2,0,2,1,2,0,1,2,1,0,1,2,0,1,0,2,0,2,1,0,1,2];
+      const prog = b / 472;
+      const base = prog < 0.3 ? 6 : prog < 0.7 ? 4 : 3;
+      const gap = diff==='easy' ? base+3 : diff==='hard' ? Math.max(1,base-2) : base;
+      if (b % gap === 0) r.push({lane:w[b%24], type:'bad'});
+      if (diff !== 'easy' && b % (gap+1) === Math.floor(gap/2)) r.push({lane:w[(b+7)%24], type:'bad'});
+      if (b % 9 === 7) r.push({lane:freeLane(r,b), type:'good'});
       return r;
     }
   },
@@ -175,38 +163,171 @@ const SONGS = [
     ytId: 'umx2NvAX1qY',
     bpm: 135,
     color: '#D85A30',
-    totalBeats: 420,
+    totalBeats: 540,
     pattern(b, diff) {
       const r = [];
-      const seq = [0,2,1,0,2,0,1,2,0,1,2,1,0,2,1,0,2,1,0,1,2,0,2,1];
-      const progress = b / 420;
-      const density = progress < 0.25 ? 6 : progress < 0.5 ? 4 : progress < 0.75 ? 3 : 2;
-      const diffMod = diff === 'easy' ? density + 3 : diff === 'normal' ? density : Math.max(1, density - 3);
-      if (b % diffMod === 0) r.push({ lane: seq[b % 24], type: 'bad' });
-      if (b % (diffMod + 1) === 1) r.push({ lane: seq[(b + 10) % 24], type: 'bad' });
-      if (b % 8 === 6) r.push({ lane: freeLane(r, b), type: 'good' });
+      const w = [0,2,1,0,2,0,1,2,0,1,2,1,0,2,1,0,2,1,0,1,2,0,2,1];
+      const prog = b / 540;
+      const base = prog < 0.25 ? 6 : prog < 0.5 ? 4 : prog < 0.75 ? 3 : 2;
+      const gap = diff==='easy' ? base+3 : diff==='hard' ? Math.max(1,base-2) : base;
+      if (b % gap === 0) r.push({lane:w[b%24], type:'bad'});
+      if (diff !== 'easy' && b % (gap+1) === Math.floor(gap/2)) r.push({lane:w[(b+10)%24], type:'bad'});
+      if (b % 8 === 6) r.push({lane:freeLane(r,b), type:'good'});
+      return r;
+    }
+  },
+  {
+    // Santa 번외곡 | AWAKE — 깨어나는 느낌, 밝고 에너지 넘침
+    title: 'Santa 번외곡 | AWAKE',
+    ytId: '590xIhxAoiU',
+    bpm: 128,
+    color: '#F5C842',
+    totalBeats: 400,
+    pattern(b, diff) {
+      const r = [];
+      const w = [0,1,2,0,1,2,1,0,2,1,2,0,0,2,1,0,2,1,2,0,1,2,1,0];
+      const prog = b / 400;
+      const base = prog < 0.3 ? 6 : prog < 0.7 ? 4 : 3;
+      const gap = diff==='easy' ? base+3 : diff==='hard' ? Math.max(1,base-2) : base;
+      if (b % gap === 0) r.push({lane:w[b%24], type:'bad'});
+      if (diff !== 'easy' && b % (gap+1) === Math.floor(gap/2)) r.push({lane:w[(b+8)%24], type:'bad'});
+      if (b % 10 === 8) r.push({lane:freeLane(r,b), type:'good'});
+      return r;
+    }
+  },
+  {
+    // Syndrome 번외곡 | Set me free — 해방감, 경쾌하고 드라이브감
+    title: 'Syndrome 번외곡 | Set me free',
+    ytId: '590xIhxAoiU',
+    bpm: 124,
+    color: '#A78BFA',
+    totalBeats: 496,
+    pattern(b, diff) {
+      const r = [];
+      const w = [2,0,1,2,0,2,1,0,2,0,1,2,1,2,0,1,0,2,0,1,2,1,0,2];
+      const prog = b / 496;
+      const base = prog < 0.3 ? 6 : prog < 0.7 ? 4 : 3;
+      const gap = diff==='easy' ? base+3 : diff==='hard' ? Math.max(1,base-2) : base;
+      if (b % gap === 0) r.push({lane:w[b%24], type:'bad'});
+      if (diff !== 'easy' && b % (gap+2) === 1) r.push({lane:w[(b+9)%24], type:'bad'});
+      if (b % 9 === 7) r.push({lane:freeLane(r,b), type:'good'});
+      return r;
+    }
+  },
+  {
+    // Pure 번외곡 | 맞아, 난 네가 좋아 — 설레고 달달한 느낌
+    title: 'Pure 번외곡 | 맞아, 난 네가 좋아',
+    ytId: '9teD-_Yx1Cg',
+    bpm: 102,
+    color: '#F9A8D4',
+    totalBeats: 408,
+    pattern(b, diff) {
+      const r = [];
+      const w = [1,0,2,1,2,0,0,1,2,0,2,1,2,1,0,2,0,1,1,2,0,1,0,2];
+      const prog = b / 408;
+      const base = prog < 0.3 ? 7 : prog < 0.7 ? 5 : 4;
+      const gap = diff==='easy' ? base+3 : diff==='hard' ? Math.max(2,base-2) : base;
+      if (b % gap === 0) r.push({lane:w[b%24], type:'bad'});
+      if (diff !== 'easy' && b % (gap+2) === 2) r.push({lane:w[(b+7)%24], type:'bad'});
+      if (b % 11 === 9) r.push({lane:freeLane(r,b), type:'good'});
+      return r;
+    }
+  },
+  {
+    // Amore 번외곡 | ROSA NERA — 이탈리안 감성, 열정적이고 드라마틱
+    title: 'Amore 번외곡 | ROSA NERA',
+    ytId: 'HYcXDO0U1zY',
+    bpm: 118,
+    color: '#E11D48',
+    totalBeats: 472,
+    pattern(b, diff) {
+      const r = [];
+      const w = [0,2,0,1,2,1,2,0,1,0,2,1,1,0,2,1,2,0,2,1,0,2,0,1];
+      const prog = b / 472;
+      const base = prog < 0.3 ? 6 : prog < 0.7 ? 4 : 3;
+      const gap = diff==='easy' ? base+3 : diff==='hard' ? Math.max(1,base-2) : base;
+      if (b % gap === 0) r.push({lane:w[b%24], type:'bad'});
+      if (diff !== 'easy' && b % (gap+1) === Math.floor(gap/2)) r.push({lane:w[(b+11)%24], type:'bad'});
+      if (b % 10 === 8) r.push({lane:freeLane(r,b), type:'good'});
+      return r;
+    }
+  },
+  {
+    // Overload 번외곡 | Feel it, electricity — 전기처럼 짜릿, 강렬한 비트
+    title: 'Overload 번외곡 | Feel it, electricity',
+    ytId: 'f-eWzfmaJlo',
+    bpm: 138,
+    color: '#22D3EE',
+    totalBeats: 552,
+    pattern(b, diff) {
+      const r = [];
+      const w = [0,2,1,2,0,1,0,1,2,1,0,2,2,0,1,0,2,1,1,2,0,2,1,0];
+      const prog = b / 552;
+      const base = prog < 0.25 ? 6 : prog < 0.6 ? 4 : 3;
+      const gap = diff==='easy' ? base+3 : diff==='hard' ? Math.max(1,base-2) : base;
+      if (b % gap === 0) r.push({lane:w[b%24], type:'bad'});
+      if (diff !== 'easy' && b % (gap+1) === Math.floor(gap/2)) r.push({lane:w[(b+12)%24], type:'bad'});
+      if (b % 8 === 6) r.push({lane:freeLane(r,b), type:'good'});
+      return r;
+    }
+  },
+  {
+    // Stray 번외곡 | 아직은 아니야 — 아련하고 감성적, 천천히 고조
+    title: 'Stray 번외곡 | 아직은 아니야',
+    ytId: 'f-eWzfmaJlo',
+    bpm: 95,
+    color: '#818CF8',
+    totalBeats: 380,
+    pattern(b, diff) {
+      const r = [];
+      const w = [1,2,0,1,0,2,2,1,0,2,0,1,0,1,2,0,2,1,1,0,2,1,2,0];
+      const prog = b / 380;
+      const base = prog < 0.4 ? 7 : prog < 0.75 ? 5 : 3;
+      const gap = diff==='easy' ? base+3 : diff==='hard' ? Math.max(2,base-2) : base;
+      if (b % gap === 0) r.push({lane:w[b%24], type:'bad'});
+      if (diff !== 'easy' && b % (gap+2) === 1) r.push({lane:w[(b+8)%24], type:'bad'});
+      if (b % 12 === 10) r.push({lane:freeLane(r,b), type:'good'});
+      return r;
+    }
+  },
+  {
+    // Vibe 번외곡 | Home sweet home — 포근하고 따뜻, 편안한 리듬
+    title: 'Vibe 번외곡 | Home sweet home',
+    ytId: 'juWw7PqGZiI',
+    bpm: 100,
+    color: '#34D399',
+    totalBeats: 400,
+    pattern(b, diff) {
+      const r = [];
+      const w = [0,1,2,1,0,1,2,0,1,0,2,1,1,2,0,2,1,0,0,2,1,2,0,1];
+      const prog = b / 400;
+      const base = prog < 0.3 ? 7 : prog < 0.7 ? 5 : 4;
+      const gap = diff==='easy' ? base+3 : diff==='hard' ? Math.max(2,base-2) : base;
+      if (b % gap === 0) r.push({lane:w[b%24], type:'bad'});
+      if (diff !== 'easy' && b % (gap+2) === 2) r.push({lane:w[(b+9)%24], type:'bad'});
+      if (b % 11 === 9) r.push({lane:freeLane(r,b), type:'good'});
       return r;
     }
   }
 ];
 // ══════════════════════════════════════════
 
-// bad 없는 레인 중 골고루 순환
+const DIFF = {
+  easy:   {livesStart:6, bpmMult:1.0,  scoreRate:0.8,  desc:'목숨 6개 · 느린 속도 · 여유로운 패턴',        color:'#1D9E75'},
+  normal: {livesStart:6, bpmMult:1.5,  scoreRate:1.0,  desc:'목숨 6개 · 빠른 속도 · 기본 패턴',            color:'#534AB7'},
+  hard:   {livesStart:6, bpmMult:2.0,  scoreRate:1.5,  desc:'목숨 6개 · 속도 2배 · 빡빡한 패턴 · 점수 x1.5', color:'#E24B4A'}
+};
+
+// bad 없는 레인 중 b값 기반으로 고르게 분산
 function freeLane(items, b) {
   const bad = items.filter(i=>i.type==='bad').map(i=>i.lane);
   const free = [0,1,2].filter(l=>!bad.includes(l));
   if (free.length === 0) return 1;
-  // 소수 기반 시퀀스로 고루 분산
-  const primes = [0,2,1,0,1,2,2,0,1,2,1,0,1,2,0,2,0,1,0,1,2,1,0,2];
-  const opts = primes.filter(l=>free.includes(l));
+  // 소수 기반 시퀀스 — 0/1/2 고르게
+  const seq = [0,2,1,2,0,1,0,1,2,1,2,0,2,0,1,0,2,1,1,0,2,1,0,2];
+  const opts = seq.filter(l=>free.includes(l));
   return opts[b % opts.length];
 }
-
-const DIFF = {
-  easy:   {livesStart:6, bpmMult:1.0,  scoreRate:0.8,  desc:'목숨 6개 · 느린 속도 · 여유로운 패턴',      color:'#1D9E75'},
-  normal: {livesStart:6, bpmMult:1.4,  scoreRate:1.0,  desc:'목숨 6개 · 빠른 속도 · 기본 패턴',          color:'#534AB7'},
-  hard:   {livesStart:6, bpmMult:3.0,  scoreRate:1.5,  desc:'목숨 6개 · 속도 3배 · 극한 패턴 · x1.5',     color:'#E24B4A'}
-};
 
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
@@ -221,8 +342,8 @@ window.addEventListener('load',resizeCanvas);
 window.addEventListener('resize',resizeCanvas);
 setTimeout(resizeCanvas,50);
 
-let state='idle',score=0,combo=0,multiplier=1,lives=3;
-let stageIdx=0,stageBeat=0,stageClearing=false,stageHits=0,stageTotal=0;
+let state='idle',score=0,combo=0,multiplier=1,lives=6;
+let stageBeat=0,stageClearing=false,stageHits=0,stageTotal=0;
 let objects=[],particles=[],floatTexts=[];
 let lastBeat=0,beatInt=750,bgPulse=0;
 let hitFlash=0,shakeX=0,shakeY=0;
@@ -231,22 +352,21 @@ let ytActive=false;
 let audioCtx=null,beatTimer=null,beatCount=0;
 let difficulty='normal';
 let selectedSong=null,selectedIdx=-1;
-let activeStages=[];
 let bannerData=null,bannerAlpha=0,bannerTid=0;
-let customSong=null;
 
 function hexRgb(h){return[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)].join(',');}
 function calcGrade(r){
-  if(r<0)return{g:'D',c:'#E24B4A'};
-  if(r>=.95)return{g:'S',c:'#FFD700'};if(r>=.85)return{g:'A',c:'#AFA9EC'};
-  if(r>=.70)return{g:'B',c:'#1D9E75'};if(r>=.50)return{g:'C',c:'#D85A30'};
+  if(r>=.95)return{g:'S',c:'#FFD700'};
+  if(r>=.85)return{g:'A',c:'#AFA9EC'};
+  if(r>=.70)return{g:'B',c:'#1D9E75'};
+  if(r>=.50)return{g:'C',c:'#D85A30'};
   return{g:'D',c:'#E24B4A'};
 }
 function getGrade(){
   if(stageTotal===0)return{g:'—',c:'#555'};
   const dodged=1-stageHits/stageTotal;
   const penalty=lives<=0?0.6:1.0;
-  return calcGrade(dodged*penalty);
+  return calcGrade(Math.max(0,dodged*penalty));
 }
 function updMult(){multiplier=combo>=20?4:combo>=10?3:combo>=5?2:1;document.getElementById('mv').textContent=`x${multiplier}`;}
 function updGrade(){const{g,c}=getGrade();const el=document.getElementById('grade-display');el.textContent=g;el.style.color=c;}
@@ -255,17 +375,18 @@ function setMsg(t){document.getElementById('msg').textContent=t;}
 function showBanner(t,s,c,d=2000){bannerData={t,s,c};bannerAlpha=1;clearTimeout(bannerTid);bannerTid=setTimeout(()=>bannerData=null,d);}
 
 function spawnFromPattern(items){
-  const stage=selectedSong;
-  // 중복 레인 제거: good 우선
   const deduped=[],seen={};
   items.forEach(i=>{
     if(seen[i.lane]===undefined){seen[i.lane]=i.type;deduped.push(i);}
     else if(i.type==='good'){const idx=deduped.findIndex(d=>d.lane===i.lane);if(idx>=0)deduped[idx]=i;}
   });
   deduped.forEach(i=>{
-    objects.push({lane:i.lane,y:-20,r:i.type==='good'?PR*.65:PR*.85,type:i.type,
-      color:i.type==='good'?'#1D9E75':stage.color,
-      speed:(H/320)*(selectedSong.bpm/80)*Math.sqrt(DIFF[difficulty].bpmMult),pulse:0});
+    objects.push({lane:i.lane,y:-20,
+      r:i.type==='good'?PR*.65:PR*.85,
+      type:i.type,
+      color:i.type==='good'?'#1D9E75':selectedSong.color,
+      speed:(H/320)*(selectedSong.bpm/80)*Math.sqrt(DIFF[difficulty].bpmMult),
+      pulse:0});
     if(i.type==='bad')stageTotal++;
   });
 }
@@ -274,12 +395,8 @@ function addFT(x,y,t,c){floatTexts.push({x,y,t,c,life:1,vy:-1.5});}
 
 function drawBg(){
   ctx.clearRect(0,0,W,H);
-  // idle: 썸네일이 보이도록 반투명, playing: ytActive면 반투명 아니면 불투명
-  if(state==='idle'){
-    ctx.fillStyle='rgba(0,0,0,0)';
-  } else {
-    ctx.fillStyle=ytActive?'rgba(5,5,20,0.60)':'rgba(10,10,20,0.97)';
-  }
+  if(state==='idle'){ctx.fillStyle='rgba(0,0,0,0)';}
+  else{ctx.fillStyle=ytActive?'rgba(5,5,20,0.60)':'rgba(10,10,20,0.97)';}
   ctx.fillRect(0,0,W,H);
   const sc=selectedSong?.color||'#534AB7';
   for(let l=0;l<LANES;l++){
@@ -307,11 +424,14 @@ function drawObjs(){
       for(let i=0;i<10;i++){const a=Math.PI/5*i-Math.PI/2,r=i%2===0?o.r:o.r*.42;i===0?ctx.moveTo(x+Math.cos(a)*r,o.y+Math.sin(a)*r):ctx.lineTo(x+Math.cos(a)*r,o.y+Math.sin(a)*r);}
       ctx.closePath();ctx.fillStyle=o.color;ctx.fill();
       ctx.strokeStyle='rgba(255,255,255,.4)';ctx.lineWidth=1.2;
-      const s=o.r*.28;ctx.beginPath();ctx.moveTo(x-s,o.y-s);ctx.lineTo(x+s,o.y+s);ctx.stroke();ctx.beginPath();ctx.moveTo(x+s,o.y-s);ctx.lineTo(x-s,o.y+s);ctx.stroke();
+      const s=o.r*.28;ctx.beginPath();ctx.moveTo(x-s,o.y-s);ctx.lineTo(x+s,o.y+s);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(x+s,o.y-s);ctx.lineTo(x-s,o.y+s);ctx.stroke();
     } else {
-      ctx.shadowColor='#1D9E75';ctx.shadowBlur=9;ctx.beginPath();ctx.arc(x,o.y,o.r,0,Math.PI*2);ctx.fillStyle='#1D9E75';ctx.fill();
+      ctx.shadowColor='#1D9E75';ctx.shadowBlur=9;
+      ctx.beginPath();ctx.arc(x,o.y,o.r,0,Math.PI*2);ctx.fillStyle='#1D9E75';ctx.fill();
       ctx.strokeStyle='#9FE1CB';ctx.lineWidth=1.5;ctx.stroke();
-      ctx.fillStyle='#fff';ctx.font=`bold ${Math.round(o.r)}px sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('+',x,o.y);
+      ctx.fillStyle='#fff';ctx.font=`bold ${Math.round(o.r)}px sans-serif`;
+      ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('+',x,o.y);
     }
     ctx.restore();
   });
@@ -322,36 +442,44 @@ function drawHUD(){
   if(hitFlash>0){ctx.fillStyle=`rgba(216,90,48,${hitFlash*.28})`;ctx.fillRect(0,0,W,H);}
   const sc=selectedSong?.color||'#534AB7';
   ctx.fillStyle=`rgba(${hexRgb(sc)},.4)`;ctx.fillRect(0,H-4,W*Math.min(combo/20,1),4);
-  for(let l=0;l<LANES;l++){ctx.fillStyle=l===playerLane?'rgba(127,119,221,.17)':'rgba(255,255,255,.02)';ctx.beginPath();ctx.roundRect(l*LW+4,H-PR*2.6,LW-8,PR*2.2,5);ctx.fill();}
+  for(let l=0;l<LANES;l++){
+    ctx.fillStyle=l===playerLane?'rgba(127,119,221,.17)':'rgba(255,255,255,.02)';
+    ctx.beginPath();ctx.roundRect(l*LW+4,H-PR*2.6,LW-8,PR*2.2,5);ctx.fill();
+  }
+  // 진행 바
   ctx.fillStyle='rgba(255,255,255,.04)';ctx.fillRect(0,0,W,3);
   ctx.fillStyle=sc;ctx.fillRect(0,0,W*(selectedSong?stageBeat/selectedSong.totalBeats:0),3);
   const fs=Math.max(9,Math.round(W*.02));
   ctx.font=`${fs}px sans-serif`;ctx.textAlign='left';ctx.textBaseline='top';
   ctx.fillStyle='rgba(230,100,60,.8)';ctx.fillText('★ 피하기',8,8);
   ctx.fillStyle='rgba(29,200,120,.8)';ctx.fillText('● 먹기',8,8+fs+3);
-  if(multiplier>1){const mc=['','','#1D9E75','#534AB7','#FFD700'][multiplier];ctx.font=`bold ${Math.round(W*.04)}px sans-serif`;ctx.fillStyle=mc;ctx.textAlign='right';ctx.textBaseline='top';ctx.fillText(`x${multiplier}`,W-8,8);}
+  if(multiplier>1){
+    const mc=['','','#1D9E75','#534AB7','#FFD700'][multiplier];
+    ctx.font=`bold ${Math.round(W*.04)}px sans-serif`;ctx.fillStyle=mc;
+    ctx.textAlign='right';ctx.textBaseline='top';ctx.fillText(`x${multiplier}`,W-8,8);
+  }
   if(ytActive){ctx.fillStyle='rgba(255,50,50,.85)';ctx.beginPath();ctx.arc(W-13,H-13,5,0,Math.PI*2);ctx.fill();}
 }
 function drawBanner(){
   if(!bannerData||bannerAlpha<=0)return;
   ctx.save();ctx.globalAlpha=bannerAlpha;
   ctx.fillStyle='rgba(0,0,0,.55)';ctx.fillRect(0,H*.3,W,H*.4);
-  ctx.font=`700 ${Math.round(W*.072)}px sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle=bannerData.c;ctx.fillText(bannerData.t,W/2,H/2-H*.04);
+  ctx.font=`700 ${Math.round(W*.072)}px sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillStyle=bannerData.c;ctx.fillText(bannerData.t,W/2,H/2-H*.04);
   ctx.font=`${Math.round(W*.027)}px sans-serif`;ctx.fillStyle='#aaa';ctx.fillText(bannerData.s,W/2,H/2+H*.05);
   ctx.restore();
 }
 
 function showResult(clear){
   const{g,c}=getGrade();
-  const ro=document.getElementById('result-overlay');
   document.getElementById('result-title').textContent=clear?'ALL CLEAR!':'GAME OVER';
   document.getElementById('result-title').style.color=clear?'#FFD700':'#aaa';
   document.getElementById('result-grade').textContent=g;
   document.getElementById('result-grade').style.color=c;
   document.getElementById('result-score').textContent=`${score.toLocaleString()}점`;
-  const dodgePct=stageTotal>0?Math.round((1-stageHits/stageTotal)*100):0;
-  document.getElementById('result-detail').textContent=`회피율 ${dodgePct}% · 최대 콤보 ${combo}`;
-  ro.style.display='flex';
+  const pct=stageTotal>0?Math.round((1-stageHits/stageTotal)*100):0;
+  document.getElementById('result-detail').textContent=`회피율 ${pct}% · 최대 콤보 ${combo}`;
+  document.getElementById('result-overlay').style.display='flex';
 }
 function hideResult(){document.getElementById('result-overlay').style.display='none';}
 
@@ -360,7 +488,7 @@ function update(now){
   if(bannerAlpha>0)bannerAlpha=Math.max(0,bannerAlpha-.007);
   if(!stageClearing&&now-lastBeat>beatInt){
     lastBeat=now;stageBeat++;bgPulse=1;
-    const items=selectedSong.pattern(stageBeat, difficulty);
+    const items=selectedSong.pattern(stageBeat,difficulty);
     if(items.length>0)spawnFromPattern(items);
     if(stageBeat>=selectedSong.totalBeats){stageClearing=true;setTimeout(()=>endGame(true),1200);}
     scheduleBeat();
@@ -384,15 +512,18 @@ function update(now){
         if(lives<=0)endGame(false);
       } else {
         const pts=Math.round(100*DIFF[difficulty].scoreRate)*multiplier;
-        score+=pts;combo++;document.getElementById('sv').textContent=score;document.getElementById('cv').textContent=combo;
-        updMult();updGrade();spawnParts(ox,o.y,'#1D9E75',8);addFT(ox,o.y-20,`+${pts}`,combo>9?'#FFD700':'#1D9E75');
+        score+=pts;combo++;
+        document.getElementById('sv').textContent=score;
+        document.getElementById('cv').textContent=combo;
+        updMult();updGrade();
+        spawnParts(ox,o.y,'#1D9E75',8);
+        addFT(ox,o.y-20,`+${pts}`,combo>9?'#FFD700':'#1D9E75');
       }
       return false;
     }
     return true;
   });
 }
-
 function draw(){
   ctx.save();ctx.translate(shakeX*(Math.random()-.5)*2,shakeY*(Math.random()-.5)*2);
   drawBg();drawObjs();drawParts();drawPlayer();drawHUD();drawFTs();drawBanner();ctx.restore();
@@ -412,7 +543,6 @@ function ytPlay(){
 function ytStop(){
   document.getElementById('yt-bg').innerHTML='';
   ytActive=false;
-  // 미리보기 썸네일 복원
   if(selectedSong?.ytId){
     document.getElementById('yt-thumb-img').src=`https://img.youtube.com/vi/${selectedSong.ytId}/mqdefault.jpg`;
     document.getElementById('yt-thumb').style.display='block';
@@ -421,9 +551,9 @@ function ytStop(){
 
 function startGame(){
   if(!selectedSong)return;
-  hideResult();resizeCanvas();
+  cancelAnimationFrame(animId);hideResult();resizeCanvas();
   score=0;combo=0;multiplier=1;lives=DIFF[difficulty].livesStart;
-  stageIdx=0;stageBeat=0;stageClearing=false;stageHits=0;stageTotal=0;
+  stageBeat=0;stageClearing=false;stageHits=0;stageTotal=0;
   objects=[];particles=[];floatTexts=[];playerLane=1;
   hitFlash=0;shakeX=0;shakeY=0;bgPulse=0;bannerData=null;
   document.getElementById('sv').textContent=0;
@@ -433,7 +563,6 @@ function startGame(){
   document.getElementById('grade-display').textContent='—';
   document.getElementById('grade-display').style.color='#fff';
   beatInt=60000/(selectedSong.bpm*DIFF[difficulty].bpmMult);
-  stageClearing=false;
   setMsg('★ 별은 피하고  ● 초록 원은 먹으세요!');
   document.getElementById('start-btn').textContent='재시작';
   document.getElementById('stop-btn').style.display='inline-block';
@@ -441,14 +570,13 @@ function startGame(){
   document.getElementById('diff-desc').style.display='none';
   document.getElementById('song-section').style.display='none';
   state='playing';lastBeat=performance.now();
-  startAudio();ytPlay();
+  stopAudio();startAudio();ytPlay();
   showBanner(selectedSong.title,'',selectedSong.color||'#534AB7',2000);
   requestAnimationFrame(loop);
 }
 function endGame(clear=false){
   state='idle';cancelAnimationFrame(animId);
   ytStop();
-  // HUD 초기화
   document.getElementById('sv').textContent=0;
   document.getElementById('cv').textContent=0;
   document.getElementById('mv').textContent='x1';
@@ -460,7 +588,6 @@ function endGame(clear=false){
   document.getElementById('diff-bar').style.display='flex';
   document.getElementById('diff-desc').style.display='block';
   document.getElementById('song-section').style.display='block';
-  // 캔버스 투명하게 — 썸네일이 보임
   ctx.clearRect(0,0,W,H);
   showResult(clear);
   stopAudio();
@@ -468,8 +595,8 @@ function endGame(clear=false){
 document.getElementById('start-btn').addEventListener('click',startGame);
 document.getElementById('stop-btn').addEventListener('click',()=>endGame(false));
 
-function moveTo(lane){if(state!=='playing')return;const now=Date.now();if(now-lastMoveTime<50)return;lastMoveTime=now;playerLane=lane;}
-function move(dir){if(state!=='playing')return;const now=Date.now();if(now-lastMoveTime<80)return;lastMoveTime=now;playerLane=Math.max(0,Math.min(LANES-1,playerLane+dir));}
+function moveTo(l){if(state!=='playing')return;const n=Date.now();if(n-lastMoveTime<50)return;lastMoveTime=n;playerLane=l;}
+function move(d){if(state!=='playing')return;const n=Date.now();if(n-lastMoveTime<80)return;lastMoveTime=n;playerLane=Math.max(0,Math.min(2,playerLane+d));}
 document.addEventListener('keydown',e=>{
   if(state!=='playing')return;
   if(e.key==='1'||e.key==='z'||e.key==='Z')moveTo(0);
@@ -482,64 +609,99 @@ canvas.addEventListener('touchstart',e=>{touchStartX=e.touches[0].clientX;},{pas
 canvas.addEventListener('touchend',e=>{
   if(state!=='playing')return;
   const dx=e.changedTouches[0].clientX-touchStartX,now=Date.now();
-  if(Math.abs(dx)<15&&now-lastMoveTime>150){const rect=canvas.getBoundingClientRect(),tl=Math.floor((e.changedTouches[0].clientX-rect.left)/rect.width*LANES);playerLane=tl!==playerLane?Math.max(0,Math.min(LANES-1,tl)):(playerLane===1?(Math.random()<.5?0:2):1);}
-  else if(dx<-20)move(-1);else if(dx>20)move(1);lastMoveTime=Date.now();
+  if(Math.abs(dx)<15&&now-lastMoveTime>150){
+    const rect=canvas.getBoundingClientRect(),tl=Math.floor((e.changedTouches[0].clientX-rect.left)/rect.width*3);
+    playerLane=tl!==playerLane?Math.max(0,Math.min(2,tl)):(playerLane===1?(Math.random()<.5?0:2):1);
+  } else if(dx<-20)move(-1); else if(dx>20)move(1);
+  lastMoveTime=Date.now();
 },{passive:true});
-canvas.addEventListener('click',e=>{if(state!=='playing')return;const rect=canvas.getBoundingClientRect(),tl=Math.floor((e.clientX-rect.left)/rect.width*LANES);if(tl!==playerLane)playerLane=Math.max(0,Math.min(LANES-1,tl));});
+canvas.addEventListener('click',e=>{
+  if(state!=='playing')return;
+  const rect=canvas.getBoundingClientRect(),tl=Math.floor((e.clientX-rect.left)/rect.width*3);
+  if(tl!==playerLane)playerLane=Math.max(0,Math.min(2,tl));
+});
 
 function startAudio(){try{audioCtx=new(window.AudioContext||window.webkitAudioContext)();beatCount=0;}catch(e){}}
 function stopAudio(){if(beatTimer)clearTimeout(beatTimer);if(audioCtx){audioCtx.close();audioCtx=null;}}
 function scheduleBeat(){
   if(!audioCtx||state!=='playing')return;clearTimeout(beatTimer);
   beatTimer=setTimeout(()=>{
-    if(state!=='playing')return;const t=audioCtx.currentTime,p=beatCount%4;
-    if(p===0||p===2){const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.frequency.setValueAtTime(p===0?150:120,t);o.frequency.exponentialRampToValueAtTime(40,t+.1);g.gain.setValueAtTime(ytActive?.07:.4,t);g.gain.exponentialRampToValueAtTime(.001,t+.2);o.start(t);o.stop(t+.2);}
-    if(!ytActive&&(p===1||p===3)){const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='triangle';o.frequency.value=[220,277,330,415][Math.floor(beatCount/4)%4];o.connect(g);g.connect(audioCtx.destination);g.gain.setValueAtTime(.06,t);g.gain.exponentialRampToValueAtTime(.001,t+.1);o.start(t);o.stop(t+.12);}
+    if(state!=='playing')return;
+    const t=audioCtx.currentTime,p=beatCount%4;
+    if(p===0||p===2){
+      const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+      o.connect(g);g.connect(audioCtx.destination);
+      o.frequency.setValueAtTime(p===0?150:120,t);
+      o.frequency.exponentialRampToValueAtTime(40,t+.1);
+      g.gain.setValueAtTime(ytActive?.07:.4,t);
+      g.gain.exponentialRampToValueAtTime(.001,t+.2);
+      o.start(t);o.stop(t+.2);
+    }
+    if(!ytActive&&(p===1||p===3)){
+      const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+      o.type='triangle';o.frequency.value=[220,277,330,415][Math.floor(beatCount/4)%4];
+      o.connect(g);g.connect(audioCtx.destination);
+      g.gain.setValueAtTime(.06,t);g.gain.exponentialRampToValueAtTime(.001,t+.1);
+      o.start(t);o.stop(t+.12);
+    }
     beatCount++;
   },beatInt*.05);
 }
 
+// 드래그 스크롤
+(function(){
+  const el = document.getElementById('song-list');
+  let down=false, startX, scrollLeft;
+  el.addEventListener('mousedown', e=>{down=true;startX=e.pageX-el.offsetLeft;scrollLeft=el.scrollLeft;el.style.cursor='grabbing';});
+  el.addEventListener('mouseleave',()=>{down=false;el.style.cursor='grab';});
+  el.addEventListener('mouseup',()=>{down=false;el.style.cursor='grab';});
+  el.addEventListener('mousemove',e=>{if(!down)return;e.preventDefault();const x=e.pageX-el.offsetLeft;el.scrollLeft=scrollLeft-(x-startX)*1.5;});
+})();
+
 function buildSongList(){
-  const allSongs=customSong?[customSong,...SONGS]:SONGS;
   const list=document.getElementById('song-list');
   list.innerHTML='';
-  allSongs.forEach((song,i)=>{
-    const card=document.createElement('div');card.className='sc'+(i===selectedIdx?' active':'');
+  SONGS.forEach((song,i)=>{
+    const card=document.createElement('div');
+    card.className='sc'+(i===selectedIdx?' active':'');
     const img=document.createElement('img');
-    img.src=song.ytId?`https://img.youtube.com/vi/${song.ytId}/mqdefault.jpg`:'';
+    img.src=`https://img.youtube.com/vi/${song.ytId}/mqdefault.jpg`;
     img.alt=song.title;
     const t=document.createElement('div');t.className='sc-title';t.textContent=song.title;
     const m=document.createElement('div');m.className='sc-meta';m.textContent=`${song.bpm} BPM`;
-    card.append(img,t,m);card.addEventListener('click',()=>selectSong(i,allSongs));list.appendChild(card);
+    card.append(img,t,m);
+    card.addEventListener('click',()=>selectSong(i));
+    list.appendChild(card);
   });
 }
-function selectSong(idx,allSongs){
-  const songs=allSongs||(customSong?[customSong,...SONGS]:SONGS);
-  selectedIdx=idx;selectedSong=songs[idx];
+function selectSong(idx){
+  selectedIdx=idx;selectedSong=SONGS[idx];
   document.querySelectorAll('.sc').forEach((c,i)=>c.classList.toggle('active',i===idx));
-  document.getElementById('pv-img-el').src=selectedSong.ytId?`https://img.youtube.com/vi/${selectedSong.ytId}/mqdefault.jpg`:'';
+  document.getElementById('pv-img-el').src=`https://img.youtube.com/vi/${selectedSong.ytId}/mqdefault.jpg`;
   document.getElementById('pv-title').textContent=selectedSong.title;
   document.getElementById('pv-bpm').textContent=`${selectedSong.bpm} BPM`;
-  document.getElementById('pv-stages').textContent=`총 ${selectedSong.totalBeats}비트`;
   document.getElementById('song-preview').style.display='flex';
-  // 썸네일 미리보기 (재생 X)
-  if(selectedSong.ytId){
-    document.getElementById('yt-thumb-img').src=`https://img.youtube.com/vi/${selectedSong.ytId}/mqdefault.jpg`;
-    document.getElementById('yt-thumb').style.display='block';
-    document.getElementById('yt-bg').innerHTML='';ytActive=false;
-  }
-  hideResult();
-  // 캔버스 초기화 (썸네일이 비치도록)
+  document.getElementById('yt-thumb-img').src=`https://img.youtube.com/vi/${selectedSong.ytId}/mqdefault.jpg`;
+  document.getElementById('yt-thumb').style.display='block';
+  document.getElementById('yt-bg').innerHTML='';ytActive=false;
   ctx.clearRect(0,0,W,H);
-  document.getElementById('start-btn').disabled=false;document.getElementById('start-btn').style.opacity='1';
+  hideResult();
+  document.getElementById('start-btn').disabled=false;
+  document.getElementById('start-btn').style.opacity='1';
   setMsg(`"${selectedSong.title}" 선택됨. 난이도 고르고 시작!`);
 }
 buildSongList();
 
 function selectDiff(d){
   difficulty=d;const info=DIFF[d];
-  document.querySelectorAll('.diff-btn').forEach(b=>{const on=b.dataset.d===d;b.style.border=on?`2px solid ${info.color}`:'1px solid #222';b.style.background=on?`rgba(${hexRgb(info.color)},.2)`:'rgba(255,255,255,.04)';b.style.color=on?info.color:'#555';});
-  document.getElementById('diff-desc').textContent=info.desc;document.getElementById('diff-desc').style.color=info.color;
+  document.querySelectorAll('.diff-btn').forEach(b=>{
+    const on=b.dataset.d===d;
+    b.style.border=on?`2px solid ${info.color}`:'1px solid #222';
+    b.style.background=on?`rgba(${hexRgb(info.color)},.2)`:'rgba(255,255,255,.04)';
+    b.style.color=on?info.color:'#555';
+  });
+  document.getElementById('diff-desc').textContent=info.desc;
+  document.getElementById('diff-desc').style.color=info.color;
 }
 document.querySelectorAll('.diff-btn').forEach(b=>b.addEventListener('click',()=>selectDiff(b.dataset.d)));
 selectDiff('normal');
