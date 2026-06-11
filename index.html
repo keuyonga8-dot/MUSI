@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Beat Dodge v2.0</title>
+<title>Beat Dodge v2.1</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;user-select:none;}
 body{background:#000;display:flex;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#fff;}
@@ -54,7 +54,7 @@ body{background:#000;display:flex;justify-content:center;font-family:-apple-syst
 </head>
 <body>
 <div id="gw">
-  <div id="ver">v2.0</div>
+  <div id="ver">v2.1</div>
   <div id="hud">
     <div class="stat">점수<b id="sv">0</b></div>
     <div class="stat">콤보<b id="cv">0</b></div>
@@ -127,11 +127,11 @@ const SONGS = [
     ytId: '3PpedpOIW28',
     bpm: 112,
     color: '#5C5B58',
-    totalBeats: 448,
+    totalBeats: 560,
     pattern(b, diff) {
       const r = [];
       const w = [0,2,0,1,2,1,0,2,1,0,1,2,2,0,1,2,0,1,1,2,0,1,0,2];
-      const prog = b / 448;
+      const prog = b / 560;
       const base = prog < 0.3 ? 6 : prog < 0.7 ? 4 : 2;
       const gap = diff==='easy' ? base+3 : diff==='hard' ? Math.max(1,base-2) : base;
       if (b % gap === 0) r.push({lane:w[b%24], type:'bad'});
@@ -145,11 +145,11 @@ const SONGS = [
     ytId: 'KvWs7PzYgwY',
     bpm: 118,
     color: '#1D9E75',
-    totalBeats: 472,
+    totalBeats: 464,
     pattern(b, diff) {
       const r = [];
       const w = [0,1,2,0,2,1,2,0,1,2,1,0,1,2,0,1,0,2,0,2,1,0,1,2];
-      const prog = b / 472;
+      const prog = b / 464;
       const base = prog < 0.3 ? 6 : prog < 0.7 ? 4 : 3;
       const gap = diff==='easy' ? base+3 : diff==='hard' ? Math.max(1,base-2) : base;
       if (b % gap === 0) r.push({lane:w[b%24], type:'bad'});
@@ -163,11 +163,11 @@ const SONGS = [
     ytId: 'umx2NvAX1qY',
     bpm: 135,
     color: '#D85A30',
-    totalBeats: 540,
+    totalBeats: 448,
     pattern(b, diff) {
       const r = [];
       const w = [0,2,1,0,2,0,1,2,0,1,2,1,0,2,1,0,2,1,0,1,2,0,2,1];
-      const prog = b / 540;
+      const prog = b / 448;
       const base = prog < 0.25 ? 6 : prog < 0.5 ? 4 : prog < 0.75 ? 3 : 2;
       const gap = diff==='easy' ? base+3 : diff==='hard' ? Math.max(1,base-2) : base;
       if (b % gap === 0) r.push({lane:w[b%24], type:'bad'});
@@ -182,11 +182,11 @@ const SONGS = [
     ytId: '590xIhxAoiU',
     bpm: 128,
     color: '#F5C842',
-    totalBeats: 400,
+    totalBeats: 512,
     pattern(b, diff) {
       const r = [];
       const w = [0,1,2,0,1,2,1,0,2,1,2,0,0,2,1,0,2,1,2,0,1,2,1,0];
-      const prog = b / 400;
+      const prog = b / 512;
       const base = prog < 0.3 ? 6 : prog < 0.7 ? 4 : 3;
       const gap = diff==='easy' ? base+3 : diff==='hard' ? Math.max(1,base-2) : base;
       if (b % gap === 0) r.push({lane:w[b%24], type:'bad'});
@@ -198,14 +198,14 @@ const SONGS = [
   {
     // Syndrome 번외곡 | Set me free — 해방감, 경쾌하고 드라이브감
     title: 'Syndrome 번외곡 | Set me free',
-    ytId: '590xIhxAoiU',
+    ytId: 'C2ccLTTkgIE',
     bpm: 124,
     color: '#A78BFA',
-    totalBeats: 496,
+    totalBeats: 504,
     pattern(b, diff) {
       const r = [];
       const w = [2,0,1,2,0,2,1,0,2,0,1,2,1,2,0,1,0,2,0,1,2,1,0,2];
-      const prog = b / 496;
+      const prog = b / 504;
       const base = prog < 0.3 ? 6 : prog < 0.7 ? 4 : 3;
       const gap = diff==='easy' ? base+3 : diff==='hard' ? Math.max(1,base-2) : base;
       if (b % gap === 0) r.push({lane:w[b%24], type:'bad'});
@@ -220,11 +220,11 @@ const SONGS = [
     ytId: '9teD-_Yx1Cg',
     bpm: 102,
     color: '#F9A8D4',
-    totalBeats: 408,
+    totalBeats: 360,
     pattern(b, diff) {
       const r = [];
       const w = [1,0,2,1,2,0,0,1,2,0,2,1,2,1,0,2,0,1,1,2,0,1,0,2];
-      const prog = b / 408;
+      const prog = b / 360;
       const base = prog < 0.3 ? 7 : prog < 0.7 ? 5 : 4;
       const gap = diff==='easy' ? base+3 : diff==='hard' ? Math.max(2,base-2) : base;
       if (b % gap === 0) r.push({lane:w[b%24], type:'bad'});
@@ -277,11 +277,11 @@ const SONGS = [
     ytId: 'f-eWzfmaJlo',
     bpm: 95,
     color: '#818CF8',
-    totalBeats: 380,
+    totalBeats: 384,
     pattern(b, diff) {
       const r = [];
       const w = [1,2,0,1,0,2,2,1,0,2,0,1,0,1,2,0,2,1,1,0,2,1,2,0];
-      const prog = b / 380;
+      const prog = b / 384;
       const base = prog < 0.4 ? 7 : prog < 0.75 ? 5 : 3;
       const gap = diff==='easy' ? base+3 : diff==='hard' ? Math.max(2,base-2) : base;
       if (b % gap === 0) r.push({lane:w[b%24], type:'bad'});
@@ -296,11 +296,11 @@ const SONGS = [
     ytId: 'juWw7PqGZiI',
     bpm: 100,
     color: '#34D399',
-    totalBeats: 400,
+    totalBeats: 424,
     pattern(b, diff) {
       const r = [];
       const w = [0,1,2,1,0,1,2,0,1,0,2,1,1,2,0,2,1,0,0,2,1,2,0,1];
-      const prog = b / 400;
+      const prog = b / 424;
       const base = prog < 0.3 ? 7 : prog < 0.7 ? 5 : 4;
       const gap = diff==='easy' ? base+3 : diff==='hard' ? Math.max(2,base-2) : base;
       if (b % gap === 0) r.push({lane:w[b%24], type:'bad'});
