@@ -142,11 +142,11 @@ const SONGS = [
     bpm: 96,
     stages: [
       { name: 'Stage 1', totalBeats: 32, color: '#85B7EB',
-        pattern: b => { const r=[],s=[0,1,2,0,2,1,1,2,0,2,0,1]; if(b%4===0)r.push({lane:s[b%12],type:'bad'}); if(b%10===7)r.push({lane:1,type:'good'}); return r; }},
+        pattern: b => { const r=[],s=[0,1,2,0,2,1,1,2,0,2,0,1]; if(b%4===0)r.push({lane:s[b%12],type:'bad'}); if(b%10===7)r.push({lane:safeLane(r,b),type:'good'}); return r; }},
       { name: 'Stage 2', totalBeats: 48, color: '#378ADD',
-        pattern: b => { const r=[],s=[0,2,1,0,1,2,2,0,1,2,1,0]; if(b%3===0)r.push({lane:s[b%12],type:'bad'}); if(b%3===1)r.push({lane:s[(b+4)%12],type:'bad'}); if(b%12===9)r.push({lane:1,type:'good'}); return r; }},
+        pattern: b => { const r=[],s=[0,2,1,0,1,2,2,0,1,2,1,0]; if(b%3===0)r.push({lane:s[b%12],type:'bad'}); if(b%3===1)r.push({lane:s[(b+4)%12],type:'bad'}); if(b%12===9)r.push({lane:safeLane(r,b),type:'good'}); return r; }},
       { name: 'Stage 3', totalBeats: 40, color: '#0C447C',
-        pattern: b => { const r=[],s=[0,1,2,1,0,2,0,2,1,0,2,1]; if(b%2===0)r.push({lane:s[b%12],type:'bad'}); if(b%9===7)r.push({lane:1,type:'good'}); return r; }}
+        pattern: b => { const r=[],s=[0,1,2,1,0,2,0,2,1,0,2,1]; if(b%2===0)r.push({lane:s[b%12],type:'bad'}); if(b%9===7)r.push({lane:safeLane(r,b),type:'good'}); return r; }}
     ]
   },
   {
@@ -155,11 +155,11 @@ const SONGS = [
     bpm: 112,
     stages: [
       { name: 'Stage 1', totalBeats: 36, color: '#5F5E5A',
-        pattern: b => { const r=[]; if(b%4===0)r.push({lane:0,type:'bad'}); if(b%4===2)r.push({lane:2,type:'bad'}); if(b%8===5)r.push({lane:1,type:'good'}); return r; }},
+        pattern: b => { const r=[]; if(b%4===0)r.push({lane:0,type:'bad'}); if(b%4===2)r.push({lane:2,type:'bad'}); if(b%8===5)r.push({lane:safeLane(r,b),type:'good'}); return r; }},
       { name: 'Stage 2', totalBeats: 48, color: '#888780',
-        pattern: b => { const r=[],s=[0,2,1,2,0,1,2,0,1,0,2,1]; if(b%3===0)r.push({lane:s[b%12],type:'bad'}); if(b%3===2)r.push({lane:s[(b+5)%12],type:'bad'}); if(b%11===8)r.push({lane:1,type:'good'}); return r; }},
+        pattern: b => { const r=[],s=[0,2,1,2,0,1,2,0,1,0,2,1]; if(b%3===0)r.push({lane:s[b%12],type:'bad'}); if(b%3===2)r.push({lane:s[(b+5)%12],type:'bad'}); if(b%11===8)r.push({lane:safeLane(r,b),type:'good'}); return r; }},
       { name: 'Stage 3', totalBeats: 44, color: '#444441',
-        pattern: b => { const r=[],s=[0,1,2,0,2,1,1,0,2,1,2,0]; if(b%2===0)r.push({lane:s[b%12],type:'bad'}); if(b%2===1)r.push({lane:s[(b+3)%12],type:'bad'}); if(b%8===7)r.push({lane:1,type:'good'}); return r; }}
+        pattern: b => { const r=[],s=[0,1,2,0,2,1,1,0,2,1,2,0]; if(b%2===0)r.push({lane:s[b%12],type:'bad'}); if(b%2===1)r.push({lane:s[(b+3)%12],type:'bad'}); if(b%8===7)r.push({lane:safeLane(r,b),type:'good'}); return r; }}
     ]
   },
   {
@@ -168,11 +168,11 @@ const SONGS = [
     bpm: 118,
     stages: [
       { name: 'Stage 1', totalBeats: 32, color: '#5DCAA5',
-        pattern: b => { const r=[]; if(b%4===0)r.push({lane:0,type:'bad'}); if(b%4===2)r.push({lane:2,type:'bad'}); if(b%8===5)r.push({lane:1,type:'good'}); return r; }},
+        pattern: b => { const r=[]; if(b%4===0)r.push({lane:0,type:'bad'}); if(b%4===2)r.push({lane:2,type:'bad'}); if(b%8===5)r.push({lane:safeLane(r,b),type:'good'}); return r; }},
       { name: 'Stage 2', totalBeats: 40, color: '#1D9E75',
-        pattern: b => { const r=[],s=[0,1,2,2,1,0,1,2,0,2,0,1]; if(b%3===0)r.push({lane:s[b%12],type:'bad'}); if(b%3===1)r.push({lane:s[(b+6)%12],type:'bad'}); if(b%9===7)r.push({lane:1,type:'good'}); return r; }},
+        pattern: b => { const r=[],s=[0,1,2,2,1,0,1,2,0,2,0,1]; if(b%3===0)r.push({lane:s[b%12],type:'bad'}); if(b%3===1)r.push({lane:s[(b+6)%12],type:'bad'}); if(b%9===7)r.push({lane:safeLane(r,b),type:'good'}); return r; }},
       { name: 'Stage 3', totalBeats: 48, color: '#0F6E56',
-        pattern: b => { const r=[],s=[2,0,1,0,2,1,0,1,2,1,0,2]; if(b%2===0)r.push({lane:s[b%12],type:'bad'}); if(b%3===1)r.push({lane:s[(b+4)%12],type:'bad'}); if(b%7===5)r.push({lane:1,type:'good'}); return r; }}
+        pattern: b => { const r=[],s=[2,0,1,0,2,1,0,1,2,1,0,2]; if(b%2===0)r.push({lane:s[b%12],type:'bad'}); if(b%3===1)r.push({lane:s[(b+4)%12],type:'bad'}); if(b%7===5)r.push({lane:safeLane(r,b),type:'good'}); return r; }}
     ]
   },
   {
@@ -181,11 +181,11 @@ const SONGS = [
     bpm: 135,
     stages: [
       { name: 'Stage 1', totalBeats: 36, color: '#F0997B',
-        pattern: b => { const r=[],s=[0,2,1,0,1,2,2,0,1,2,1,0]; if(b%4===0)r.push({lane:s[b%12],type:'bad'}); if(b%4===2)r.push({lane:s[(b+3)%12],type:'bad'}); if(b%8===6)r.push({lane:1,type:'good'}); return r; }},
+        pattern: b => { const r=[],s=[0,2,1,0,1,2,2,0,1,2,1,0]; if(b%4===0)r.push({lane:s[b%12],type:'bad'}); if(b%4===2)r.push({lane:s[(b+3)%12],type:'bad'}); if(b%8===6)r.push({lane:safeLane(r,b),type:'good'}); return r; }},
       { name: 'Stage 2', totalBeats: 48, color: '#D85A30',
-        pattern: b => { const r=[],s=[0,1,2,0,2,1,1,2,0,2,0,1]; if(b%3===0)r.push({lane:s[b%12],type:'bad'}); if(b%3===1)r.push({lane:s[(b+5)%12],type:'bad'}); if(b%3===2)r.push({lane:s[(b+8)%12],type:'bad'}); if(b%10===8)r.push({lane:1,type:'good'}); return r; }},
+        pattern: b => { const r=[],s=[0,1,2,0,2,1,1,2,0,2,0,1]; if(b%3===0)r.push({lane:s[b%12],type:'bad'}); if(b%3===1)r.push({lane:s[(b+5)%12],type:'bad'}); if(b%3===2)r.push({lane:s[(b+8)%12],type:'bad'}); if(b%10===8)r.push({lane:safeLane(r,b),type:'good'}); return r; }},
       { name: 'Stage 3', totalBeats: 56, color: '#993C1D',
-        pattern: b => { const r=[],s=[0,2,1,0,2,0,1,2,0,1,2,1,0,2,1,0]; r.push({lane:s[b%16],type:'bad'}); if(b%6===4)r.push({lane:s[(b+8)%16],type:'good'}); return r; }}
+        pattern: b => { const r=[],s=[0,2,1,0,2,0,1,2,0,1,2,1,0,2,1,0]; r.push({lane:safeLane(r,b),type:'good'}); return r; }}
     ]
   }
 ];
@@ -234,9 +234,27 @@ function lx(l){return LW*l+LW/2;}
 function showBanner(t,s,c,d=2000){bannerData={t,s,c};bannerAlpha=1;clearTimeout(bannerTid);bannerTid=setTimeout(()=>bannerData=null,d);}
 function setMsg(t){document.getElementById('msg').textContent=t;}
 
+// bad가 없는 레인 중 랜덤 선택
+function safeLane(items, beat){
+  const badLanes = items.filter(i=>i.type==='bad').map(i=>i.lane);
+  const free = [0,1,2].filter(l=>!badLanes.includes(l));
+  if(free.length===0) return 1; // 전부 막혔으면 그냥 1
+  return free[beat % free.length];
+}
 function spawnFromPattern(items){
   const stage=activeStages[stageIdx];
+  // 같은 레인 중복 제거: good 우선, bad 중복 제거
+  const deduped=[];
+  const lanes={};
   items.forEach(i=>{
+    if(lanes[i.lane]===undefined){lanes[i.lane]=i.type;deduped.push(i);}
+    else if(i.type==='good'){
+      // good이 있으면 bad 대체
+      const idx=deduped.findIndex(d=>d.lane===i.lane);
+      if(idx>=0)deduped[idx]=i;
+    }
+  });
+  deduped.forEach(i=>{
     objects.push({lane:i.lane,y:-20,r:i.type==='good'?PR*.65:PR*.85,type:i.type,
       color:i.type==='good'?'#1D9E75':stage.color,
       speed:(H/320)*(selectedSong.bpm/80)*DIFF[difficulty].bpmMult,pulse:0});
