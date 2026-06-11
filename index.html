@@ -171,39 +171,35 @@ body{background:#000;display:flex;justify-content:center;font-family:-apple-syst
 // ════════════════════════════════════════════
 const BUILTIN_SONGS = [
   {
-    // Hugo 번외곡 | Melting down — 몽환적, 감성적, 물결치듯 흐르는 패턴
     title: 'Hugo 번외곡 | Melting down',
     ytId: 'p4spKijRcAw',
     bpm: 96,
     stages: [
-      { name: '녹아드는 시작', totalBeats: 32, color: '#85B7EB',
+      { name: 'Stage 1', totalBeats: 32, color: '#85B7EB',
         pattern: b => {
           const r = [];
-          // 물결 패턴: 천천히 좌→우→좌 흐름
-          if (b % 6 === 0) r.push({ lane: 0, type: 'bad' });
-          if (b % 6 === 2) r.push({ lane: 1, type: 'bad' });
-          if (b % 6 === 4) r.push({ lane: 2, type: 'bad' });
-          if (b % 10 === 5) r.push({ lane: 1, type: 'good' });
+          // 한 번에 하나씩, 물결처럼 좌→중→우 순환
+          const lane = [0,1,2,0,2,1][b % 6];
+          if (b % 4 === 0) r.push({ lane, type: 'bad' });
+          if (b % 10 === 7) r.push({ lane: 1, type: 'good' });
           return r;
         }
       },
-      { name: '감정의 소용돌이', totalBeats: 48, color: '#378ADD',
+      { name: 'Stage 2', totalBeats: 48, color: '#378ADD',
         pattern: b => {
           const r = [];
-          // 양쪽에서 번갈아 오다가 중앙으로 수렴
-          if (b % 4 === 0) r.push({ lane: b % 8 < 4 ? 0 : 2, type: 'bad' });
-          if (b % 4 === 2) r.push({ lane: 1, type: 'bad' });
-          if (b % 8 === 6) { r.push({ lane: 0, type: 'bad' }); r.push({ lane: 2, type: 'bad' }); }
+          const seq = [0,2,1,0,1,2,2,0,1,2,0,1];
+          if (b % 3 === 0) r.push({ lane: seq[b % 12], type: 'bad' });
+          if (b % 3 === 1) r.push({ lane: seq[(b+4) % 12], type: 'bad' });
           if (b % 12 === 9) r.push({ lane: 1, type: 'good' });
           return r;
         }
       },
-      { name: '완전히 녹아내림', totalBeats: 40, color: '#0C447C',
+      { name: 'Stage 3', totalBeats: 40, color: '#0C447C',
         pattern: b => {
           const r = [];
-          const wave = [0,1,2,1,0,2,1,0]; // 파도 패턴
-          if (b % 3 === 0) r.push({ lane: wave[b % 8], type: 'bad' });
-          if (b % 3 === 1) r.push({ lane: wave[(b+3) % 8], type: 'bad' });
+          const wave = [0,1,2,1,0,2,0,2,1,0,2,1];
+          if (b % 2 === 0) r.push({ lane: wave[b % 12], type: 'bad' });
           if (b % 9 === 7) r.push({ lane: 1, type: 'good' });
           return r;
         }
@@ -211,81 +207,74 @@ const BUILTIN_SONGS = [
     ]
   },
   {
-    // Eden 번외곡 | Freedomless — 답답하고 어두운, 조여오는 패턴
     title: 'Eden 번외곡 | Freedomless',
     ytId: '3PpedpOIW28',
     bpm: 112,
     stages: [
-      { name: '억압', totalBeats: 36, color: '#5F5E5A',
+      { name: 'Stage 1', totalBeats: 36, color: '#5F5E5A',
         pattern: b => {
           const r = [];
-          // 양쪽에서 조여오기
-          if (b % 4 === 0) { r.push({ lane: 0, type: 'bad' }); r.push({ lane: 2, type: 'bad' }); }
-          if (b % 4 === 2) r.push({ lane: 1, type: 'bad' });
-          if (b % 10 === 7) r.push({ lane: b % 2 === 0 ? 0 : 2, type: 'good' });
-          return r;
-        }
-      },
-      { name: '탈출 시도', totalBeats: 48, color: '#888780',
-        pattern: b => {
-          const r = [];
-          // 빠르게 좌우 교차
-          if (b % 2 === 0) r.push({ lane: (b / 2) % 2 === 0 ? 0 : 2, type: 'bad' });
-          if (b % 3 === 1) r.push({ lane: 1, type: 'bad' });
-          if (b % 5 === 4) { r.push({ lane: 0, type: 'bad' }); r.push({ lane: 2, type: 'bad' }); }
-          if (b % 11 === 8) r.push({ lane: 1, type: 'good' });
-          return r;
-        }
-      },
-      { name: '완전한 봉쇄', totalBeats: 44, color: '#444441',
-        pattern: b => {
-          const r = [];
-          const p = b % 6;
-          // 3레인 순환 + 갑작스런 양쪽 동시
-          if (p === 0) r.push({ lane: 0, type: 'bad' });
-          if (p === 1) r.push({ lane: 1, type: 'bad' });
-          if (p === 2) r.push({ lane: 2, type: 'bad' });
-          if (p === 3) { r.push({ lane: 0, type: 'bad' }); r.push({ lane: 2, type: 'bad' }); }
-          if (p === 4) r.push({ lane: 1, type: 'bad' });
-          if (b % 8 === 7) r.push({ lane: b % 3, type: 'good' });
-          return r;
-        }
-      }
-    ]
-  },
-  {
-    // Liam 번외곡 | Word — 단호하고 직선적, 리드미컬한 패턴
-    title: 'Liam 번외곡 | Word',
-    ytId: 'KvWs7PzYgwY',
-    bpm: 118,
-    stages: [
-      { name: '선언', totalBeats: 32, color: '#5DCAA5',
-        pattern: b => {
-          const r = [];
-          // 4박자 정박 패턴
+          // 좌우 교차
           if (b % 4 === 0) r.push({ lane: 0, type: 'bad' });
           if (b % 4 === 2) r.push({ lane: 2, type: 'bad' });
           if (b % 8 === 5) r.push({ lane: 1, type: 'good' });
           return r;
         }
       },
-      { name: '확신', totalBeats: 40, color: '#1D9E75',
+      { name: 'Stage 2', totalBeats: 48, color: '#888780',
         pattern: b => {
           const r = [];
-          // 리드미컬하게 3레인 순서대로
-          if (b % 3 === 0) r.push({ lane: 0, type: 'bad' });
-          if (b % 3 === 1) r.push({ lane: 2, type: 'bad' });
-          if (b % 6 === 4) { r.push({ lane: 0, type: 'bad' }); r.push({ lane: 1, type: 'bad' }); }
+          const seq = [0,2,1,2,0,1,2,0,1,0,2,1];
+          if (b % 3 === 0) r.push({ lane: seq[b % 12], type: 'bad' });
+          if (b % 3 === 2) r.push({ lane: seq[(b+5) % 12], type: 'bad' });
+          if (b % 11 === 8) r.push({ lane: 1, type: 'good' });
+          return r;
+        }
+      },
+      { name: 'Stage 3', totalBeats: 44, color: '#444441',
+        pattern: b => {
+          const r = [];
+          // 한 칸씩 순환, 점점 빨라지는 느낌
+          const seq = [0,1,2,0,2,1,1,0,2,1,2,0];
+          if (b % 2 === 0) r.push({ lane: seq[b % 12], type: 'bad' });
+          if (b % 2 === 1) r.push({ lane: seq[(b+3) % 12], type: 'bad' });
+          if (b % 8 === 7) r.push({ lane: 1, type: 'good' });
+          return r;
+        }
+      }
+    ]
+  },
+  {
+    title: 'Liam 번외곡 | Word',
+    ytId: 'KvWs7PzYgwY',
+    bpm: 118,
+    stages: [
+      { name: 'Stage 1', totalBeats: 32, color: '#5DCAA5',
+        pattern: b => {
+          const r = [];
+          // 좌우 정박
+          if (b % 4 === 0) r.push({ lane: 0, type: 'bad' });
+          if (b % 4 === 2) r.push({ lane: 2, type: 'bad' });
+          if (b % 8 === 5) r.push({ lane: 1, type: 'good' });
+          return r;
+        }
+      },
+      { name: 'Stage 2', totalBeats: 40, color: '#1D9E75',
+        pattern: b => {
+          const r = [];
+          const seq = [0,1,2,2,1,0,1,2,0,2,0,1];
+          if (b % 3 === 0) r.push({ lane: seq[b % 12], type: 'bad' });
+          if (b % 3 === 1) r.push({ lane: seq[(b+6) % 12], type: 'bad' });
           if (b % 9 === 7) r.push({ lane: 1, type: 'good' });
           return r;
         }
       },
-      { name: '강한 의지', totalBeats: 48, color: '#0F6E56',
+      { name: 'Stage 3', totalBeats: 48, color: '#0F6E56',
         pattern: b => {
           const r = [];
-          // 강하고 빠른 교차
-          if (b % 2 === 0) r.push({ lane: b % 6 < 2 ? 0 : b % 6 < 4 ? 1 : 2, type: 'bad' });
-          if (b % 4 === 1) r.push({ lane: (b + 1) % 3, type: 'bad' });
+          const seq = [2,0,1,0,2,1,0,1,2,1,0,2];
+          if (b % 2 === 0) r.push({ lane: seq[b % 12], type: 'bad' });
+          if (b % 3 === 1) r.push({ lane: seq[(b+4) % 12], type: 'bad' });
           if (b % 7 === 5) r.push({ lane: 1, type: 'good' });
           return r;
         }
@@ -293,46 +282,38 @@ const BUILTIN_SONGS = [
     ]
   },
   {
-    // Ash 번외곡 | 가까이 오지 말라고 말했잖아! — 격렬하고 감정적, 보스급 패턴
     title: 'Ash 번외곡 | 가까이 오지 말라고 말했잖아!',
     ytId: 'umx2NvAX1qY',
     bpm: 135,
     stages: [
-      { name: '경고', totalBeats: 36, color: '#F0997B',
+      { name: 'Stage 1', totalBeats: 36, color: '#F0997B',
         pattern: b => {
           const r = [];
-          // 처음엔 경고성 패턴
-          if (b % 4 === 0) { r.push({ lane: 0, type: 'bad' }); r.push({ lane: 2, type: 'bad' }); }
-          if (b % 4 === 2) r.push({ lane: 1, type: 'bad' });
-          if (b % 6 === 5) r.push({ lane: b % 2 === 0 ? 0 : 2, type: 'good' });
+          const seq = [0,2,1,0,1,2,2,0,1,2,1,0];
+          if (b % 4 === 0) r.push({ lane: seq[b % 12], type: 'bad' });
+          if (b % 4 === 2) r.push({ lane: seq[(b+3) % 12], type: 'bad' });
+          if (b % 8 === 6) r.push({ lane: 1, type: 'good' });
           return r;
         }
       },
-      { name: '분노', totalBeats: 48, color: '#D85A30',
+      { name: 'Stage 2', totalBeats: 48, color: '#D85A30',
         pattern: b => {
           const r = [];
-          // 빠르고 불규칙하게
-          if (b % 3 === 0) { r.push({ lane: 0, type: 'bad' }); r.push({ lane: 2, type: 'bad' }); }
-          if (b % 3 === 1) r.push({ lane: 1, type: 'bad' });
-          if (b % 5 === 2) { r.push({ lane: 0, type: 'bad' }); r.push({ lane: 1, type: 'bad' }); }
-          if (b % 5 === 4) r.push({ lane: 2, type: 'bad' });
+          const seq = [0,1,2,0,2,1,1,2,0,2,0,1];
+          if (b % 3 === 0) r.push({ lane: seq[b % 12], type: 'bad' });
+          if (b % 3 === 1) r.push({ lane: seq[(b+5) % 12], type: 'bad' });
+          if (b % 3 === 2) r.push({ lane: seq[(b+8) % 12], type: 'bad' });
           if (b % 10 === 8) r.push({ lane: 1, type: 'good' });
           return r;
         }
       },
-      { name: '폭발 — 가까이 오지 마!', totalBeats: 56, color: '#993C1D',
+      { name: 'Stage 3', totalBeats: 56, color: '#993C1D',
         pattern: b => {
           const r = [];
-          const p = b % 8;
-          // 보스 패턴: 거의 모든 비트에 뭔가 나옴
-          if (p === 0) { r.push({ lane: 0, type: 'bad' }); r.push({ lane: 2, type: 'bad' }); }
-          else if (p === 1) r.push({ lane: 1, type: 'bad' });
-          else if (p === 2) { r.push({ lane: 0, type: 'bad' }); r.push({ lane: 1, type: 'bad' }); }
-          else if (p === 3) r.push({ lane: 2, type: 'bad' });
-          else if (p === 4) { r.push({ lane: 0, type: 'bad' }); r.push({ lane: 2, type: 'bad' }); } // 양쪽만
-          else if (p === 5) r.push({ lane: b % 3, type: 'good' }); // 잠깐 숨통
-          else if (p === 6) { r.push({ lane: 1, type: 'bad' }); r.push({ lane: 2, type: 'bad' }); }
-          else if (p === 7) r.push({ lane: 0, type: 'bad' });
+          // 보스: 매 비트 한 칸씩, 간격 없이
+          const seq = [0,2,1,0,2,0,1,2,0,1,2,1,0,2,1,0];
+          r.push({ lane: seq[b % 16], type: 'bad' });
+          if (b % 6 === 4) r.push({ lane: seq[(b+8) % 16], type: 'good' });
           return r;
         }
       }
