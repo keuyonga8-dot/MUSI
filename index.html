@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Beat Dodge v1.0</title>
+<title>Beat Dodge v1.3</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;user-select:none;}
 body{background:#000;display:flex;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#fff;}
@@ -27,14 +27,15 @@ body{background:#000;display:flex;justify-content:center;font-family:-apple-syst
 /* 곡 목록 */
 #song-section{background:#0a0a0f;border-top:1px solid #1a1a2e;padding:10px 12px;}
 #song-label{font-size:11px;color:#444;margin-bottom:8px;}
-#song-list{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;}
-#song-list::-webkit-scrollbar{height:3px;}
+#song-list{display:flex;flex-direction:column;gap:4px;max-height:220px;overflow-y:auto;padding-right:4px;}
+#song-list::-webkit-scrollbar{width:3px;}
 #song-list::-webkit-scrollbar-thumb{background:#333;border-radius:2px;}
-.sc{flex:0 0 auto;width:110px;cursor:pointer;border-radius:8px;border:1px solid #1a1a2e;background:#111;overflow:hidden;transition:border-color .15s;}
-.sc:hover{border-color:#534AB7;}.sc.active{border:2px solid #534AB7;}
-.sc img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:#1a1a2e;}
-.sc-title{font-size:10px;color:#ccc;padding:5px 6px 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.sc-meta{font-size:9px;color:#555;padding:0 6px 5px;}
+.sc{display:flex;gap:10px;align-items:center;cursor:pointer;border-radius:8px;border:1px solid #1a1a2e;background:#111;padding:6px 8px;transition:border-color .15s;}
+.sc:hover{border-color:#534AB7;background:#161620;}.sc.active{border:1px solid #534AB7;background:rgba(83,74,183,.15);}
+.sc img{width:64px;flex:0 0 64px;aspect-ratio:16/9;object-fit:cover;display:block;background:#1a1a2e;border-radius:4px;}
+.sc-info{flex:1;min-width:0;}
+.sc-title{font-size:12px;color:#ccc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sc-meta{font-size:10px;color:#555;margin-top:2px;}
 #song-preview{display:none;margin-top:8px;background:#111;border:1px solid #1a1a2e;border-radius:8px;padding:10px;gap:10px;align-items:center;}
 #pv-img{width:88px;flex:0 0 88px;border-radius:6px;overflow:hidden;}
 #pv-img img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;}
@@ -51,23 +52,14 @@ body{background:#000;display:flex;justify-content:center;font-family:-apple-syst
 #ctrl{display:flex;gap:6px;padding:6px 12px 10px;background:#0a0a0f;}
 #ctrl button{flex:1;padding:9px;font-size:13px;font-weight:500;background:rgba(83,74,183,.22);border:1px solid rgba(83,74,183,.45);border-radius:8px;color:#AFA9EC;cursor:pointer;}
 #ctrl button:hover{background:rgba(83,74,183,.38);}
-.ed-btn{background:rgba(239,159,39,.14)!important;border-color:rgba(239,159,39,.38)!important;color:#EF9F27!important;}
 #key-hint{text-align:center;font-size:10px;color:#2a2a2a;padding:0 0 8px;background:#0a0a0f;}
-/* 에디터 */
-#editor-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.93);z-index:1000;align-items:center;justify-content:center;padding:12px;}
-#editor-box{width:100%;max-width:660px;background:#0d0d18;border:1px solid #222;border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px;max-height:96vh;overflow-y:auto;}
-.ed-cell{width:100%;aspect-ratio:1;min-width:12px;border-radius:3px;border:1px solid #1a1a2e;background:#0d0d18;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:7px;}
-.ed-cell:hover{background:#1a1a2e;}
-.ed-bad{background:rgba(216,90,48,.28)!important;border-color:#D85A30!important;color:#D85A30;}
-.ed-good{background:rgba(29,158,117,.28)!important;border-color:#1D9E75!important;color:#1D9E75;}
 </style>
 </head>
 <body>
 <div id="gw">
-  <div id="ver">v1.0</div>
+  <div id="ver">v1.3</div>
   <div id="hud">
     <div class="stat">점수<b id="sv">0</b></div>
-    <div class="stat">스테이지<b id="stv">1</b></div>
     <div class="stat">콤보<b id="cv">0</b></div>
     <div class="stat">배율<b id="mv">x1</b></div>
     <div class="stat">목숨<b id="lv">—</b></div>
@@ -107,40 +99,9 @@ body{background:#000;display:flex;justify-content:center;font-family:-apple-syst
   <div id="ctrl">
     <button id="start-btn" disabled style="opacity:.35;">시작</button>
     <button id="stop-btn" style="display:none">종료</button>
-    <button class="ed-btn" id="ed-open-btn">패턴 편집</button>
+
   </div>
   <div id="key-hint">1 2 3 · Z X C · ← → · A D · 스와이프 · 탭</div>
-</div>
-
-<!-- 에디터 -->
-<div id="editor-overlay">
-  <div id="editor-box">
-    <div style="display:flex;justify-content:space-between;align-items:center;">
-      <span style="font-size:14px;font-weight:600;">패턴 에디터</span>
-      <button id="ed-close" style="background:none;border:none;color:#555;font-size:20px;cursor:pointer;">✕</button>
-    </div>
-    <div style="font-size:11px;color:#555;line-height:1.7;"><b style="color:#888">왼쪽 클릭</b> 추가/제거 &nbsp;|&nbsp; <b style="color:#888">오른쪽 클릭</b> ★↔● 전환<br>레인: 위=왼쪽 · 가운데=중앙 · 아래=오른쪽</div>
-    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-      <label style="font-size:11px;color:#555;">비트수</label>
-      <input id="ed-beats" type="number" min="8" max="128" value="64" style="width:54px;font-size:12px;padding:5px 8px;background:#111;border:1px solid #222;border-radius:6px;color:#fff;outline:none;"/>
-      <label style="font-size:11px;color:#555;">BPM</label>
-      <input id="ed-bpm" type="number" min="60" max="220" value="120" style="width:62px;font-size:12px;padding:5px 8px;background:#111;border:1px solid #222;border-radius:6px;color:#fff;outline:none;"/>
-      <button id="ed-resize" style="font-size:11px;padding:5px 10px;background:#1a1a2e;border:1px solid #333;border-radius:6px;color:#aaa;cursor:pointer;">그리드 갱신</button>
-      <div style="margin-left:auto;display:flex;gap:4px;">
-        <span style="font-size:10px;padding:2px 7px;background:rgba(216,90,48,.2);border:1px solid #D85A30;border-radius:4px;color:#D85A30;">★ 피하기</span>
-        <span style="font-size:10px;padding:2px 7px;background:rgba(29,158,117,.2);border:1px solid #1D9E75;border-radius:4px;color:#1D9E75;">● 먹기</span>
-      </div>
-    </div>
-    <div style="overflow-x:auto;background:#080810;border:1px solid #1a1a2e;border-radius:8px;padding:8px;">
-      <div style="font-size:9px;color:#2a2a2a;margin-bottom:3px;">← 비트 순서 →</div>
-      <div id="ed-grid" style="display:grid;gap:2px;"></div>
-      <div id="ed-nums" style="display:grid;gap:2px;margin-top:3px;"></div>
-    </div>
-    <div style="display:flex;gap:8px;justify-content:flex-end;">
-      <button id="ed-clear" style="font-size:12px;padding:7px 14px;background:#1a1a2e;border:1px solid #333;border-radius:8px;color:#666;cursor:pointer;">초기화</button>
-      <button id="ed-apply" style="font-size:13px;padding:7px 18px;background:#EF9F27;border:none;border-radius:8px;color:#000;font-weight:700;cursor:pointer;">적용 후 플레이</button>
-    </div>
-  </div>
 </div>
 
 <script>
@@ -155,238 +116,76 @@ const SONGS = [
     title: 'Hugo 번외곡 | Melting down',
     ytId: 'p4spKijRcAw',
     bpm: 96,
-    stages: [
-      { name: 'Stage 1', color: '#85B7EB', totalBeats: 96,
-        // 물결: 천천히 한 칸씩 흐름
-        pattern(b, diff) {
-          const r = [];
-          const wave = [0,1,2,1,0,2,0,1,2,0,2,1];
-          if (diff === 'easy') {
-            if (b % 6 === 0) r.push({ lane: wave[b % 12], type: 'bad' });
-          } else if (diff === 'normal') {
-            if (b % 4 === 0) r.push({ lane: wave[b % 12], type: 'bad' });
-            if (b % 4 === 2) r.push({ lane: wave[(b + 5) % 12], type: 'bad' });
-          } else {
-            if (b % 3 === 0) r.push({ lane: wave[b % 12], type: 'bad' });
-            if (b % 3 === 1) r.push({ lane: wave[(b + 4) % 12], type: 'bad' });
-          }
-          if (b % 10 === 7) r.push({ lane: freeLane(r, b), type: 'good' });
-          return r;
-        }
-      },
-      { name: 'Stage 2', color: '#378ADD', totalBeats: 96,
-        pattern(b, diff) {
-          const r = [];
-          const seq = [0,2,0,1,2,1,0,2,1,0,1,2];
-          if (diff === 'easy') {
-            if (b % 5 === 0) r.push({ lane: seq[b % 12], type: 'bad' });
-          } else if (diff === 'normal') {
-            if (b % 3 === 0) r.push({ lane: seq[b % 12], type: 'bad' });
-            if (b % 3 === 2) r.push({ lane: seq[(b + 6) % 12], type: 'bad' });
-          } else {
-            if (b % 2 === 0) r.push({ lane: seq[b % 12], type: 'bad' });
-            if (b % 4 === 1) r.push({ lane: seq[(b + 4) % 12], type: 'bad' });
-          }
-          if (b % 12 === 9) r.push({ lane: freeLane(r, b), type: 'good' });
-          return r;
-        }
-      },
-      { name: 'Stage 3', color: '#0C447C', totalBeats: 112,
-        pattern(b, diff) {
-          const r = [];
-          const seq = [2,0,1,2,1,0,0,2,1,0,1,2,1,0,2,1];
-          if (diff === 'easy') {
-            if (b % 4 === 0) r.push({ lane: seq[b % 16], type: 'bad' });
-          } else if (diff === 'normal') {
-            if (b % 3 === 0) r.push({ lane: seq[b % 16], type: 'bad' });
-            if (b % 3 === 1) r.push({ lane: seq[(b + 5) % 16], type: 'bad' });
-          } else {
-            if (b % 2 === 0) r.push({ lane: seq[b % 16], type: 'bad' });
-            if (b % 2 === 1) r.push({ lane: seq[(b + 7) % 16], type: 'bad' });
-          }
-          if (b % 9 === 7) r.push({ lane: freeLane(r, b), type: 'good' });
-          return r;
-        }
-      }
-    ]
+    color: '#378ADD',
+    totalBeats: 320,
+    pattern(b, diff) {
+      const r = [];
+      const wave = [0,1,2,1,0,2,0,1,2,0,2,1,2,0,1,0,2,1,1,0,2,1,2,0];
+      const progress = b / 320;
+      // 초반(0~30%): 여유롭게
+      // 중반(30~70%): 점점 빨라짐
+      // 후반(70~100%): 절정
+      const density = progress < 0.3 ? 6 : progress < 0.7 ? 4 : 3;
+      const diffMod = diff === 'easy' ? density + 2 : diff === 'hard' ? Math.max(1, density - 2) : density;
+      if (b % diffMod === 0) r.push({ lane: wave[b % 24], type: 'bad' });
+      if (b % (diffMod + 1) === 1) r.push({ lane: wave[(b + 8) % 24], type: 'bad' });
+      if (b % 12 === 9) r.push({ lane: freeLane(r, b), type: 'good' });
+      return r;
+    }
   },
   {
     title: 'Eden 번외곡 | Freedomless',
     ytId: '3PpedpOIW28',
     bpm: 112,
-    stages: [
-      { name: 'Stage 1', color: '#7A7874', totalBeats: 96,
-        // 좌우 교차
-        pattern(b, diff) {
-          const r = [];
-          if (diff === 'easy') {
-            if (b % 6 === 0) r.push({ lane: 0, type: 'bad' });
-            if (b % 6 === 3) r.push({ lane: 2, type: 'bad' });
-          } else if (diff === 'normal') {
-            if (b % 4 === 0) r.push({ lane: 0, type: 'bad' });
-            if (b % 4 === 2) r.push({ lane: 2, type: 'bad' });
-          } else {
-            if (b % 3 === 0) r.push({ lane: 0, type: 'bad' });
-            if (b % 3 === 1) r.push({ lane: 2, type: 'bad' });
-            if (b % 6 === 4) r.push({ lane: 1, type: 'bad' });
-          }
-          if (b % 8 === 5) r.push({ lane: freeLane(r, b), type: 'good' });
-          return r;
-        }
-      },
-      { name: 'Stage 2', color: '#5C5B58', totalBeats: 112,
-        pattern(b, diff) {
-          const r = [];
-          const seq = [2,0,1,0,2,1,0,2,1,2,0,1];
-          if (diff === 'easy') {
-            if (b % 5 === 0) r.push({ lane: seq[b % 12], type: 'bad' });
-          } else if (diff === 'normal') {
-            if (b % 3 === 0) r.push({ lane: seq[b % 12], type: 'bad' });
-            if (b % 6 === 4) r.push({ lane: seq[(b + 4) % 12], type: 'bad' });
-          } else {
-            if (b % 2 === 0) r.push({ lane: seq[b % 12], type: 'bad' });
-            if (b % 3 === 1) r.push({ lane: seq[(b + 5) % 12], type: 'bad' });
-          }
-          if (b % 11 === 8) r.push({ lane: freeLane(r, b), type: 'good' });
-          return r;
-        }
-      },
-      { name: 'Stage 3', color: '#3A3A38', totalBeats: 128,
-        pattern(b, diff) {
-          const r = [];
-          const seq = [1,0,2,0,1,2,0,2,1,0,1,2,2,0,1,2];
-          if (diff === 'easy') {
-            if (b % 4 === 0) r.push({ lane: seq[b % 16], type: 'bad' });
-          } else if (diff === 'normal') {
-            if (b % 3 === 0) r.push({ lane: seq[b % 16], type: 'bad' });
-            if (b % 3 === 2) r.push({ lane: seq[(b + 6) % 16], type: 'bad' });
-          } else {
-            if (b % 2 === 0) r.push({ lane: seq[b % 16], type: 'bad' });
-            if (b % 2 === 1) r.push({ lane: seq[(b + 8) % 16], type: 'bad' });
-          }
-          if (b % 8 === 6) r.push({ lane: freeLane(r, b), type: 'good' });
-          return r;
-        }
-      }
-    ]
+    color: '#5C5B58',
+    totalBeats: 360,
+    pattern(b, diff) {
+      const r = [];
+      const seq = [0,2,0,1,2,1,0,2,1,0,1,2,2,0,1,2,0,1,1,2,0,1,0,2];
+      const progress = b / 360;
+      const density = progress < 0.3 ? 6 : progress < 0.7 ? 4 : 2;
+      const diffMod = diff === 'easy' ? density + 2 : diff === 'hard' ? Math.max(1, density - 2) : density;
+      if (b % diffMod === 0) r.push({ lane: seq[b % 24], type: 'bad' });
+      if (b % (diffMod + 2) === 1) r.push({ lane: seq[(b + 9) % 24], type: 'bad' });
+      if (b % 11 === 8) r.push({ lane: freeLane(r, b), type: 'good' });
+      return r;
+    }
   },
   {
     title: 'Liam 번외곡 | Word',
     ytId: 'KvWs7PzYgwY',
     bpm: 118,
-    stages: [
-      { name: 'Stage 1', color: '#5DCAA5', totalBeats: 96,
-        // 규칙적 정박
-        pattern(b, diff) {
-          const r = [];
-          if (diff === 'easy') {
-            if (b % 6 === 0) r.push({ lane: b % 2 === 0 ? 0 : 2, type: 'bad' });
-          } else if (diff === 'normal') {
-            if (b % 4 === 0) r.push({ lane: 0, type: 'bad' });
-            if (b % 4 === 2) r.push({ lane: 2, type: 'bad' });
-          } else {
-            if (b % 3 === 0) r.push({ lane: 0, type: 'bad' });
-            if (b % 3 === 1) r.push({ lane: 2, type: 'bad' });
-            if (b % 6 === 3) r.push({ lane: 1, type: 'bad' });
-          }
-          if (b % 8 === 5) r.push({ lane: freeLane(r, b), type: 'good' });
-          return r;
-        }
-      },
-      { name: 'Stage 2', color: '#1D9E75', totalBeats: 112,
-        pattern(b, diff) {
-          const r = [];
-          const seq = [0,2,1,0,1,2,2,0,1,2,1,0];
-          if (diff === 'easy') {
-            if (b % 5 === 0) r.push({ lane: seq[b % 12], type: 'bad' });
-          } else if (diff === 'normal') {
-            if (b % 3 === 0) r.push({ lane: seq[b % 12], type: 'bad' });
-            if (b % 3 === 1) r.push({ lane: seq[(b + 4) % 12], type: 'bad' });
-          } else {
-            if (b % 2 === 0) r.push({ lane: seq[b % 12], type: 'bad' });
-            if (b % 3 === 2) r.push({ lane: seq[(b + 6) % 12], type: 'bad' });
-          }
-          if (b % 9 === 7) r.push({ lane: freeLane(r, b), type: 'good' });
-          return r;
-        }
-      },
-      { name: 'Stage 3', color: '#0F6E56', totalBeats: 128,
-        pattern(b, diff) {
-          const r = [];
-          const seq = [2,1,0,2,0,1,0,2,1,0,1,2,1,2,0,1];
-          if (diff === 'easy') {
-            if (b % 4 === 0) r.push({ lane: seq[b % 16], type: 'bad' });
-          } else if (diff === 'normal') {
-            if (b % 3 === 0) r.push({ lane: seq[b % 16], type: 'bad' });
-            if (b % 4 === 1) r.push({ lane: seq[(b + 5) % 16], type: 'bad' });
-          } else {
-            if (b % 2 === 0) r.push({ lane: seq[b % 16], type: 'bad' });
-            if (b % 2 === 1) r.push({ lane: seq[(b + 6) % 16], type: 'bad' });
-          }
-          if (b % 7 === 5) r.push({ lane: freeLane(r, b), type: 'good' });
-          return r;
-        }
-      }
-    ]
+    color: '#1D9E75',
+    totalBeats: 380,
+    pattern(b, diff) {
+      const r = [];
+      const seq = [0,1,2,0,2,1,2,0,1,2,1,0,1,2,0,1,0,2,0,2,1,0,1,2];
+      const progress = b / 380;
+      const density = progress < 0.3 ? 6 : progress < 0.7 ? 4 : 3;
+      const diffMod = diff === 'easy' ? density + 2 : diff === 'hard' ? Math.max(1, density - 2) : density;
+      if (b % diffMod === 0) r.push({ lane: seq[b % 24], type: 'bad' });
+      if (b % (diffMod + 1) === 2) r.push({ lane: seq[(b + 7) % 24], type: 'bad' });
+      if (b % 9 === 7) r.push({ lane: freeLane(r, b), type: 'good' });
+      return r;
+    }
   },
   {
     title: 'Ash 번외곡 | 가까이 오지 말라고 말했잖아!',
     ytId: 'umx2NvAX1qY',
     bpm: 135,
-    stages: [
-      { name: 'Stage 1', color: '#F0997B', totalBeats: 112,
-        // 경고: 불규칙 교차
-        pattern(b, diff) {
-          const r = [];
-          const seq = [0,2,1,0,2,1,2,0,1,2,0,1];
-          if (diff === 'easy') {
-            if (b % 6 === 0) r.push({ lane: seq[b % 12], type: 'bad' });
-          } else if (diff === 'normal') {
-            if (b % 4 === 0) r.push({ lane: seq[b % 12], type: 'bad' });
-            if (b % 4 === 2) r.push({ lane: seq[(b + 3) % 12], type: 'bad' });
-          } else {
-            if (b % 3 === 0) r.push({ lane: seq[b % 12], type: 'bad' });
-            if (b % 3 === 1) r.push({ lane: seq[(b + 4) % 12], type: 'bad' });
-          }
-          if (b % 8 === 6) r.push({ lane: freeLane(r, b), type: 'good' });
-          return r;
-        }
-      },
-      { name: 'Stage 2', color: '#D85A30', totalBeats: 128,
-        // 분노: 빠르고 공격적
-        pattern(b, diff) {
-          const r = [];
-          const seq = [0,1,2,0,2,1,1,0,2,1,2,0,2,1,0,2];
-          if (diff === 'easy') {
-            if (b % 5 === 0) r.push({ lane: seq[b % 16], type: 'bad' });
-          } else if (diff === 'normal') {
-            if (b % 3 === 0) r.push({ lane: seq[b % 16], type: 'bad' });
-            if (b % 3 === 2) r.push({ lane: seq[(b + 5) % 16], type: 'bad' });
-          } else {
-            if (b % 2 === 0) r.push({ lane: seq[b % 16], type: 'bad' });
-            if (b % 3 === 1) r.push({ lane: seq[(b + 7) % 16], type: 'bad' });
-          }
-          if (b % 10 === 8) r.push({ lane: freeLane(r, b), type: 'good' });
-          return r;
-        }
-      },
-      { name: 'Stage 3 — 폭발', color: '#993C1D', totalBeats: 160,
-        // 보스: 매 비트 한 칸, 숨막히는 속도
-        pattern(b, diff) {
-          const r = [];
-          const seq = [0,2,1,0,2,0,1,2,0,1,2,1,0,2,1,0,2,1,0,1,2,0,1,2];
-          if (diff === 'easy') {
-            if (b % 3 === 0) r.push({ lane: seq[b % 24], type: 'bad' });
-          } else if (diff === 'normal') {
-            if (b % 2 === 0) r.push({ lane: seq[b % 24], type: 'bad' });
-          } else {
-            r.push({ lane: seq[b % 24], type: 'bad' });
-          }
-          if (b % 6 === 4) r.push({ lane: freeLane(r, b), type: 'good' });
-          return r;
-        }
-      }
-    ]
+    color: '#D85A30',
+    totalBeats: 420,
+    pattern(b, diff) {
+      const r = [];
+      const seq = [0,2,1,0,2,0,1,2,0,1,2,1,0,2,1,0,2,1,0,1,2,0,2,1];
+      const progress = b / 420;
+      const density = progress < 0.25 ? 6 : progress < 0.5 ? 4 : progress < 0.75 ? 3 : 2;
+      const diffMod = diff === 'easy' ? density + 2 : diff === 'hard' ? Math.max(1, density - 2) : density;
+      if (b % diffMod === 0) r.push({ lane: seq[b % 24], type: 'bad' });
+      if (b % (diffMod + 1) === 1) r.push({ lane: seq[(b + 10) % 24], type: 'bad' });
+      if (b % 8 === 6) r.push({ lane: freeLane(r, b), type: 'good' });
+      return r;
+    }
   }
 ];
 // ══════════════════════════════════════════
@@ -405,7 +204,7 @@ function freeLane(items, b) {
 const DIFF = {
   easy:   {livesStart:6, bpmMult:1.0,  scoreRate:0.8,  desc:'목숨 6개 · 느린 속도 · 여유로운 패턴',      color:'#1D9E75'},
   normal: {livesStart:6, bpmMult:1.4,  scoreRate:1.0,  desc:'목숨 6개 · 빠른 속도 · 기본 패턴',          color:'#534AB7'},
-  hard:   {livesStart:6, bpmMult:1.9,  scoreRate:1.5,  desc:'목숨 6개 · 속도 1.9배 · 빽빽한 패턴 · x1.5', color:'#E24B4A'}
+  hard:   {livesStart:6, bpmMult:2.4,  scoreRate:1.5,  desc:'목숨 6개 · 속도 2.4배 · 매우 빽빽 · x1.5',   color:'#E24B4A'}
 };
 
 const canvas = document.getElementById('canvas');
@@ -455,7 +254,7 @@ function setMsg(t){document.getElementById('msg').textContent=t;}
 function showBanner(t,s,c,d=2000){bannerData={t,s,c};bannerAlpha=1;clearTimeout(bannerTid);bannerTid=setTimeout(()=>bannerData=null,d);}
 
 function spawnFromPattern(items){
-  const stage=activeStages[stageIdx];
+  const stage=selectedSong;
   // 중복 레인 제거: good 우선
   const deduped=[],seen={};
   items.forEach(i=>{
@@ -465,7 +264,7 @@ function spawnFromPattern(items){
   deduped.forEach(i=>{
     objects.push({lane:i.lane,y:-20,r:i.type==='good'?PR*.65:PR*.85,type:i.type,
       color:i.type==='good'?'#1D9E75':stage.color,
-      speed:(H/320)*(selectedSong.bpm/80)*DIFF[difficulty].bpmMult,pulse:0});
+      speed:(H/320)*(selectedSong.bpm/80)*Math.sqrt(DIFF[difficulty].bpmMult),pulse:0});
     if(i.type==='bad')stageTotal++;
   });
 }
@@ -481,7 +280,7 @@ function drawBg(){
     ctx.fillStyle=ytActive?'rgba(5,5,20,0.60)':'rgba(10,10,20,0.97)';
   }
   ctx.fillRect(0,0,W,H);
-  const sc=activeStages[stageIdx]?.color||'#534AB7';
+  const sc=selectedSong?.color||'#534AB7';
   for(let l=0;l<LANES;l++){
     ctx.fillStyle=l===playerLane?`rgba(83,74,183,${.05+bgPulse*.05})`:'rgba(255,255,255,.01)';
     ctx.fillRect(l*LW,0,LW,H);
@@ -493,7 +292,7 @@ function drawBg(){
   ctx.save();ctx.globalAlpha=bp*.2;ctx.strokeStyle=sc;ctx.lineWidth=2;ctx.beginPath();ctx.arc(W/2,H/2,W*.2+bp*W*.06,0,Math.PI*2);ctx.stroke();ctx.restore();
 }
 function drawPlayer(){
-  const x=lx(playerLane),p=1+bgPulse*.1,col=activeStages[stageIdx]?.color||'#534AB7';
+  const x=lx(playerLane),p=1+bgPulse*.1,col=selectedSong?.color||'#534AB7';
   ctx.save();ctx.shadowColor=col;ctx.shadowBlur=12+bgPulse*7;
   ctx.beginPath();ctx.moveTo(x,PY-PR*1.4*p);ctx.lineTo(x+PR*p,PY+PR*.7*p);ctx.lineTo(x-PR*p,PY+PR*.7*p);ctx.closePath();ctx.fillStyle='#7F77DD';ctx.fill();
   ctx.beginPath();ctx.moveTo(x,PY-PR*1.1*p);ctx.lineTo(x+PR*.6*p,PY+PR*.4*p);ctx.lineTo(x-PR*.6*p,PY+PR*.4*p);ctx.closePath();ctx.fillStyle='#AFA9EC';ctx.fill();
@@ -520,11 +319,11 @@ function drawParts(){particles.forEach(p=>{ctx.save();ctx.globalAlpha=p.life;ctx
 function drawFTs(){floatTexts.forEach(t=>{ctx.save();ctx.globalAlpha=t.life;ctx.font=`bold ${Math.round(W*.025)}px sans-serif`;ctx.fillStyle=t.c;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(t.t,t.x,t.y);ctx.restore();});}
 function drawHUD(){
   if(hitFlash>0){ctx.fillStyle=`rgba(216,90,48,${hitFlash*.28})`;ctx.fillRect(0,0,W,H);}
-  const sc=activeStages[stageIdx]?.color||'#534AB7';
+  const sc=selectedSong?.color||'#534AB7';
   ctx.fillStyle=`rgba(${hexRgb(sc)},.4)`;ctx.fillRect(0,H-4,W*Math.min(combo/20,1),4);
   for(let l=0;l<LANES;l++){ctx.fillStyle=l===playerLane?'rgba(127,119,221,.17)':'rgba(255,255,255,.02)';ctx.beginPath();ctx.roundRect(l*LW+4,H-PR*2.6,LW-8,PR*2.2,5);ctx.fill();}
   ctx.fillStyle='rgba(255,255,255,.04)';ctx.fillRect(0,0,W,3);
-  ctx.fillStyle=sc;ctx.fillRect(0,0,W*(activeStages[stageIdx]?stageBeat/activeStages[stageIdx].totalBeats:0),3);
+  ctx.fillStyle=sc;ctx.fillRect(0,0,W*(selectedSong?stageBeat/selectedSong.totalBeats:0),3);
   const fs=Math.max(9,Math.round(W*.02));
   ctx.font=`${fs}px sans-serif`;ctx.textAlign='left';ctx.textBaseline='top';
   ctx.fillStyle='rgba(230,100,60,.8)';ctx.fillText('★ 피하기',8,8);
@@ -558,12 +357,11 @@ function hideResult(){document.getElementById('result-overlay').style.display='n
 function update(now){
   bgPulse*=.88;hitFlash=Math.max(0,hitFlash-.05);shakeX*=.7;shakeY*=.7;
   if(bannerAlpha>0)bannerAlpha=Math.max(0,bannerAlpha-.007);
-  const stage=activeStages[stageIdx];
   if(!stageClearing&&now-lastBeat>beatInt){
     lastBeat=now;stageBeat++;bgPulse=1;
-    const items=stage.pattern(stageBeat, difficulty);
+    const items=selectedSong.pattern(stageBeat, difficulty);
     if(items.length>0)spawnFromPattern(items);
-    if(stageBeat>=stage.totalBeats){stageClearing=true;setTimeout(endStage,1200);}
+    if(stageBeat>=selectedSong.totalBeats){stageClearing=true;setTimeout(()=>endGame(true),1200);}
     scheduleBeat();
   }
   objects.forEach(o=>{o.y+=o.speed;o.pulse=bgPulse;});
@@ -593,25 +391,7 @@ function update(now){
     return true;
   });
 }
-function endStage(){
-  if(state!=='playing')return;
-  const{g,c}=getGrade();
-  const bonus={S:5000,A:3000,B:1500,C:500,D:0}[g]||0;
-  score+=bonus;document.getElementById('sv').textContent=score;
-  if(stageIdx<activeStages.length-1){
-    showBanner(`STAGE ${stageIdx+1} CLEAR!`,`등급: ${g}  보너스: +${bonus}점`,c,2200);
-    setTimeout(nextStage,2400);
-  } else {
-    setTimeout(()=>endGame(true),800);
-  }
-}
-function nextStage(){
-  if(state!=='playing')return;
-  stageIdx++;stageBeat=0;stageClearing=false;stageHits=0;stageTotal=0;objects=[];
-  beatInt=60000/(selectedSong.bpm*DIFF[difficulty].bpmMult);lastBeat=performance.now();
-  document.getElementById('stv').textContent=stageIdx+1;
-  showBanner(`STAGE ${stageIdx+1}`,activeStages[stageIdx].name,activeStages[stageIdx].color,1600);
-}
+
 function draw(){
   ctx.save();ctx.translate(shakeX*(Math.random()-.5)*2,shakeY*(Math.random()-.5)*2);
   drawBg();drawObjs();drawParts();drawPlayer();drawHUD();drawFTs();drawBanner();ctx.restore();
@@ -641,7 +421,6 @@ function ytStop(){
 function startGame(){
   if(!selectedSong)return;
   hideResult();resizeCanvas();
-  activeStages=[...selectedSong.stages];
   score=0;combo=0;multiplier=1;lives=DIFF[difficulty].livesStart;
   stageIdx=0;stageBeat=0;stageClearing=false;stageHits=0;stageTotal=0;
   objects=[];particles=[];floatTexts=[];playerLane=1;
@@ -650,10 +429,11 @@ function startGame(){
   document.getElementById('cv').textContent=0;
   document.getElementById('lv').textContent=lives;
   document.getElementById('mv').textContent='x1';
-  document.getElementById('stv').textContent=1;
+  document.getElementById('stv').textContent='—';
   document.getElementById('grade-display').textContent='—';
   document.getElementById('grade-display').style.color='#fff';
   beatInt=60000/(selectedSong.bpm*DIFF[difficulty].bpmMult);
+  stageClearing=false;
   setMsg('★ 별은 피하고  ● 초록 원은 먹으세요!');
   document.getElementById('start-btn').textContent='재시작';
   document.getElementById('stop-btn').style.display='inline-block';
@@ -662,7 +442,7 @@ function startGame(){
   document.getElementById('song-section').style.display='none';
   state='playing';lastBeat=performance.now();
   startAudio();ytPlay();
-  showBanner('STAGE 1',activeStages[0].name,activeStages[0].color,1600);
+  showBanner(selectedSong.title,'',selectedSong.color||'#534AB7',2000);
   requestAnimationFrame(loop);
 }
 function endGame(clear=false){
@@ -729,9 +509,10 @@ function buildSongList(){
     const img=document.createElement('img');
     img.src=song.ytId?`https://img.youtube.com/vi/${song.ytId}/mqdefault.jpg`:'';
     img.alt=song.title;
+    const info=document.createElement('div');info.className='sc-info';
     const t=document.createElement('div');t.className='sc-title';t.textContent=song.title;
-    const m=document.createElement('div');m.className='sc-meta';m.textContent=`${song.bpm} BPM · ${song.stages.length}스테이지`;
-    card.append(img,t,m);card.addEventListener('click',()=>selectSong(i,allSongs));list.appendChild(card);
+    const m=document.createElement('div');m.className='sc-meta';m.textContent=`${song.bpm} BPM`;
+    info.append(t,m);card.append(img,info);card.addEventListener('click',()=>selectSong(i,allSongs));list.appendChild(card);
   });
 }
 function selectSong(idx,allSongs){
@@ -740,8 +521,8 @@ function selectSong(idx,allSongs){
   document.querySelectorAll('.sc').forEach((c,i)=>c.classList.toggle('active',i===idx));
   document.getElementById('pv-img-el').src=selectedSong.ytId?`https://img.youtube.com/vi/${selectedSong.ytId}/mqdefault.jpg`:'';
   document.getElementById('pv-title').textContent=selectedSong.title;
-  document.getElementById('pv-bpm').textContent=`${selectedSong.bpm} BPM · ${selectedSong.stages.length}스테이지`;
-  document.getElementById('pv-stages').innerHTML=selectedSong.stages.map((s,i)=>`<b style="color:#888">${i+1}.</b> ${s.name}`).join(' → ');
+  document.getElementById('pv-bpm').textContent=`${selectedSong.bpm} BPM`;
+  document.getElementById('pv-stages').textContent=`총 ${selectedSong.totalBeats}비트`;
   document.getElementById('song-preview').style.display='flex';
   // 썸네일 미리보기 (재생 X)
   if(selectedSong.ytId){
@@ -764,46 +545,6 @@ function selectDiff(d){
 }
 document.querySelectorAll('.diff-btn').forEach(b=>b.addEventListener('click',()=>selectDiff(b.dataset.d)));
 selectDiff('normal');
-
-// 에디터
-let edPattern=[],edBeats=64,edBpm=120;
-function openEditor(){renderGrid();document.getElementById('editor-overlay').style.display='flex';}
-function closeEditor(){document.getElementById('editor-overlay').style.display='none';}
-function renderGrid(){
-  const grid=document.getElementById('ed-grid');grid.innerHTML='';grid.style.gridTemplateColumns=`repeat(${edBeats},1fr)`;
-  for(let b=0;b<edBeats;b++){for(let l=0;l<3;l++){
-    const cell=document.createElement('div');cell.className='ed-cell';
-    const item=edPattern.find(p=>p.beat===b&&p.lane===l);
-    if(item){cell.classList.add(item.type==='bad'?'ed-bad':'ed-good');cell.textContent=item.type==='bad'?'★':'●';}
-    cell.addEventListener('click',()=>edToggle(b,l,cell));
-    cell.addEventListener('contextmenu',e=>{e.preventDefault();edFlip(b,l,cell);});
-    grid.appendChild(cell);
-  }}
-  const nums=document.getElementById('ed-nums');nums.innerHTML='';nums.style.gridTemplateColumns=`repeat(${edBeats},1fr)`;
-  for(let b=0;b<edBeats;b++){const n=document.createElement('div');n.style.cssText='font-size:8px;color:#2a2a2a;text-align:center;';n.textContent=(b+1)%4===1?b+1:'';nums.appendChild(n);}
-}
-function edToggle(b,l,cell){const idx=edPattern.findIndex(p=>p.beat===b&&p.lane===l);if(idx===-1){edPattern.push({beat:b,lane:l,type:'bad'});cell.classList.add('ed-bad');cell.textContent='★';}else{edPattern.splice(idx,1);cell.classList.remove('ed-bad','ed-good');cell.textContent='';}}
-function edFlip(b,l,cell){const item=edPattern.find(p=>p.beat===b&&p.lane===l);if(!item)return;item.type=item.type==='bad'?'good':'bad';cell.classList.toggle('ed-bad',item.type==='bad');cell.classList.toggle('ed-good',item.type==='good');cell.textContent=item.type==='bad'?'★':'●';}
-function edApply(){
-  if(edPattern.length===0){alert('패턴을 하나 이상 추가해주세요!');return;}
-  const snap=[...edPattern],total=edBeats,bpmVal=edBpm;
-  customSong={title:'커스텀 패턴',ytId:null,bpm:bpmVal,
-    stages:[{name:'내 패턴',totalBeats:total,color:'#EF9F27',
-      pattern:(beat)=>snap.filter(p=>p.beat===beat).map(p=>({lane:p.lane,type:p.type}))}]};
-  buildSongList();closeEditor();
-  const allSongs=customSong?[customSong,...SONGS]:SONGS;
-  selectSong(0,allSongs);
-  setMsg('커스텀 패턴 등록! 시작하면 내 패턴으로 플레이됩니다.');
-}
-document.getElementById('ed-open-btn').addEventListener('click',openEditor);
-document.getElementById('ed-close').addEventListener('click',closeEditor);
-document.getElementById('ed-clear').addEventListener('click',()=>{edPattern=[];renderGrid();});
-document.getElementById('ed-apply').addEventListener('click',edApply);
-document.getElementById('ed-resize').addEventListener('click',()=>{
-  edBeats=Math.max(8,Math.min(128,parseInt(document.getElementById('ed-beats').value)||64));
-  edBpm=Math.max(60,Math.min(220,parseInt(document.getElementById('ed-bpm').value)||120));
-  edPattern=edPattern.filter(p=>p.beat<edBeats);renderGrid();
-});
 </script>
 </body>
 </html>
