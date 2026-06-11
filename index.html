@@ -16,15 +16,7 @@ body{background:#000;display:flex;justify-content:center;font-family:-apple-syst
 #yt-iframe-container iframe{width:100%;height:100%;border:none;display:block;}
 #canvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:2;}
 
-/* 곡 추가 바 */
-#add-bar{padding:10px 12px;background:#0a0a0f;border-top:1px solid #1a1a2e;display:flex;flex-direction:column;gap:8px;}
-#add-row{display:flex;gap:6px;align-items:center;}
-#add-url{flex:1;font-size:12px;padding:7px 10px;background:#111;border:1px solid #222;border-radius:7px;color:#fff;outline:none;}
-#add-url:focus{border-color:#534AB7;}
-#add-url::placeholder{color:#444;}
-#add-btn{font-size:12px;padding:7px 14px;background:#534AB7;border:none;border-radius:7px;color:#fff;cursor:pointer;white-space:nowrap;}
-#add-btn:hover{background:#7F77DD;}
-#add-status{font-size:11px;color:#555;min-height:14px;}
+
 
 /* 곡 리스트 */
 #song-section{padding:0 12px 10px;background:#0a0a0f;}
@@ -89,13 +81,7 @@ body{background:#000;display:flex;justify-content:center;font-family:-apple-syst
     <canvas id="canvas"></canvas>
   </div>
 
-  <div id="add-bar">
-    <div id="add-row">
-      <input id="add-url" type="text" placeholder="유튜브 URL 붙여넣기 → 자동으로 제목/썸네일 가져옴"/>
-      <button id="add-btn">불러오기</button>
-    </div>
-    <div id="add-status"></div>
-  </div>
+
 
   <div id="song-section">
     <div id="song-section-label">곡 목록</div>
@@ -109,7 +95,7 @@ body{background:#000;display:flex;justify-content:center;font-family:-apple-syst
         <div id="pv-bpm"></div>
         <div id="pv-stages"></div>
       </div>
-      <button id="pv-delete">삭제</button>
+      <button id="pv-delete" style="display:none">삭제</button>
     </div>
   </div>
 
@@ -550,7 +536,6 @@ function startGame(){
   document.getElementById('stop-btn').style.display='inline-block';
   document.getElementById('diff-bar').style.display='none';
   document.getElementById('diff-desc').style.display='none';
-  document.getElementById('add-bar').style.display='none';
   document.getElementById('song-section').style.display='none';
   state='playing';lastBeat=performance.now();
   startAudio();resumeYouTube();
@@ -565,7 +550,6 @@ function endGame(clear=false){
   document.getElementById('stop-btn').style.display='none';
   document.getElementById('diff-bar').style.display='flex';
   document.getElementById('diff-desc').style.display='block';
-  document.getElementById('add-bar').style.display='flex';
   document.getElementById('song-section').style.display='block';
   ctx.fillStyle='rgba(0,0,0,.75)';ctx.fillRect(0,0,W,H);ctx.textAlign='center';
   ctx.fillStyle=clear?'#FFD700':'#AFA9EC';ctx.font=`700 ${Math.round(W*.062)}px sans-serif`;ctx.fillText(clear?'ALL CLEAR!':'GAME OVER',W/2,H/2-H*.1);
@@ -670,41 +654,6 @@ document.getElementById('pv-delete').addEventListener('click',()=>{
   buildSongList();setMsg('곡을 삭제했어요.');
 });
 
-// URL로 곡 추가
-function extractYtId(input){const m=input.match(/(?:v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/);return m?m[1]:null;}
-
-async function addSongFromUrl(){
-  const input=document.getElementById('add-url').value.trim();
-  const status=document.getElementById('add-status');
-  if(!input){status.textContent='URL을 입력해주세요';status.style.color='#E24B4A';return;}
-  const ytId=extractYtId(input);
-  if(!ytId){status.textContent='유효한 유튜브 URL이 아닙니다';status.style.color='#E24B4A';return;}
-  if(SONG_LIST.find(s=>s.ytId===ytId)){
-    status.textContent='이미 추가된 곡이에요';status.style.color='#EF9F27';
-    selectSong(SONG_LIST.findIndex(s=>s.ytId===ytId));return;
-  }
-  status.textContent='정보 불러오는 중...';status.style.color='#555';
-  let title=`유튜브 곡 (${ytId})`;
-  try{
-    const res=await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${ytId}&format=json`);
-    if(res.ok){const data=await res.json();title=data.title||title;}
-  }catch(e){}
-  const bpmStr=prompt(`"${title}"\nBPM을 입력해주세요 (모르면 120):`, '120');
-  if(!bpmStr){status.textContent='취소됐어요.';status.style.color='#555';return;}
-  const bpm=Math.max(60,Math.min(220,parseInt(bpmStr)||120));
-  const newSong={
-    title,ytId,bpm,
-    stages:[{name:'스테이지 1',totalBeats:32,color:'#534AB7',
-      pattern:b=>{const r=[];if(b%2===0)r.push({lane:b%3,type:'bad'});if(b%8===5)r.push({lane:1,type:'good'});return r;}}]
-  };
-  SONG_LIST.push(newSong);
-  buildSongList();
-  selectSong(SONG_LIST.length-1);
-  document.getElementById('add-url').value='';
-  status.textContent=`✓ "${title}" 추가됨! 패턴 편집으로 패턴을 커스텀하세요.`;status.style.color='#1D9E75';
-}
-document.getElementById('add-btn').addEventListener('click',addSongFromUrl);
-document.getElementById('add-url').addEventListener('keydown',e=>{if(e.key==='Enter')addSongFromUrl();});
 
 // ─── 난이도 ───
 function selectDiff(d){
