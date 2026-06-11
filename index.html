@@ -6,27 +6,66 @@
 <title>Beat Dodge</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;user-select:none;}
-body{background:#000;display:flex;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;}
+body{background:#000;display:flex;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#fff;}
 #gw{width:100%;max-width:640px;}
-#hud{display:flex;justify-content:space-between;align-items:center;padding:8px 16px;background:#0a0a0f;}
-.stat{font-size:11px;color:#666;text-align:center;}
-.stat b{display:block;font-size:16px;font-weight:600;color:#fff;}
-#grade-display{font-size:28px;font-weight:700;min-width:36px;text-align:center;}
+
+/* HUD */
+#hud{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;background:#0a0a0f;}
+.stat{font-size:11px;color:#555;text-align:center;}
+.stat b{display:block;font-size:15px;font-weight:600;color:#fff;}
+#grade-display{font-size:26px;font-weight:700;min-width:32px;text-align:center;}
+
+/* Canvas */
 #canvas-wrap{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;background:#000;}
 #yt-iframe-container{position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none;}
 #yt-iframe-container iframe{width:100%;height:100%;border:none;display:block;}
 #canvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:2;}
-#yt-bar{padding:8px 12px;display:flex;gap:8px;background:#0a0a0f;border-top:1px solid #1a1a2e;}
-#yt-bar input{flex:1;font-size:12px;padding:6px 10px;background:#111;border:1px solid #222;border-radius:7px;color:#fff;outline:none;}
-#yt-bar input:focus{border-color:#534AB7;}
-#yt-bar input::placeholder{color:#444;}
-#yt-bar button{font-size:12px;padding:6px 12px;background:#534AB7;border:none;border-radius:7px;color:#fff;cursor:pointer;}
+
+/* Song selector */
+#song-bar{background:#0a0a0f;border-top:1px solid #1a1a2e;padding:10px 12px;}
+#song-bar-top{display:flex;gap:8px;align-items:center;margin-bottom:8px;}
+#song-bar-top span{font-size:11px;color:#555;}
+#song-list{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;}
+#song-list::-webkit-scrollbar{height:3px;}
+#song-list::-webkit-scrollbar-track{background:#111;}
+#song-list::-webkit-scrollbar-thumb{background:#333;border-radius:2px;}
+.song-card{flex:0 0 auto;width:100px;cursor:pointer;border-radius:8px;border:1px solid #222;background:#111;overflow:hidden;transition:border-color .15s;}
+.song-card:hover{border-color:#534AB7;}
+.song-card.active{border-color:#534AB7;border-width:2px;}
+.song-card img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:#1a1a2e;}
+.song-card-title{font-size:10px;color:#aaa;padding:4px 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.song-card-bpm{font-size:9px;color:#555;padding:0 5px 4px;}
+
+/* Song preview */
+#song-preview{display:none;background:#111;border:1px solid #1a1a2e;border-radius:8px;padding:10px;margin-top:8px;gap:10px;align-items:flex-start;}
+#preview-thumb{width:90px;flex:0 0 90px;border-radius:6px;overflow:hidden;}
+#preview-thumb img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;}
+#preview-info{flex:1;min-width:0;}
+#preview-title{font-size:13px;font-weight:600;color:#fff;margin-bottom:4px;}
+#preview-bpm{font-size:11px;color:#666;margin-bottom:6px;}
+#preview-pattern{font-size:10px;color:#555;line-height:1.5;}
+#preview-pattern b{color:#aaa;}
+
+/* Diff + controls */
+#diff-bar{display:flex;gap:6px;padding:8px 12px 0;background:#0a0a0f;}
+#diff-bar span{font-size:11px;color:#555;line-height:28px;white-space:nowrap;}
+.diff-btn{flex:1;padding:5px;font-size:12px;font-weight:500;border-radius:7px;border:1px solid #333;background:rgba(255,255,255,.05);color:#666;cursor:pointer;}
+#diff-desc{text-align:center;padding:4px;font-size:11px;color:#555;background:#0a0a0f;}
 #msg{text-align:center;padding:6px;font-size:12px;color:#555;background:#0a0a0f;min-height:24px;}
-#ctrl{display:flex;gap:8px;padding:6px 12px 10px;background:#0a0a0f;}
-#ctrl button{flex:1;padding:9px;font-size:13px;font-weight:500;background:rgba(83,74,183,.25);border:1px solid rgba(83,74,183,.5);border-radius:8px;color:#AFA9EC;cursor:pointer;}
-#ctrl button:hover{background:rgba(83,74,183,.4);}
+#ctrl{display:flex;gap:6px;padding:6px 12px 10px;background:#0a0a0f;}
+#ctrl button{flex:1;padding:9px;font-size:13px;font-weight:500;background:rgba(83,74,183,.22);border:1px solid rgba(83,74,183,.45);border-radius:8px;color:#AFA9EC;cursor:pointer;}
+#ctrl button:hover{background:rgba(83,74,183,.38);}
+#ctrl button.ed-btn{background:rgba(239,159,39,.15);border-color:rgba(239,159,39,.4);color:#EF9F27;}
+#ctrl button.ed-btn:hover{background:rgba(239,159,39,.28);}
 #key-hint{text-align:center;font-size:10px;color:#333;padding:0 0 8px;background:#0a0a0f;}
-#stage-banner{position:absolute;top:0;left:0;width:100%;height:100%;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;}
+
+/* Editor overlay */
+#editor-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.93);z-index:1000;align-items:center;justify-content:center;padding:12px;}
+#editor-box{width:100%;max-width:660px;background:#0d0d18;border:1px solid #222;border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px;max-height:95vh;overflow-y:auto;}
+.ed-cell{width:100%;aspect-ratio:1;min-width:12px;border-radius:3px;border:1px solid #1a1a2e;background:#0d0d18;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:7px;}
+.ed-cell:hover{background:#1a1a2e;}
+.ed-bad{background:rgba(216,90,48,.3)!important;border-color:#D85A30!important;color:#D85A30;}
+.ed-good{background:rgba(29,158,117,.3)!important;border-color:#1D9E75!important;color:#1D9E75;}
 </style>
 </head>
 <body>
@@ -43,142 +82,227 @@ body{background:#000;display:flex;justify-content:center;font-family:-apple-syst
     <div id="yt-iframe-container"></div>
     <canvas id="canvas"></canvas>
   </div>
-  <div id="yt-bar">
-    <input id="yt-url" type="text" placeholder="유튜브 URL 또는 iframe 코드"/>
-    <button id="yt-btn">연동</button>
+
+  <!-- 곡 선택 -->
+  <div id="song-bar">
+    <div id="song-bar-top" style="display:flex;gap:6px;align-items:center;margin-bottom:8px;">
+      <span style="font-size:11px;color:#555;white-space:nowrap;">곡 추가</span>
+      <input id="add-url" type="text" placeholder="유튜브 URL 붙여넣기" style="flex:1;font-size:12px;padding:6px 10px;background:#111;border:1px solid #222;border-radius:7px;color:#fff;outline:none;"/>
+      <button id="add-btn" style="font-size:12px;padding:6px 12px;background:#534AB7;border:none;border-radius:7px;color:#fff;cursor:pointer;white-space:nowrap;">불러오기</button>
+    </div>
+    <div id="add-status" style="font-size:11px;color:#555;padding:0 2px 6px;min-height:16px;"></div>
+    <div id="song-list"></div>
+    <div id="song-preview" style="display:none;background:#111;border:1px solid #1a1a2e;border-radius:8px;padding:10px;margin-top:8px;gap:10px;align-items:flex-start;">
+      <div id="preview-thumb" style="width:90px;flex:0 0 90px;border-radius:6px;overflow:hidden;"><img id="preview-img" src="" alt="" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block;"/></div>
+      <div id="preview-info" style="flex:1;min-width:0;">
+        <div id="preview-title" style="font-size:13px;font-weight:600;color:#fff;margin-bottom:4px;"></div>
+        <div id="preview-bpm" style="font-size:11px;color:#666;margin-bottom:6px;"></div>
+        <div id="preview-pattern" style="font-size:10px;color:#555;line-height:1.5;"></div>
+      </div>
+      <button id="preview-delete" style="font-size:11px;padding:4px 8px;background:rgba(226,75,74,.15);border:1px solid rgba(226,75,74,.4);border-radius:6px;color:#E24B4A;cursor:pointer;white-space:nowrap;flex:0 0 auto;">삭제</button>
+    </div>
   </div>
-  <div id="bpm-bar" style="padding:8px 12px 0;display:flex;gap:8px;align-items:center;background:#0a0a0f;">
-    <span style="font-size:11px;color:#555;white-space:nowrap;">곡 BPM</span>
-    <input id="bpm-input" type="number" min="60" max="220" placeholder="예: 128" style="width:72px;font-size:12px;padding:6px 10px;background:#111;border:1px solid #222;border-radius:7px;color:#fff;outline:none;"/>
-    <button id="bpm-btn" style="font-size:12px;padding:6px 14px;background:#1D9E75;border:none;border-radius:7px;color:#fff;cursor:pointer;">적용</button>
-    <span id="bpm-status" style="font-size:11px;color:#555;flex:1;"></span>
+
+  <div id="diff-bar">
+    <span>난이도</span>
+    <button class="diff-btn" data-d="easy">이지</button>
+    <button class="diff-btn" data-d="normal">노멀</button>
+    <button class="diff-btn" data-d="hard">하드</button>
   </div>
-  <div id="diff-bar" style="display:flex;gap:6px;padding:8px 12px 0;background:#0a0a0f;">
-    <span style="font-size:11px;color:#555;line-height:30px;margin-right:2px;">난이도</span>
-    <button class="diff-btn" data-d="easy"  style="flex:1;padding:6px;font-size:12px;font-weight:500;border-radius:7px;border:1px solid #333;background:rgba(255,255,255,.05);color:#666;cursor:pointer;">이지</button>
-    <button class="diff-btn" data-d="normal" style="flex:1;padding:6px;font-size:12px;font-weight:500;border-radius:7px;border:1px solid #333;background:rgba(255,255,255,.05);color:#666;cursor:pointer;">노멀</button>
-    <button class="diff-btn" data-d="hard"  style="flex:1;padding:6px;font-size:12px;font-weight:500;border-radius:7px;border:1px solid #333;background:rgba(255,255,255,.05);color:#666;cursor:pointer;">하드</button>
-  </div>
-  <div id="diff-desc" style="text-align:center;padding:5px;font-size:11px;color:#555;background:#0a0a0f;">난이도를 선택하세요</div>
-  <div id="msg">시작 버튼을 누르세요</div>
+  <div id="diff-desc"></div>
+  <div id="msg">곡을 선택하세요</div>
   <div id="ctrl">
-    <button id="start-btn">시작</button>
+    <button id="start-btn" disabled style="opacity:.4;">시작</button>
     <button id="stop-btn" style="display:none">종료</button>
+    <button class="ed-btn" id="ed-open-btn">패턴 편집</button>
   </div>
   <div id="key-hint">← → / A D / 스와이프 / 탭으로 이동</div>
 </div>
 
+<!-- 패턴 에디터 -->
+<div id="editor-overlay">
+  <div id="editor-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <span style="font-size:14px;font-weight:600;">패턴 에디터</span>
+      <button id="ed-close" style="background:none;border:none;color:#666;font-size:20px;cursor:pointer;">✕</button>
+    </div>
+    <div style="font-size:11px;color:#555;line-height:1.7;">
+      <b style="color:#888">왼쪽 클릭</b> — 추가/제거 &nbsp;|&nbsp;
+      <b style="color:#888">오른쪽 클릭</b> — ★ 피하기 ↔ ● 먹기<br>
+      레인: 위=왼쪽 · 가운데=중앙 · 아래=오른쪽
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <label style="font-size:11px;color:#666;">비트 수</label>
+      <input id="ed-beats" type="number" min="8" max="64" value="32" style="width:54px;font-size:12px;padding:5px 8px;background:#111;border:1px solid #222;border-radius:6px;color:#fff;outline:none;"/>
+      <label style="font-size:11px;color:#666;">BPM</label>
+      <input id="ed-bpm" type="number" min="60" max="220" value="120" style="width:62px;font-size:12px;padding:5px 8px;background:#111;border:1px solid #222;border-radius:6px;color:#fff;outline:none;"/>
+      <button id="ed-resize" style="font-size:11px;padding:5px 10px;background:#1a1a2e;border:1px solid #333;border-radius:6px;color:#aaa;cursor:pointer;">그리드 갱신</button>
+      <div style="display:flex;gap:4px;margin-left:auto;">
+        <span style="font-size:10px;background:rgba(216,90,48,.25);border:1px solid #D85A30;border-radius:4px;padding:2px 7px;color:#D85A30;font-size:10px;">★ 피하기</span>
+        <span style="font-size:10px;background:rgba(29,158,117,.25);border:1px solid #1D9E75;border-radius:4px;padding:2px 7px;color:#1D9E75;font-size:10px;">● 먹기</span>
+      </div>
+    </div>
+    <div style="overflow-x:auto;background:#080810;border:1px solid #1a1a2e;border-radius:8px;padding:8px;">
+      <div style="font-size:9px;color:#333;margin-bottom:3px;">← 비트 순서 →</div>
+      <div id="ed-grid" style="display:grid;gap:2px;"></div>
+      <div id="ed-nums" style="display:grid;gap:2px;margin-top:3px;"></div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button id="ed-clear" style="font-size:12px;padding:7px 14px;background:#1a1a2e;border:1px solid #333;border-radius:8px;color:#666;cursor:pointer;">초기화</button>
+      <button id="ed-apply" style="font-size:13px;padding:7px 18px;background:#EF9F27;border:none;border-radius:8px;color:#000;font-weight:700;cursor:pointer;">적용 후 플레이</button>
+    </div>
+  </div>
+</div>
+
 <script>
+// ═══════════════════════════════════════════
+//  ★ 곡 목록 — 여기만 편집하세요 ★
+//  ytId: 유튜브 영상 ID (youtu.be/ 뒤 11자리)
+//  bpm:  곡의 BPM
+//  stages: 스테이지 배열. pattern(beat) 함수로 패턴 정의
+//    beat: 0부터 시작하는 비트 번호
+//    return: [{lane:0~2, type:'bad'|'good'}, ...]
+//    type bad=★피하기, good=●먹기
+// ═══════════════════════════════════════════
+const SONG_LIST = [
+  {
+    title: 'Daft Punk — Around the World',
+    ytId: 'dwDns8x3s7E',
+    bpm: 121,
+    stages: [
+      {
+        name: '인트로',
+        totalBeats: 32,
+        color: '#534AB7',
+        pattern: (b) => {
+          const r = [];
+          if (b % 4 === 0) r.push({ lane: b % 3, type: 'bad' });
+          if (b % 8 === 3) r.push({ lane: 1, type: 'good' });
+          return r;
+        }
+      },
+      {
+        name: '메인 훅',
+        totalBeats: 48,
+        color: '#1D9E75',
+        pattern: (b) => {
+          const r = [];
+          if (b % 2 === 0) r.push({ lane: (b / 2) % 3, type: 'bad' });
+          if (b % 6 === 5) r.push({ lane: 1, type: 'good' });
+          return r;
+        }
+      }
+    ]
+  },
+  {
+    title: 'Stromae — Alors On Danse',
+    ytId: 'FHwobHCBDo0',
+    bpm: 119,
+    stages: [
+      {
+        name: '좌우 교차',
+        totalBeats: 40,
+        color: '#D85A30',
+        pattern: (b) => {
+          const r = [];
+          if (b % 4 === 0) { r.push({ lane: 0, type: 'bad' }); r.push({ lane: 2, type: 'bad' }); }
+          if (b % 4 === 2) r.push({ lane: 1, type: 'bad' });
+          if (b % 8 === 5) r.push({ lane: b % 2 === 0 ? 0 : 2, type: 'good' });
+          return r;
+        }
+      },
+      {
+        name: '빈 레인',
+        totalBeats: 48,
+        color: '#D4537E',
+        pattern: (b) => {
+          const r = [];
+          if (b % 3 === 0) {
+            const safe = Math.floor(b / 3) % 3;
+            for (let l = 0; l < 3; l++) if (l !== safe) r.push({ lane: l, type: 'bad' });
+          }
+          if (b % 7 === 4) r.push({ lane: 1, type: 'good' });
+          return r;
+        }
+      }
+    ]
+  },
+  {
+    title: 'Kavinsky — Nightcall',
+    ytId: 'MV_3Dpw-BRY',
+    bpm: 104,
+    stages: [
+      {
+        name: '다크 웨이브',
+        totalBeats: 36,
+        color: '#185FA5',
+        pattern: (b) => {
+          const r = [];
+          if (b % 3 === 0) r.push({ lane: b % 3, type: 'bad' });
+          if (b % 3 === 1) r.push({ lane: (b + 1) % 3, type: 'bad' });
+          if (b % 9 === 6) r.push({ lane: 1, type: 'good' });
+          return r;
+        }
+      },
+      {
+        name: '보스',
+        totalBeats: 56,
+        color: '#E24B4A',
+        pattern: (b) => {
+          const r = [];
+          const p = b % 8;
+          if (p === 0) { r.push({ lane: 0, type: 'bad' }); r.push({ lane: 2, type: 'bad' }); }
+          else if (p === 1) r.push({ lane: 1, type: 'bad' });
+          else if (p === 2) { r.push({ lane: 0, type: 'bad' }); r.push({ lane: 1, type: 'bad' }); }
+          else if (p === 3) r.push({ lane: 2, type: 'bad' });
+          else if (p === 5) r.push({ lane: b % 3, type: 'good' });
+          else if (p === 6) { r.push({ lane: 1, type: 'bad' }); r.push({ lane: 2, type: 'bad' }); }
+          else if (p === 7) r.push({ lane: 0, type: 'bad' });
+          return r;
+        }
+      }
+    ]
+  }
+];
+// ═══════════════════════════════════════════
+
+// ─── 난이도 설정 ───
+const DIFF = {
+  easy:   { livesStart: 5, bpmMult: 1.10, spawnRate: 2, goodRate: 0.22, scoreRate: 0.8,  label: '이지',  desc: '목숨 5개 · 속도 보통 · 여유로운 패턴',          color: '#1D9E75' },
+  normal: { livesStart: 3, bpmMult: 1.45, spawnRate: 2, goodRate: 0.16, scoreRate: 1.0,  label: '노멀',  desc: '목숨 3개 · 빠른 속도 · 기본 패턴',              color: '#534AB7' },
+  hard:   { livesStart: 2, bpmMult: 2.00, spawnRate: 1, goodRate: 0.10, scoreRate: 1.5,  label: '하드',  desc: '목숨 2개 · 속도 2배 · 빽빽한 패턴 · x1.5점수',  color: '#E24B4A' }
+};
+
+// ─── 게임 상태 ───
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const LANES = 3;
 let W, H, LW, PR, PY;
 
-function resizeCanvas(){
+function resizeCanvas() {
   const wrap = document.getElementById('canvas-wrap');
   W = wrap.clientWidth; H = wrap.clientHeight;
   canvas.width = W; canvas.height = H;
-  LW = W/LANES; PR = Math.round(W*0.028); PY = H - Math.round(H*0.17);
+  LW = W / LANES; PR = Math.round(W * 0.028); PY = H - Math.round(H * 0.17);
 }
 window.addEventListener('load', resizeCanvas);
 window.addEventListener('resize', resizeCanvas);
 setTimeout(resizeCanvas, 50);
 
-// 스테이지 패턴 정의 (각 스테이지마다 고유 패턴)
-const STAGES = [
-  { // 1: 튜토리얼 - 단순 일정 간격
-    name: '튜토리얼',
-    bpm: 80,
-    totalBeats: 32,
-    color: '#534AB7',
-    pattern: (beat) => {
-      if (beat % 2 === 0) return [{ lane: beat % 3, type: 'bad' }];
-      if (beat % 4 === 1) return [{ lane: 1, type: 'good' }];
-      return [];
-    }
-  },
-  { // 2: 좌우 교차
-    name: '좌우 교차',
-    bpm: 95,
-    totalBeats: 40,
-    color: '#1D9E75',
-    pattern: (beat) => {
-      const result = [];
-      if (beat % 2 === 0) result.push({ lane: beat % 2 === 0 ? (beat/2)%2===0?0:2 : 1, type: 'bad' });
-      if (beat % 6 === 3) result.push({ lane: 1, type: 'good' });
-      return result;
-    }
-  },
-  { // 3: 양쪽 동시
-    name: '양쪽 협공',
-    bpm: 105,
-    totalBeats: 48,
-    color: '#D85A30',
-    pattern: (beat) => {
-      const result = [];
-      if (beat % 4 === 0) { result.push({ lane: 0, type: 'bad' }); result.push({ lane: 2, type: 'bad' }); }
-      else if (beat % 4 === 2) result.push({ lane: 1, type: 'bad' });
-      if (beat % 8 === 5) result.push({ lane: beat%2===0?0:2, type: 'good' });
-      return result;
-    }
-  },
-  { // 4: 세 개 동시 + 빈 레인
-    name: '빈 레인 찾기',
-    bpm: 115,
-    totalBeats: 48,
-    color: '#D4537E',
-    pattern: (beat) => {
-      const result = [];
-      if (beat % 3 === 0) {
-        const safe = beat % 3 === 0 ? (Math.floor(beat/3))%3 : 1;
-        for (let l = 0; l < 3; l++) if (l !== safe) result.push({ lane: l, type: 'bad' });
-      }
-      if (beat % 5 === 2) result.push({ lane: 1, type: 'good' });
-      return result;
-    }
-  },
-  { // 5: 보스 - 빠르고 복잡
-    name: '보스',
-    bpm: 130,
-    totalBeats: 64,
-    color: '#E24B4A',
-    pattern: (beat) => {
-      const result = [];
-      const p = beat % 8;
-      if (p === 0) { result.push({ lane: 0, type: 'bad' }); result.push({ lane: 2, type: 'bad' }); }
-      else if (p === 1) result.push({ lane: 1, type: 'bad' });
-      else if (p === 2) { result.push({ lane: 0, type: 'bad' }); result.push({ lane: 1, type: 'bad' }); }
-      else if (p === 3) result.push({ lane: 2, type: 'bad' });
-      else if (p === 4) { for(let l=0;l<3;l++) result.push({ lane: l, type: 'bad' }); }
-      else if (p === 5) result.push({ lane: beat%3, type: 'good' });
-      else if (p === 6) { result.push({ lane: 1, type: 'bad' }); result.push({ lane: 2, type: 'bad' }); }
-      else if (p === 7) result.push({ lane: 0, type: 'bad' });
-      return result;
-    }
-  }
-];
-
-let state = 'idle';
-let score = 0, combo = 0, multiplier = 1, lives = 3;
-let stageIdx = 0, stageBeat = 0;
+let state = 'idle', score = 0, combo = 0, multiplier = 1, lives = 3;
+let stageIdx = 0, stageBeat = 0, stageClearing = false, stageHits = 0, stageTotal = 0;
 let objects = [], particles = [], floatTexts = [];
-let lastBeat = 0, beatInt = 750;
-let hitFlash = 0, shakeX = 0, shakeY = 0, bgPulse = 0;
-let animId, touchStartX = 0, lastMoveTime = 0;
+let lastBeat = 0, beatInt = 750, bgPulse = 0;
+let hitFlash = 0, shakeX = 0, shakeY = 0;
+let animId, touchStartX = 0, lastMoveTime = 0, playerLane = 1;
 let ytActive = false;
-let customBpm = 0; // 0 = 스테이지 기본값 사용
-let difficulty = 'normal'; // easy / normal / hard
-const DIFF = {
-  easy:   { livesStart: 5, bpmMult: 1.10, spawnRate: 2, goodRate: 0.22, scoreRate: 0.8,  label: '이지',  desc: '목숨 5개 · 적당한 속도 · 패턴 여유',           color: '#1D9E75' },
-  normal: { livesStart: 3, bpmMult: 1.45, spawnRate: 2, goodRate: 0.16, scoreRate: 1.0,  label: '노멀',  desc: '목숨 3개 · 빠른 속도 · 기본 패턴',              color: '#534AB7' },
-  hard:   { livesStart: 2, bpmMult: 2.00, spawnRate: 1, goodRate: 0.10, scoreRate: 1.5,  label: '하드',  desc: '목숨 2개 · 속도 2배 · 패턴 빽빽 · 점수 x1.5',   color: '#E24B4A' }
-};
 let audioCtx = null, beatTimer = null, beatCount = 0;
-let stageClearing = false, stageTransTimer = null;
-let totalScore = 0, stageHits = 0, stageTotal = 0;
-let playerLane = 1;
+let difficulty = 'normal';
+let selectedSong = null;       // 현재 선택된 곡
+let activeStages = [];         // 현재 플레이 중인 스테이지 배열
+let bannerData = null, bannerAlpha = 0, bannerTimer2 = 0;
 
-// 등급 계산
+// ─── 등급 ───
 function calcGrade(ratio) {
   if (ratio >= 0.95) return { g: 'S', color: '#FFD700' };
   if (ratio >= 0.85) return { g: 'A', color: '#AFA9EC' };
@@ -186,626 +310,584 @@ function calcGrade(ratio) {
   if (ratio >= 0.50) return { g: 'C', color: '#D85A30' };
   return { g: 'D', color: '#E24B4A' };
 }
-
 function updateMultiplier() {
-  if (combo >= 20) multiplier = 4;
-  else if (combo >= 10) multiplier = 3;
-  else if (combo >= 5) multiplier = 2;
-  else multiplier = 1;
+  multiplier = combo >= 20 ? 4 : combo >= 10 ? 3 : combo >= 5 ? 2 : 1;
   document.getElementById('mv').textContent = `x${multiplier}`;
 }
-
+function updateGradeDisplay() {
+  const ratio = stageTotal > 0 ? 1 - stageHits / stageTotal : 1;
+  const { g, color } = calcGrade(ratio);
+  const el = document.getElementById('grade-display');
+  el.textContent = g; el.style.color = color;
+}
 function lx(l) { return LW * l + LW / 2; }
+function hexToRgb(hex) {
+  const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+  return `${r},${g},${b}`;
+}
 
-function spawnFromPattern(patternItems) {
-  patternItems.forEach(item => {
+// ─── 오브젝트 스폰 ───
+function spawnFromPattern(items) {
+  items.forEach(item => {
+    const stage = activeStages[stageIdx];
     objects.push({
       lane: item.lane, y: -20,
       r: item.type === 'good' ? PR * 0.65 : PR * 0.85,
       type: item.type,
-      color: item.type === 'good' ? '#1D9E75' : STAGES[stageIdx].color,
-      speed: (H / 320) * ((customBpm > 0 ? customBpm : STAGES[stageIdx].bpm) / 80) * DIFF[difficulty].bpmMult,
+      color: item.type === 'good' ? '#1D9E75' : stage.color,
+      speed: (H / 320) * (selectedSong.bpm / 80) * DIFF[difficulty].bpmMult,
       pulse: 0
     });
     if (item.type === 'bad') stageTotal++;
   });
 }
-
 function spawnParts(x, y, col, n = 8) {
   for (let i = 0; i < n; i++) {
     const a = Math.PI * 2 * i / n + Math.random() * .3;
-    particles.push({ x, y, color: col, vx: Math.cos(a) * (2 + Math.random() * 3), vy: Math.sin(a) * (2 + Math.random() * 3), life: 1, decay: .04 + Math.random() * .03, r: 3 + Math.random() * 3 });
+    particles.push({ x, y, color: col, vx: Math.cos(a)*(2+Math.random()*3), vy: Math.sin(a)*(2+Math.random()*3), life: 1, decay: .04+Math.random()*.03, r: 3+Math.random()*3 });
   }
 }
-
 function addFloatText(x, y, text, color) {
   floatTexts.push({ x, y, text, color, life: 1, vy: -1.5 });
 }
+function showBanner(text, sub, color, duration = 2000) {
+  bannerData = { text, sub, color }; bannerAlpha = 1;
+  clearTimeout(bannerTimer2);
+  bannerTimer2 = setTimeout(() => { bannerData = null; }, duration);
+}
 
+// ─── 그리기 ───
 function drawBg() {
   ctx.clearRect(0, 0, W, H);
-  ctx.fillStyle = ytActive ? 'rgba(5,5,20,0.58)' : 'rgba(10,10,20,0.97)';
+  ctx.fillStyle = ytActive ? 'rgba(5,5,20,0.60)' : 'rgba(10,10,20,0.97)';
   ctx.fillRect(0, 0, W, H);
-
-  const stColor = STAGES[stageIdx].color;
+  const stColor = activeStages[stageIdx] ? activeStages[stageIdx].color : '#534AB7';
   for (let l = 0; l < LANES; l++) {
-    ctx.fillStyle = l === playerLane ? `rgba(83,74,183,${.055 + bgPulse * .05})` : 'rgba(255,255,255,.012)';
-    ctx.fillRect(l * LW, 0, LW, H);
-    if (l > 0) {
-      ctx.strokeStyle = 'rgba(255,255,255,.07)'; ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(l * LW, 0); ctx.lineTo(l * LW, H); ctx.stroke();
-    }
+    ctx.fillStyle = l === playerLane ? `rgba(83,74,183,${.055+bgPulse*.05})` : 'rgba(255,255,255,.012)';
+    ctx.fillRect(l*LW, 0, LW, H);
+    if (l > 0) { ctx.strokeStyle='rgba(255,255,255,.07)'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(l*LW,0); ctx.lineTo(l*LW,H); ctx.stroke(); }
   }
-  // 스테이지 테마 라인
-  const off = (Date.now() / 16) % 50;
-  for (let y2 = 0; y2 < H; y2 += 50) {
-    ctx.strokeStyle = `rgba(${hexToRgb(stColor)},${.025 + bgPulse * .04})`; ctx.lineWidth = .5;
-    ctx.beginPath(); ctx.moveTo(0, (y2 + off) % H); ctx.lineTo(W, (y2 + off) % H); ctx.stroke();
+  const off = (Date.now()/16)%50;
+  for (let y2=0; y2<H; y2+=50) {
+    ctx.strokeStyle=`rgba(${hexToRgb(stColor)},${.022+bgPulse*.035})`; ctx.lineWidth=.5;
+    ctx.beginPath(); ctx.moveTo(0,(y2+off)%H); ctx.lineTo(W,(y2+off)%H); ctx.stroke();
   }
-  // 비트 링
-  const bp = Math.max(0, 1 - (Date.now() - lastBeat) / (beatInt * .5));
-  ctx.save(); ctx.globalAlpha = bp * .25; ctx.strokeStyle = stColor; ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.arc(W / 2, H / 2, W * .2 + bp * W * .06, 0, Math.PI * 2); ctx.stroke();
-  ctx.restore();
+  const bp = Math.max(0, 1-(Date.now()-lastBeat)/(beatInt*.5));
+  ctx.save(); ctx.globalAlpha=bp*.22; ctx.strokeStyle=stColor; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.arc(W/2,H/2,W*.2+bp*W*.06,0,Math.PI*2); ctx.stroke(); ctx.restore();
 }
-
-function hexToRgb(hex) {
-  const r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
-  return `${r},${g},${b}`;
-}
-
 function drawPlayer() {
-  const x = lx(playerLane), p = 1 + bgPulse * .1;
-  const col = STAGES[stageIdx].color;
-  ctx.save(); ctx.shadowColor = col; ctx.shadowBlur = 14 + bgPulse * 8;
-  ctx.beginPath(); ctx.moveTo(x, PY - PR * 1.4 * p); ctx.lineTo(x + PR * p, PY + PR * .7 * p); ctx.lineTo(x - PR * p, PY + PR * .7 * p); ctx.closePath(); ctx.fillStyle = '#7F77DD'; ctx.fill();
-  ctx.beginPath(); ctx.moveTo(x, PY - PR * 1.1 * p); ctx.lineTo(x + PR * .6 * p, PY + PR * .4 * p); ctx.lineTo(x - PR * .6 * p, PY + PR * .4 * p); ctx.closePath(); ctx.fillStyle = '#AFA9EC'; ctx.fill();
+  const x=lx(playerLane), p=1+bgPulse*.1, col=activeStages[stageIdx]?activeStages[stageIdx].color:'#534AB7';
+  ctx.save(); ctx.shadowColor=col; ctx.shadowBlur=12+bgPulse*7;
+  ctx.beginPath(); ctx.moveTo(x,PY-PR*1.4*p); ctx.lineTo(x+PR*p,PY+PR*.7*p); ctx.lineTo(x-PR*p,PY+PR*.7*p); ctx.closePath(); ctx.fillStyle='#7F77DD'; ctx.fill();
+  ctx.beginPath(); ctx.moveTo(x,PY-PR*1.1*p); ctx.lineTo(x+PR*.6*p,PY+PR*.4*p); ctx.lineTo(x-PR*.6*p,PY+PR*.4*p); ctx.closePath(); ctx.fillStyle='#AFA9EC'; ctx.fill();
   ctx.restore();
 }
-
 function drawObjs() {
   objects.forEach(o => {
-    const x = lx(o.lane); ctx.save();
-    if (o.type === 'bad') {
-      ctx.shadowColor = o.color; ctx.shadowBlur = 8 + o.pulse * 6;
+    const x=lx(o.lane); ctx.save();
+    if (o.type==='bad') {
+      ctx.shadowColor=o.color; ctx.shadowBlur=6+o.pulse*5;
       ctx.beginPath();
-      for (let i = 0; i < 10; i++) { const a = Math.PI / 5 * i - Math.PI / 2, r = i % 2 === 0 ? o.r : o.r * .42; i === 0 ? ctx.moveTo(x + Math.cos(a) * r, o.y + Math.sin(a) * r) : ctx.lineTo(x + Math.cos(a) * r, o.y + Math.sin(a) * r); }
-      ctx.closePath(); ctx.fillStyle = o.color; ctx.fill();
-      ctx.strokeStyle = 'rgba(255,255,255,.5)'; ctx.lineWidth = 1.5;
-      const s = o.r * .28;
-      ctx.beginPath(); ctx.moveTo(x - s, o.y - s); ctx.lineTo(x + s, o.y + s); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(x + s, o.y - s); ctx.lineTo(x - s, o.y + s); ctx.stroke();
+      for (let i=0;i<10;i++) { const a=Math.PI/5*i-Math.PI/2, r=i%2===0?o.r:o.r*.42; i===0?ctx.moveTo(x+Math.cos(a)*r,o.y+Math.sin(a)*r):ctx.lineTo(x+Math.cos(a)*r,o.y+Math.sin(a)*r); }
+      ctx.closePath(); ctx.fillStyle=o.color; ctx.fill();
+      ctx.strokeStyle='rgba(255,255,255,.5)'; ctx.lineWidth=1.2;
+      const s=o.r*.28; ctx.beginPath(); ctx.moveTo(x-s,o.y-s); ctx.lineTo(x+s,o.y+s); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x+s,o.y-s); ctx.lineTo(x-s,o.y+s); ctx.stroke();
     } else {
-      ctx.shadowColor = '#1D9E75'; ctx.shadowBlur = 12;
-      ctx.beginPath(); ctx.arc(x, o.y, o.r, 0, Math.PI * 2); ctx.fillStyle = '#1D9E75'; ctx.fill();
-      ctx.strokeStyle = '#9FE1CB'; ctx.lineWidth = 2; ctx.stroke();
-      ctx.fillStyle = '#fff'; ctx.font = `bold ${Math.round(o.r)}px sans-serif`;
-      ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('+', x, o.y);
+      ctx.shadowColor='#1D9E75'; ctx.shadowBlur=10;
+      ctx.beginPath(); ctx.arc(x,o.y,o.r,0,Math.PI*2); ctx.fillStyle='#1D9E75'; ctx.fill();
+      ctx.strokeStyle='#9FE1CB'; ctx.lineWidth=1.5; ctx.stroke();
+      ctx.fillStyle='#fff'; ctx.font=`bold ${Math.round(o.r)}px sans-serif`; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('+',x,o.y);
     }
     ctx.restore();
   });
 }
-
 function drawParts() {
-  particles.forEach(p => { ctx.save(); ctx.globalAlpha = p.life; ctx.beginPath(); ctx.arc(p.x, p.y, p.r * p.life, 0, Math.PI * 2); ctx.fillStyle = p.color; ctx.fill(); ctx.restore(); });
+  particles.forEach(p => { ctx.save(); ctx.globalAlpha=p.life; ctx.beginPath(); ctx.arc(p.x,p.y,p.r*p.life,0,Math.PI*2); ctx.fillStyle=p.color; ctx.fill(); ctx.restore(); });
 }
-
 function drawFloatTexts() {
-  floatTexts.forEach(t => {
-    ctx.save(); ctx.globalAlpha = t.life; ctx.font = `bold ${Math.round(W * .028)}px sans-serif`;
-    ctx.fillStyle = t.color; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(t.text, t.x, t.y); ctx.restore();
-  });
+  floatTexts.forEach(t => { ctx.save(); ctx.globalAlpha=t.life; ctx.font=`bold ${Math.round(W*.026)}px sans-serif`; ctx.fillStyle=t.color; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(t.text,t.x,t.y); ctx.restore(); });
 }
-
 function drawHUD() {
-  if (hitFlash > 0) { ctx.fillStyle = `rgba(216,90,48,${hitFlash * .3})`; ctx.fillRect(0, 0, W, H); }
-  // 콤보 게이지
-  ctx.fillStyle = `rgba(${hexToRgb(STAGES[stageIdx].color)},.45)`;
-  ctx.fillRect(0, H - 4, W * Math.min(combo / 20, 1), 4);
-  // 레인 하이라이트
-  for (let l = 0; l < LANES; l++) {
-    ctx.fillStyle = l === playerLane ? 'rgba(127,119,221,.18)' : 'rgba(255,255,255,.025)';
-    ctx.beginPath(); ctx.roundRect(l * LW + 4, H - PR * 2.6, LW - 8, PR * 2.2, 5); ctx.fill();
+  if (hitFlash>0) { ctx.fillStyle=`rgba(216,90,48,${hitFlash*.28})`; ctx.fillRect(0,0,W,H); }
+  const stColor = activeStages[stageIdx]?activeStages[stageIdx].color:'#534AB7';
+  ctx.fillStyle=`rgba(${hexToRgb(stColor)},.4)`; ctx.fillRect(0,H-4,W*Math.min(combo/20,1),4);
+  for (let l=0;l<LANES;l++) {
+    ctx.fillStyle=l===playerLane?'rgba(127,119,221,.18)':'rgba(255,255,255,.025)';
+    ctx.beginPath(); ctx.roundRect(l*LW+4,H-PR*2.6,LW-8,PR*2.2,5); ctx.fill();
   }
-  // 스테이지 진행 바
-  const prog = stageBeat / STAGES[stageIdx].totalBeats;
-  ctx.fillStyle = 'rgba(255,255,255,.06)'; ctx.fillRect(0, 0, W, 3);
-  ctx.fillStyle = STAGES[stageIdx].color; ctx.fillRect(0, 0, W * prog, 3);
+  // 진행 바
+  ctx.fillStyle='rgba(255,255,255,.05)'; ctx.fillRect(0,0,W,3);
+  const prog = activeStages[stageIdx] ? stageBeat/activeStages[stageIdx].totalBeats : 0;
+  ctx.fillStyle=stColor; ctx.fillRect(0,0,W*prog,3);
   // 범례
-  const fs = Math.max(9, Math.round(W * .02));
-  ctx.font = `${fs}px sans-serif`; ctx.textAlign = 'left'; ctx.textBaseline = 'top';
-  ctx.fillStyle = 'rgba(230,100,60,.85)'; ctx.fillText('★ 피하기', 8, 8);
-  ctx.fillStyle = 'rgba(29,200,120,.85)'; ctx.fillText('● 먹기', 8, 8 + fs + 3);
-  // 멀티플라이어 표시
-  if (multiplier > 1) {
-    const colors = ['', '', '#1D9E75', '#534AB7', '#FFD700'];
-    ctx.font = `bold ${Math.round(W * .045)}px sans-serif`;
-    ctx.fillStyle = colors[multiplier] || '#fff';
-    ctx.textAlign = 'right'; ctx.textBaseline = 'top';
-    ctx.fillText(`x${multiplier}`, W - 8, 8);
+  const fs=Math.max(9,Math.round(W*.02));
+  ctx.font=`${fs}px sans-serif`; ctx.textAlign='left'; ctx.textBaseline='top';
+  ctx.fillStyle='rgba(230,100,60,.85)'; ctx.fillText('★ 피하기',8,8);
+  ctx.fillStyle='rgba(29,200,120,.85)'; ctx.fillText('● 먹기',8,8+fs+3);
+  if (multiplier>1) {
+    const mc=['','','#1D9E75','#534AB7','#FFD700'][multiplier];
+    ctx.font=`bold ${Math.round(W*.042)}px sans-serif`; ctx.fillStyle=mc; ctx.textAlign='right'; ctx.textBaseline='top'; ctx.fillText(`x${multiplier}`,W-8,8);
+  }
+  if (ytActive) {
+    ctx.fillStyle='rgba(255,50,50,.9)'; ctx.beginPath(); ctx.arc(W-14,H-14,5,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,.7)'; ctx.font='10px sans-serif'; ctx.textAlign='right'; ctx.textBaseline='middle'; ctx.fillText('YT',W-23,H-14);
   }
 }
-
-function drawStageBanner(text, sub, color, alpha) {
-  ctx.save(); ctx.globalAlpha = alpha;
-  ctx.fillStyle = 'rgba(0,0,0,.6)'; ctx.fillRect(0, H * .3, W, H * .4);
-  ctx.font = `700 ${Math.round(W * .08)}px sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.fillStyle = color; ctx.fillText(text, W / 2, H / 2 - H * .05);
-  ctx.font = `${Math.round(W * .032)}px sans-serif`; ctx.fillStyle = '#aaa';
-  ctx.fillText(sub, W / 2, H / 2 + H * .05);
+function drawBanner() {
+  if (!bannerData || bannerAlpha<=0) return;
+  ctx.save(); ctx.globalAlpha=bannerAlpha;
+  ctx.fillStyle='rgba(0,0,0,.55)'; ctx.fillRect(0,H*.3,W,H*.4);
+  ctx.font=`700 ${Math.round(W*.075)}px sans-serif`; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillStyle=bannerData.color; ctx.fillText(bannerData.text,W/2,H/2-H*.04);
+  ctx.font=`${Math.round(W*.028)}px sans-serif`; ctx.fillStyle='#aaa'; ctx.fillText(bannerData.sub,W/2,H/2+H*.05);
   ctx.restore();
 }
 
-let bannerAlpha = 0, bannerData = null, bannerTimer = 0;
-function showBanner(text, sub, color, duration = 2000) {
-  bannerData = { text, sub, color };
-  bannerAlpha = 1;
-  clearTimeout(bannerTimer);
-  bannerTimer = setTimeout(() => { bannerData = null; }, duration);
-}
-
-function updateGradeDisplay() {
-  const ratio = stageTotal > 0 ? stageHits / stageTotal : 1;
-  const { g, color } = calcGrade(1 - ratio); // ratio = 얼마나 잘 피했나
-  const el = document.getElementById('grade-display');
-  el.textContent = g; el.style.color = color;
-}
-
+// ─── 업데이트 ───
 function update(now) {
-  bgPulse *= .88; hitFlash = Math.max(0, hitFlash - .05); shakeX *= .7; shakeY *= .7;
-  if (bannerAlpha > 0) bannerAlpha = Math.max(0, bannerAlpha - .008);
-
-  if (!stageClearing && now - lastBeat > beatInt) {
-    lastBeat = now; stageBeat++; bgPulse = 1;
-    const stage = STAGES[stageIdx];
+  bgPulse*=.88; hitFlash=Math.max(0,hitFlash-.05); shakeX*=.7; shakeY*=.7;
+  if (bannerAlpha>0) bannerAlpha=Math.max(0,bannerAlpha-.007);
+  const stage = activeStages[stageIdx];
+  if (!stageClearing && now-lastBeat>beatInt) {
+    lastBeat=now; stageBeat++; bgPulse=1;
     const items = stage.pattern(stageBeat);
-    if (items.length > 0) spawnFromPattern(items);
-    // 스테이지 클리어 체크
-    if (stageBeat >= stage.totalBeats) {
-      stageClearing = true;
-      setTimeout(() => endStage(), 1200);
-    }
-    scheduleSingleBeat();
+    if (items.length>0) spawnFromPattern(items);
+    if (stageBeat>=stage.totalBeats) { stageClearing=true; setTimeout(endStage, 1200); }
+    scheduleBeatSound();
   }
-
-  objects.forEach(o => { o.y += o.speed; o.pulse = bgPulse; });
-  particles.forEach(p => { p.x += p.vx; p.y += p.vy; p.vy += .1; p.life -= p.decay; });
-  particles = particles.filter(p => p.life > 0);
-  floatTexts.forEach(t => { t.y += t.vy; t.life -= .025; });
-  floatTexts = floatTexts.filter(t => t.life > 0);
-
-  const px = lx(playerLane);
-  objects = objects.filter(o => {
-    if (o.y > H + 30) return false;
-    const ox = lx(o.lane), dist = Math.sqrt((ox - px) ** 2 + (o.y - PY) ** 2);
-    const hitR = o.type === 'bad' ? Math.min(o.r, PR * 0.7) : o.r + PR * 0.5;
-    if (dist < hitR) {
-      if (o.type === 'bad') {
-        stageHits++;
-        lives--; document.getElementById('lv').textContent = lives;
-        combo = 0; document.getElementById('cv').textContent = 0;
+  objects.forEach(o=>{o.y+=o.speed; o.pulse=bgPulse;});
+  particles.forEach(p=>{p.x+=p.vx; p.y+=p.vy; p.vy+=.1; p.life-=p.decay;});
+  particles=particles.filter(p=>p.life>0);
+  floatTexts.forEach(t=>{t.y+=t.vy; t.life-=.022;});
+  floatTexts=floatTexts.filter(t=>t.life>0);
+  const px=lx(playerLane);
+  objects=objects.filter(o=>{
+    if (o.y>H+30) return false;
+    const ox=lx(o.lane), dist=Math.sqrt((ox-px)**2+(o.y-PY)**2);
+    const hitR = o.type==='bad' ? Math.min(o.r, PR*0.7) : o.r+PR*0.5;
+    if (dist<hitR) {
+      if (o.type==='bad') {
+        stageHits++; lives--; document.getElementById('lv').textContent=lives;
+        combo=0; document.getElementById('cv').textContent=0;
         updateMultiplier(); updateGradeDisplay();
-        hitFlash = 1; shakeX = 10; shakeY = 7;
-        spawnParts(ox, o.y, '#D85A30', 12);
-        addFloatText(ox, o.y - 20, 'MISS!', '#E24B4A');
-        if (lives <= 0) endGame();
+        hitFlash=1; shakeX=10; shakeY=7;
+        spawnParts(ox,o.y,'#D85A30',12); addFloatText(ox,o.y-20,'MISS!','#E24B4A');
+        if (lives<=0) endGame(false);
       } else {
-        const base = Math.round(100 * DIFF[difficulty].scoreRate);
-        const pts = base * multiplier;
-        score += pts; combo++;
-        document.getElementById('sv').textContent = score;
-        document.getElementById('cv').textContent = combo;
+        const pts=Math.round(100*DIFF[difficulty].scoreRate)*multiplier;
+        score+=pts; combo++; document.getElementById('sv').textContent=score; document.getElementById('cv').textContent=combo;
         updateMultiplier(); updateGradeDisplay();
-        spawnParts(ox, o.y, '#1D9E75', 8);
-        addFloatText(ox, o.y - 20, `+${pts}`, combo > 9 ? '#FFD700' : '#1D9E75');
+        spawnParts(ox,o.y,'#1D9E75',8); addFloatText(ox,o.y-20,`+${pts}`,combo>9?'#FFD700':'#1D9E75');
       }
       return false;
     }
     return true;
   });
 }
-
 function endStage() {
-  if (state !== 'playing') return;
-  const stage = STAGES[stageIdx];
-  const dodgeRatio = stageTotal > 0 ? 1 - stageHits / stageTotal : 1;
+  if (state!=='playing') return;
+  const dodgeRatio = stageTotal>0 ? 1-stageHits/stageTotal : 1;
   const { g, color } = calcGrade(dodgeRatio);
-  const bonus = { S: 5000, A: 3000, B: 1500, C: 500, D: 0 }[g];
-  score += bonus;
-  document.getElementById('sv').textContent = score;
-
-  if (stageIdx < STAGES.length - 1) {
-    showBanner(`STAGE ${stageIdx + 1} CLEAR!`, `등급: ${g}  보너스: +${bonus}점  다음 스테이지로...`, color, 2500);
-    setTimeout(() => nextStage(), 2600);
+  const bonus = { S:5000,A:3000,B:1500,C:500,D:0 }[g];
+  score+=bonus; document.getElementById('sv').textContent=score;
+  if (stageIdx<activeStages.length-1) {
+    showBanner(`STAGE ${stageIdx+1} CLEAR!`,`등급: ${g}  보너스: +${bonus}점`,color,2200);
+    setTimeout(nextStage, 2400);
   } else {
-    showBanner('ALL CLEAR!', `최종 등급: ${g}  총 점수: ${score}점`, '#FFD700', 3000);
-    setTimeout(() => endGame(true), 3100);
+    showBanner('ALL CLEAR!',`최종 등급: ${g}  총 점수: ${score}점`,'#FFD700',3000);
+    setTimeout(()=>endGame(true), 3200);
   }
 }
-
 function nextStage() {
-  if (state !== 'playing') return;
-  stageIdx = Math.min(stageIdx + 1, STAGES.length - 1);
-  stageBeat = 0; stageClearing = false; stageHits = 0; stageTotal = 0;
-  objects = [];
-  const baseBpmN = customBpm > 0 ? customBpm + stageIdx * 8 : STAGES[stageIdx].bpm;
-  beatInt = 60000 / (baseBpmN * DIFF[difficulty].bpmMult);
-  lastBeat = performance.now();
-  document.getElementById('stv').textContent = stageIdx + 1;
-  showBanner(`STAGE ${stageIdx + 1}`, STAGES[stageIdx].name, STAGES[stageIdx].color, 1800);
-  scheduleSingleBeat();
+  if (state!=='playing') return;
+  stageIdx++; stageBeat=0; stageClearing=false; stageHits=0; stageTotal=0; objects=[];
+  beatInt=60000/(selectedSong.bpm*DIFF[difficulty].bpmMult);
+  lastBeat=performance.now();
+  document.getElementById('stv').textContent=stageIdx+1;
+  showBanner(`STAGE ${stageIdx+1}`,activeStages[stageIdx].name,activeStages[stageIdx].color,1600);
 }
-
 function draw() {
-  ctx.save();
-  ctx.translate(shakeX * (Math.random() - .5) * 2, shakeY * (Math.random() - .5) * 2);
-  drawBg(); drawObjs(); drawParts(); drawPlayer(); drawHUD(); drawFloatTexts();
-  if (bannerData && bannerAlpha > 0) drawStageBanner(bannerData.text, bannerData.sub, bannerData.color, bannerAlpha);
+  ctx.save(); ctx.translate(shakeX*(Math.random()-.5)*2,shakeY*(Math.random()-.5)*2);
+  drawBg(); drawObjs(); drawParts(); drawPlayer(); drawHUD(); drawFloatTexts(); drawBanner();
   ctx.restore();
 }
+function loop(now) { if(state!=='playing')return; update(now); draw(); animId=requestAnimationFrame(loop); }
+function setMsg(t) { document.getElementById('msg').textContent=t; }
 
-function loop(now) {
-  if (state !== 'playing') return;
-  update(now); draw(); animId = requestAnimationFrame(loop);
-}
-
-function setMsg(t) { document.getElementById('msg').textContent = t; }
-
+// ─── 시작/종료 ───
 function startGame() {
+  if (!selectedSong) return;
   resizeCanvas();
-  score = 0; combo = 0; multiplier = 1; lives = DIFF[difficulty].livesStart; stageIdx = 0;
-  stageBeat = 0; stageClearing = false; stageHits = 0; stageTotal = 0;
-  objects = []; particles = []; floatTexts = [];
-  playerLane = 1; hitFlash = 0; shakeX = 0; shakeY = 0; bgPulse = 0;
-  document.getElementById('sv').textContent = 0;
-  document.getElementById('cv').textContent = 0;
-  document.getElementById('mv').textContent = 'x1';
-  document.getElementById('lv').textContent = DIFF[difficulty].livesStart;
-  document.getElementById('stv').textContent = 1;
-  document.getElementById('grade-display').textContent = '—';
-  document.getElementById('grade-display').style.color = '#fff';
-  const baseBpm0 = customBpm > 0 ? customBpm : STAGES[0].bpm;
-  beatInt = 60000 / (baseBpm0 * DIFF[difficulty].bpmMult);
+  activeStages = [...selectedSong.stages];
+  score=0; combo=0; multiplier=1; lives=DIFF[difficulty].livesStart;
+  stageIdx=0; stageBeat=0; stageClearing=false; stageHits=0; stageTotal=0;
+  objects=[]; particles=[]; floatTexts=[]; playerLane=1;
+  hitFlash=0; shakeX=0; shakeY=0; bgPulse=0;
+  ['sv','cv'].forEach(id=>document.getElementById(id).textContent=0);
+  document.getElementById('lv').textContent=lives;
+  document.getElementById('mv').textContent='x1';
+  document.getElementById('stv').textContent=1;
+  document.getElementById('grade-display').textContent='—';
+  document.getElementById('grade-display').style.color='#fff';
+  beatInt=60000/(selectedSong.bpm*DIFF[difficulty].bpmMult);
   setMsg('★ 별은 피하고   ● 초록 원은 먹으세요!  콤보 쌓으면 배율 UP!');
-  document.getElementById('start-btn').textContent = '재시작';
-  document.getElementById('stop-btn').style.display = 'inline-block';
-  document.getElementById('diff-bar').style.display = 'none';
-  document.getElementById('diff-desc').style.display = 'none';
-  state = 'playing'; lastBeat = performance.now();
+  document.getElementById('start-btn').textContent='재시작';
+  document.getElementById('stop-btn').style.display='inline-block';
+  document.getElementById('diff-bar').style.display='none';
+  document.getElementById('diff-desc').style.display='none';
+  document.getElementById('song-bar').style.display='none';
+  state='playing'; lastBeat=performance.now();
   startAudio();
   resumeYouTube();
-  showBanner('STAGE 1', STAGES[0].name, STAGES[0].color, 1600);
+  showBanner(`STAGE 1`,activeStages[0].name,activeStages[0].color,1600);
   requestAnimationFrame(loop);
 }
-
-function stopYouTube() {
-  const iframe = document.querySelector('#yt-iframe-container iframe');
-  if (iframe) {
-    // src를 비워서 재생 즉시 중단
-    const src = iframe.src;
-    iframe.src = '';
-    iframe._lastSrc = src;
-  }
-}
-
-function resumeYouTube() {
-  const iframe = document.querySelector('#yt-iframe-container iframe');
-  if (iframe && iframe._lastSrc) iframe.src = iframe._lastSrc;
-}
-
-function endGame(clear = false) {
-  state = 'idle'; cancelAnimationFrame(animId);
+function endGame(clear=false) {
+  state='idle'; cancelAnimationFrame(animId);
   stopYouTube();
-  const dodgeRatio = stageTotal > 0 ? 1 - stageHits / stageTotal : 1;
-  const { g, color } = calcGrade(dodgeRatio);
-  setMsg(clear ? `ALL CLEAR! 최종 점수: ${score}점  등급: ${g}` : `게임 오버! 점수: ${score}점  등급: ${g}`);
-  document.getElementById('stop-btn').style.display = 'none';
-  document.getElementById('diff-bar').style.display = 'flex';
-  document.getElementById('diff-desc').style.display = 'block';
-  ctx.fillStyle = 'rgba(0,0,0,.75)'; ctx.fillRect(0, 0, W, H); ctx.textAlign = 'center';
-  ctx.fillStyle = clear ? '#FFD700' : '#AFA9EC';
-  ctx.font = `700 ${Math.round(W * .065)}px sans-serif`;
-  ctx.fillText(clear ? 'ALL CLEAR!' : 'GAME OVER', W / 2, H / 2 - H * .1);
-  ctx.font = `600 ${Math.round(W * .1)}px sans-serif`;
-  ctx.fillStyle = color; ctx.fillText(g, W / 2, H / 2 + H * .01);
-  ctx.font = `${Math.round(W * .04)}px sans-serif`; ctx.fillStyle = '#aaa';
-  ctx.fillText(`${score}점`, W / 2, H / 2 + H * .1);
+  const dodgeRatio=stageTotal>0?1-stageHits/stageTotal:1;
+  const { g, color }=calcGrade(dodgeRatio);
+  setMsg((clear?'ALL CLEAR! ':'게임 오버! ')+`점수: ${score}점  등급: ${g}`);
+  document.getElementById('stop-btn').style.display='none';
+  document.getElementById('diff-bar').style.display='flex';
+  document.getElementById('diff-desc').style.display='block';
+  document.getElementById('song-bar').style.display='block';
+  ctx.fillStyle='rgba(0,0,0,.75)'; ctx.fillRect(0,0,W,H); ctx.textAlign='center';
+  ctx.fillStyle=clear?'#FFD700':'#AFA9EC'; ctx.font=`700 ${Math.round(W*.062)}px sans-serif`;
+  ctx.fillText(clear?'ALL CLEAR!':'GAME OVER',W/2,H/2-H*.1);
+  ctx.font=`700 ${Math.round(W*.1)}px sans-serif`; ctx.fillStyle=color; ctx.fillText(g,W/2,H/2+H*.01);
+  ctx.font=`${Math.round(W*.038)}px sans-serif`; ctx.fillStyle='#aaa'; ctx.fillText(`${score}점`,W/2,H/2+H*.1);
   stopAudio();
 }
+function stopYouTube() {
+  const iframe=document.querySelector('#yt-iframe-container iframe');
+  if (iframe) { iframe._lastSrc=iframe.src; iframe.src=''; }
+}
+function resumeYouTube() {
+  const iframe=document.querySelector('#yt-iframe-container iframe');
+  if (iframe&&iframe._lastSrc) iframe.src=iframe._lastSrc;
+}
 
-// BPM 입력
-document.getElementById('bpm-btn').addEventListener('click', () => {
-  const val = parseInt(document.getElementById('bpm-input').value);
-  if (!val || val < 60 || val > 220) {
-    document.getElementById('bpm-status').textContent = '60~220 사이로 입력하세요';
-    document.getElementById('bpm-status').style.color = '#E24B4A';
+// ─── 조작 ───
+function move(dir) {
+  if(state!=='playing')return;
+  const now=Date.now(); if(now-lastMoveTime<80)return;
+  lastMoveTime=now; playerLane=Math.max(0,Math.min(LANES-1,playerLane+dir));
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowLeft'||e.key==='a'||e.key==='A')move(-1);
+  if(e.key==='ArrowRight'||e.key==='d'||e.key==='D')move(1);
+});
+canvas.addEventListener('touchstart',e=>{touchStartX=e.touches[0].clientX;},{passive:true});
+canvas.addEventListener('touchend',e=>{
+  if(state!=='playing')return;
+  const dx=e.changedTouches[0].clientX-touchStartX,now=Date.now();
+  if(Math.abs(dx)<15&&now-lastMoveTime>150){
+    const rect=canvas.getBoundingClientRect(),tl=Math.floor((e.changedTouches[0].clientX-rect.left)/rect.width*LANES);
+    playerLane=tl!==playerLane?Math.max(0,Math.min(LANES-1,tl)):(playerLane===1?(Math.random()<.5?0:2):1);
+  } else if(dx<-20)move(-1); else if(dx>20)move(1);
+  lastMoveTime=Date.now();
+},{passive:true});
+canvas.addEventListener('click',e=>{
+  if(state!=='playing')return;
+  const rect=canvas.getBoundingClientRect(),tl=Math.floor((e.clientX-rect.left)/rect.width*LANES);
+  if(tl!==playerLane)playerLane=Math.max(0,Math.min(LANES-1,tl));
+});
+
+// ─── 오디오 ───
+function startAudio(){try{audioCtx=new(window.AudioContext||window.webkitAudioContext)();beatCount=0;}catch(e){}}
+function stopAudio(){if(beatTimer)clearTimeout(beatTimer);if(audioCtx){audioCtx.close();audioCtx=null;}}
+function scheduleBeatSound(){
+  if(!audioCtx||state!=='playing')return;
+  clearTimeout(beatTimer);
+  beatTimer=setTimeout(()=>{
+    if(state!=='playing')return;
+    const t=audioCtx.currentTime,pat=beatCount%4;
+    if(pat===0||pat===2){
+      const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+      o.connect(g);g.connect(audioCtx.destination);
+      o.frequency.setValueAtTime(pat===0?150:120,t);o.frequency.exponentialRampToValueAtTime(40,t+.1);
+      g.gain.setValueAtTime(ytActive?.07:.4,t);g.gain.exponentialRampToValueAtTime(.001,t+.2);
+      o.start(t);o.stop(t+.2);
+    }
+    if(!ytActive&&(pat===1||pat===3)){
+      const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+      o.type='triangle';o.frequency.value=[220,277,330,415][Math.floor(beatCount/4)%4];
+      o.connect(g);g.connect(audioCtx.destination);
+      g.gain.setValueAtTime(.06,t);g.gain.exponentialRampToValueAtTime(.001,t+.1);
+      o.start(t);o.stop(t+.12);
+    }
+    beatCount++;
+  }, beatInt*.05);
+}
+
+// ─── 곡 선택 UI ───
+let selectedSongIdx = -1;
+
+function buildSongList() {
+  const list = document.getElementById('song-list');
+  list.innerHTML = '';
+  SONG_LIST.forEach((song, i) => {
+    const thumb = song.ytId !== '__custom__'
+      ? `https://img.youtube.com/vi/${song.ytId}/mqdefault.jpg`
+      : 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="160" height="90" style="background:%231a1a2e"><text x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" fill="%23EF9F27" font-size="28">♪</text></svg>';
+    const card = document.createElement('div');
+    card.className = 'song-card';
+    card.dataset.idx = i;
+    card.innerHTML = `<img src="${thumb}" alt="${song.title}" loading="lazy"/><div class="song-card-title">${song.title}</div><div class="song-card-bpm">${song.bpm} BPM · ${song.stages.length}스테이지</div>`;
+    card.addEventListener('click', () => selectSong(i));
+    list.appendChild(card);
+  });
+  // 선택 유지
+  if (selectedSongIdx >= 0 && selectedSongIdx < SONG_LIST.length) {
+    document.querySelectorAll('.song-card')[selectedSongIdx]?.classList.add('active');
+  }
+}
+
+function selectSong(idx) {
+  selectedSongIdx = idx;
+  selectedSong = SONG_LIST[idx];
+  document.querySelectorAll('.song-card').forEach((c,i)=>c.classList.toggle('active',i===idx));
+
+  const thumb = selectedSong.ytId !== '__custom__'
+    ? `https://img.youtube.com/vi/${selectedSong.ytId}/mqdefault.jpg`
+    : '';
+  document.getElementById('preview-img').src = thumb;
+  document.getElementById('preview-img').style.display = thumb ? 'block' : 'none';
+  document.getElementById('preview-title').textContent = selectedSong.title;
+  document.getElementById('preview-bpm').textContent = `${selectedSong.bpm} BPM · ${selectedSong.stages.length}스테이지`;
+  const stageNames = selectedSong.stages.map((s,i)=>`<b>${i+1}.</b> ${s.name}`).join(' → ');
+  document.getElementById('preview-pattern').innerHTML = stageNames;
+  document.getElementById('song-preview').style.display = 'flex';
+
+  // 유튜브 배경 로드 (커스텀은 없음)
+  const container = document.getElementById('yt-iframe-container');
+  container.innerHTML = '';
+  if (selectedSong.ytId && selectedSong.ytId !== '__custom__') {
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://www.youtube.com/embed/${selectedSong.ytId}?autoplay=0&controls=0&disablekb=1&fs=0&rel=0&playsinline=1&modestbranding=1&loop=1&playlist=${selectedSong.ytId}`;
+    iframe.allow = 'autoplay; encrypted-media';
+    container.appendChild(iframe);
+    ytActive = true;
+  } else {
+    ytActive = false;
+  }
+
+  document.getElementById('start-btn').disabled = false;
+  document.getElementById('start-btn').style.opacity = '1';
+  setMsg(`"${selectedSong.title}" 선택됨. 난이도 고르고 시작하세요!`);
+}
+
+// 삭제 버튼
+document.getElementById('preview-delete').addEventListener('click', () => {
+  if (selectedSongIdx < 0) return;
+  // 기본 내장곡은 삭제 불가
+  if (SONG_LIST[selectedSongIdx]._builtin) {
+    setMsg('기본 내장곡은 삭제할 수 없어요.'); return;
+  }
+  SONG_LIST.splice(selectedSongIdx, 1);
+  selectedSongIdx = -1; selectedSong = null;
+  document.getElementById('song-preview').style.display = 'none';
+  document.getElementById('yt-iframe-container').innerHTML = '';
+  ytActive = false;
+  document.getElementById('start-btn').disabled = true;
+  document.getElementById('start-btn').style.opacity = '.4';
+  buildSongList();
+  setMsg('곡이 삭제됐어요.');
+});
+
+// URL로 곡 추가 (oEmbed)
+function extractYtId(input) {
+  const m = input.match(/(?:v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/);
+  return m ? m[1] : null;
+}
+
+document.getElementById('add-btn').addEventListener('click', addSongFromUrl);
+document.getElementById('add-url').addEventListener('keydown', e => { if(e.key==='Enter') addSongFromUrl(); });
+
+async function addSongFromUrl() {
+  const input = document.getElementById('add-url').value.trim();
+  const status = document.getElementById('add-status');
+  if (!input) { status.textContent = 'URL을 입력해주세요'; status.style.color='#E24B4A'; return; }
+  const ytId = extractYtId(input);
+  if (!ytId) { status.textContent = '유효한 유튜브 URL이 아닙니다'; status.style.color='#E24B4A'; return; }
+
+  // 이미 있는지 확인
+  if (SONG_LIST.find(s => s.ytId === ytId)) {
+    status.textContent = '이미 추가된 곡이에요'; status.style.color='#EF9F27';
+    selectSong(SONG_LIST.findIndex(s=>s.ytId===ytId));
     return;
   }
-  customBpm = val;
-  // 게임 중이면 즉시 beatInt 갱신
-  if (state === 'playing') {
-    const base = customBpm + stageIdx * 8;
-    beatInt = 60000 / (base * DIFF[difficulty].bpmMult);
-  }
-  document.getElementById('bpm-status').textContent = `✓ ${val} BPM 적용됨`;
-  document.getElementById('bpm-status').style.color = '#1D9E75';
-});
-document.getElementById('bpm-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') document.getElementById('bpm-btn').click();
-});
 
-// 난이도 버튼
-const diffBtns = document.querySelectorAll('.diff-btn');
+  status.textContent = '정보 불러오는 중...'; status.style.color='#555';
+
+  try {
+    // oEmbed로 제목 가져오기
+    const res = await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${ytId}&format=json`);
+    if (!res.ok) throw new Error('fetch failed');
+    const data = await res.json();
+    const title = data.title || '제목 없음';
+
+    // BPM 입력 받기
+    const bpmInput = prompt(`"${title}"
+BPM을 입력해주세요 (모르면 120):`, '120');
+    if (!bpmInput) { status.textContent = '취소됐어요.'; return; }
+    const bpm = Math.max(60, Math.min(220, parseInt(bpmInput) || 120));
+
+    // 기본 패턴으로 곡 추가
+    const newSong = {
+      title,
+      ytId,
+      bpm,
+      stages: [
+        {
+          name: '스테이지 1',
+          totalBeats: 32,
+          color: '#534AB7',
+          pattern: (b) => {
+            const r = [];
+            if (b % 2 === 0) r.push({ lane: b % 3, type: 'bad' });
+            if (b % 8 === 5) r.push({ lane: 1, type: 'good' });
+            return r;
+          }
+        }
+      ]
+    };
+    SONG_LIST.push(newSong);
+    buildSongList();
+    selectSong(SONG_LIST.length - 1);
+    document.getElementById('add-url').value = '';
+    status.textContent = `✓ "${title}" 추가됨! 패턴 편집으로 커스텀 패턴을 만들어보세요.`;
+    status.style.color = '#1D9E75';
+  } catch(e) {
+    // oEmbed 실패 시 제목 없이 추가
+    const bpmInput = prompt('제목을 가져오지 못했어요.
+BPM을 입력해주세요 (모르면 120):', '120');
+    if (!bpmInput) { status.textContent = '취소됐어요.'; return; }
+    const bpm = Math.max(60, Math.min(220, parseInt(bpmInput) || 120));
+    const newSong = {
+      title: `유튜브 곡 (${ytId})`,
+      ytId, bpm,
+      stages: [{
+        name: '스테이지 1', totalBeats: 32, color: '#534AB7',
+        pattern: (b) => {
+          const r = [];
+          if (b % 2 === 0) r.push({ lane: b % 3, type: 'bad' });
+          if (b % 8 === 5) r.push({ lane: 1, type: 'good' });
+          return r;
+        }
+      }]
+    };
+    SONG_LIST.push(newSong);
+    buildSongList();
+    selectSong(SONG_LIST.length - 1);
+    document.getElementById('add-url').value = '';
+    status.textContent = `✓ 곡 추가됨 (제목 불러오기 실패)`;
+    status.style.color = '#EF9F27';
+  }
+}
+
+// 내장곡 표시
+SONG_LIST.forEach(s => s._builtin = true);
+buildSongList();
+
+// ─── 난이도 버튼 ───
 function selectDiff(d) {
   difficulty = d;
   const info = DIFF[d];
-  diffBtns.forEach(b => {
-    const active = b.dataset.d === d;
-    b.style.border = active ? `2px solid ${info.color}` : '1px solid #333';
-    b.style.background = active ? `rgba(${hexToRgb(info.color)},.25)` : 'rgba(255,255,255,.05)';
-    b.style.color = active ? info.color : '#666';
+  document.querySelectorAll('.diff-btn').forEach(b => {
+    const on = b.dataset.d===d;
+    b.style.border = on ? `2px solid ${info.color}` : '1px solid #333';
+    b.style.background = on ? `rgba(${hexToRgb(info.color)},.22)` : 'rgba(255,255,255,.05)';
+    b.style.color = on ? info.color : '#666';
   });
   document.getElementById('diff-desc').textContent = info.desc;
   document.getElementById('diff-desc').style.color = info.color;
 }
-diffBtns.forEach(b => b.addEventListener('click', () => selectDiff(b.dataset.d)));
-selectDiff('normal'); // 기본값
+document.querySelectorAll('.diff-btn').forEach(b=>b.addEventListener('click',()=>selectDiff(b.dataset.d)));
+selectDiff('normal');
 
 document.getElementById('start-btn').addEventListener('click', startGame);
-document.getElementById('stop-btn').addEventListener('click', () => endGame(false));
+document.getElementById('stop-btn').addEventListener('click', ()=>endGame(false));
 
-function move(dir) {
-  if (state !== 'playing') return;
-  const now = Date.now(); if (now - lastMoveTime < 80) return;
-  lastMoveTime = now; playerLane = Math.max(0, Math.min(LANES - 1, playerLane + dir));
-}
-document.addEventListener('keydown', e => {
-  if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') move(-1);
-  if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') move(1);
-});
-canvas.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
-canvas.addEventListener('touchend', e => {
-  if (state !== 'playing') return;
-  const dx = e.changedTouches[0].clientX - touchStartX, now = Date.now();
-  if (Math.abs(dx) < 15 && now - lastMoveTime > 150) {
-    const rect = canvas.getBoundingClientRect(), tl = Math.floor((e.changedTouches[0].clientX - rect.left) / rect.width * LANES);
-    playerLane = tl !== playerLane ? Math.max(0, Math.min(LANES - 1, tl)) : (playerLane === 1 ? (Math.random() < .5 ? 0 : 2) : 1);
-  } else if (dx < -20) move(-1); else if (dx > 20) move(1);
-  lastMoveTime = Date.now();
-}, { passive: true });
-canvas.addEventListener('click', e => {
-  if (state !== 'playing') return;
-  const rect = canvas.getBoundingClientRect(), tl = Math.floor((e.clientX - rect.left) / rect.width * LANES);
-  if (tl !== playerLane) playerLane = Math.max(0, Math.min(LANES - 1, tl));
-});
+// ─── 패턴 에디터 ───
+let edPattern = [], edBeats = 32, edBpm = 120;
 
-function extractYtId(input) {
-  const iframeSrc = input.match(/src="([^"]+)"/);
-  const url = iframeSrc ? iframeSrc[1] : input;
-  const m = url.match(/(?:v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/);
-  return m ? m[1] : null;
-}
-document.getElementById('yt-btn').addEventListener('click', () => {
-  const input = document.getElementById('yt-url').value.trim();
-  if (!input) { setMsg('URL을 입력해주세요'); return; }
-  const id = extractYtId(input);
-  if (!id) { setMsg('유효한 유튜브 URL이 아닙니다'); return; }
-  const container = document.getElementById('yt-iframe-container');
-  container.innerHTML = '';
-  const iframe = document.createElement('iframe');
-  iframe.src = `https://www.youtube.com/embed/${id}?autoplay=1&controls=0&disablekb=1&fs=0&rel=0&playsinline=1&modestbranding=1&loop=1&playlist=${id}`;
-  iframe.allow = 'autoplay; encrypted-media';
-  container.appendChild(iframe);
-  ytActive = true;
-  setMsg('연동됨! 시작하면 영상이 배경에 재생됩니다.');
-});
+function openEditor() { renderEditorGrid(); document.getElementById('editor-overlay').style.display='flex'; }
+function closeEditor() { document.getElementById('editor-overlay').style.display='none'; }
 
-function startAudio() { try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); beatCount = 0; } catch (e) { } }
-function stopAudio() { if (beatTimer) clearTimeout(beatTimer); if (audioCtx) { audioCtx.close(); audioCtx = null; } }
-
-function scheduleSingleBeat() {
-  if (!audioCtx || state !== 'playing') return;
-  clearTimeout(beatTimer);
-  beatTimer = setTimeout(() => {
-    if (state !== 'playing' || stageClearing) return;
-    const t = audioCtx.currentTime, pat = beatCount % 4;
-    if (pat === 0 || pat === 2) {
-      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-      o.connect(g); g.connect(audioCtx.destination);
-      o.frequency.setValueAtTime(pat === 0 ? 150 : 120, t);
-      o.frequency.exponentialRampToValueAtTime(40, t + .1);
-      g.gain.setValueAtTime(ytActive ? .07 : .4, t);
-      g.gain.exponentialRampToValueAtTime(.001, t + .2);
-      o.start(t); o.stop(t + .2);
-    }
-    if (!ytActive && (pat === 1 || pat === 3)) {
-      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-      o.type = 'triangle'; o.frequency.value = [220, 277, 330, 415][Math.floor(beatCount / 4) % 4];
-      o.connect(g); g.connect(audioCtx.destination);
-      g.gain.setValueAtTime(.06, t); g.gain.exponentialRampToValueAtTime(.001, t + .1);
-      o.start(t); o.stop(t + .12);
-    }
-    beatCount++;
-  }, beatInt * .05);
-}
-</script>
-</body>
-</html>
-<!-- PATTERN EDITOR -->
-<script>
-// ───────────────────────────────────────────
-// PATTERN EDITOR
-// ───────────────────────────────────────────
-let editorOpen = false;
-let editorPattern = []; // [{beat, lane, type}]
-let editorBeats = 32;
-let editorBpm = 120;
-let editorPreviewTimer = null;
-let customStageActive = false;
-
-function openEditor() {
-  editorOpen = true;
-  if (state === 'playing') endGame(false);
-  renderEditor();
-  document.getElementById('editor-overlay').style.display = 'flex';
-}
-function closeEditor() {
-  editorOpen = false;
-  document.getElementById('editor-overlay').style.display = 'none';
-}
-
-function renderEditor() {
+function renderEditorGrid() {
   const grid = document.getElementById('ed-grid');
   grid.innerHTML = '';
-  grid.style.gridTemplateColumns = `repeat(${editorBeats}, 1fr)`;
-
-  for (let b = 0; b < editorBeats; b++) {
-    for (let l = 0; l < 3; l++) {
+  grid.style.gridTemplateColumns = `repeat(${edBeats}, 1fr)`;
+  for (let b=0; b<edBeats; b++) {
+    for (let l=0; l<3; l++) {
       const cell = document.createElement('div');
       cell.className = 'ed-cell';
-      cell.dataset.beat = b;
-      cell.dataset.lane = l;
-      const item = editorPattern.find(p => p.beat === b && p.lane === l);
-      if (item) {
-        cell.classList.add(item.type === 'bad' ? 'ed-bad' : 'ed-good');
-        cell.textContent = item.type === 'bad' ? '★' : '●';
-      }
-      cell.addEventListener('click', () => toggleCell(b, l, cell));
-      cell.addEventListener('contextmenu', e => { e.preventDefault(); toggleCellType(b, l, cell); });
+      const item = edPattern.find(p=>p.beat===b&&p.lane===l);
+      if (item) { cell.classList.add(item.type==='bad'?'ed-bad':'ed-good'); cell.textContent=item.type==='bad'?'★':'●'; }
+      cell.addEventListener('click',()=>edToggle(b,l,cell));
+      cell.addEventListener('contextmenu',e=>{e.preventDefault();edToggleType(b,l,cell);});
       grid.appendChild(cell);
     }
   }
-  // beat numbers
   const nums = document.getElementById('ed-nums');
-  nums.innerHTML = '';
-  nums.style.gridTemplateColumns = `repeat(${editorBeats}, 1fr)`;
-  for (let b = 0; b < editorBeats; b++) {
-    const n = document.createElement('div');
-    n.style.cssText = 'font-size:9px;color:#444;text-align:center;line-height:16px;';
-    n.textContent = (b + 1) % 4 === 1 ? b + 1 : '';
+  nums.innerHTML = ''; nums.style.gridTemplateColumns=`repeat(${edBeats},1fr)`;
+  for (let b=0;b<edBeats;b++) {
+    const n=document.createElement('div');
+    n.style.cssText='font-size:8px;color:#333;text-align:center;';
+    n.textContent=(b+1)%4===1?b+1:'';
     nums.appendChild(n);
   }
 }
-
-function toggleCell(b, l, cell) {
-  const idx = editorPattern.findIndex(p => p.beat === b && p.lane === l);
-  if (idx === -1) {
-    editorPattern.push({ beat: b, lane: l, type: 'bad' });
-    cell.classList.add('ed-bad'); cell.textContent = '★';
-  } else {
-    editorPattern.splice(idx, 1);
-    cell.classList.remove('ed-bad', 'ed-good'); cell.textContent = '';
-  }
+function edToggle(b,l,cell) {
+  const idx=edPattern.findIndex(p=>p.beat===b&&p.lane===l);
+  if(idx===-1){edPattern.push({beat:b,lane:l,type:'bad'}); cell.classList.add('ed-bad'); cell.textContent='★';}
+  else{edPattern.splice(idx,1); cell.classList.remove('ed-bad','ed-good'); cell.textContent='';}
 }
-
-function toggleCellType(b, l, cell) {
-  const item = editorPattern.find(p => p.beat === b && p.lane === l);
-  if (!item) return;
-  item.type = item.type === 'bad' ? 'good' : 'bad';
-  cell.classList.toggle('ed-bad', item.type === 'bad');
-  cell.classList.toggle('ed-good', item.type === 'good');
-  cell.textContent = item.type === 'bad' ? '★' : '●';
+function edToggleType(b,l,cell) {
+  const item=edPattern.find(p=>p.beat===b&&p.lane===l);
+  if(!item)return;
+  item.type=item.type==='bad'?'good':'bad';
+  cell.classList.toggle('ed-bad',item.type==='bad'); cell.classList.toggle('ed-good',item.type==='good');
+  cell.textContent=item.type==='bad'?'★':'●';
 }
-
-function applyCustomStage() {
-  if (editorPattern.length === 0) {
-    alert('패턴을 하나 이상 추가해주세요!'); return;
-  }
-  const snap = [...editorPattern];
-  const totalB = editorBeats;
-  const bpmVal = editorBpm;
-
-  // 커스텀 스테이지를 STAGES[0] 자리에 삽입
-  STAGES.unshift({
-    name: '내 패턴',
+function edApply() {
+  if(edPattern.length===0){alert('패턴을 하나 이상 추가해주세요!');return;}
+  const snap=[...edPattern], total=edBeats, bpmVal=edBpm;
+  // 커스텀 곡을 SONG_LIST 맨 앞에 추가
+  const existing = SONG_LIST.findIndex(s=>s.ytId==='__custom__');
+  const customSong = {
+    title:'커스텀 패턴',
+    ytId:'__custom__',
     bpm: bpmVal,
-    totalBeats: totalB,
-    color: '#EF9F27',
-    pattern: (beat) => snap.filter(p => p.beat === beat).map(p => ({ lane: p.lane, type: p.type }))
-  });
-  customStageActive = true;
+    stages:[{
+      name:'내 패턴',
+      totalBeats:total,
+      color:'#EF9F27',
+      pattern:(beat)=>snap.filter(p=>p.beat===beat).map(p=>({lane:p.lane,type:p.type}))
+    }]
+  };
+  if(existing>=0) SONG_LIST[existing]=customSong;
+  else SONG_LIST.unshift(customSong);
+  buildSongList();
   closeEditor();
-  setMsg('커스텀 패턴 적용됨! 시작하면 내 패턴으로 플레이됩니다.');
+  selectSong(SONG_LIST.findIndex(s=>s.ytId==='__custom__'));
+  setMsg('커스텀 패턴 등록됨! 시작하면 내 패턴으로 플레이됩니다.');
 }
 
-function clearEditor() {
-  editorPattern = [];
-  renderEditor();
-}
-
-// Build editor DOM
-const overlay = document.createElement('div');
-overlay.id = 'editor-overlay';
-overlay.style.cssText = 'display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.92);z-index:1000;flex-direction:column;align-items:center;justify-content:center;padding:16px;';
-
-overlay.innerHTML = `
-<div style="width:100%;max-width:660px;background:#0d0d18;border:1px solid #222;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px;">
-  <div style="display:flex;justify-content:space-between;align-items:center;">
-    <span style="font-size:15px;font-weight:600;color:#fff;">패턴 에디터</span>
-    <button id="ed-close" style="background:none;border:none;color:#666;font-size:18px;cursor:pointer;">✕</button>
-  </div>
-
-  <div style="font-size:11px;color:#555;line-height:1.6;">
-    <b style="color:#aaa">왼쪽 클릭</b> — 셀 추가/제거 &nbsp;|&nbsp;
-    <b style="color:#aaa">오른쪽 클릭</b> — ★ 피하기 ↔ ● 먹기 전환<br>
-    레인: 위=왼쪽 &nbsp; 가운데=중앙 &nbsp; 아래=오른쪽
-  </div>
-
-  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-    <label style="font-size:11px;color:#666;">비트 수</label>
-    <input id="ed-beats" type="number" min="8" max="64" value="32" style="width:56px;font-size:12px;padding:5px 8px;background:#111;border:1px solid #222;border-radius:6px;color:#fff;outline:none;"/>
-    <label style="font-size:11px;color:#666;">BPM</label>
-    <input id="ed-bpm" type="number" min="60" max="220" value="120" style="width:64px;font-size:12px;padding:5px 8px;background:#111;border:1px solid #222;border-radius:6px;color:#fff;outline:none;"/>
-    <button id="ed-resize" style="font-size:11px;padding:5px 10px;background:#222;border:1px solid #333;border-radius:6px;color:#aaa;cursor:pointer;">그리드 갱신</button>
-    <div style="display:flex;gap:4px;margin-left:auto;">
-      <span style="font-size:10px;color:#555;line-height:26px;margin-right:4px;">범례</span>
-      <span style="font-size:11px;padding:3px 8px;background:rgba(216,90,48,.3);border:1px solid #D85A30;border-radius:5px;color:#D85A30;">★ 피하기</span>
-      <span style="font-size:11px;padding:3px 8px;background:rgba(29,158,117,.3);border:1px solid #1D9E75;border-radius:5px;color:#1D9E75;">● 먹기</span>
-    </div>
-  </div>
-
-  <div style="overflow-x:auto;background:#080810;border:1px solid #1a1a2e;border-radius:8px;padding:8px;">
-    <div style="font-size:10px;color:#444;margin-bottom:4px;padding-left:2px;">← 비트 순서 →</div>
-    <div id="ed-grid" style="display:grid;gap:3px;min-width:100%;"></div>
-    <div id="ed-nums" style="display:grid;gap:3px;margin-top:4px;min-width:100%;"></div>
-  </div>
-
-  <div style="display:flex;gap:8px;justify-content:flex-end;">
-    <button id="ed-clear" style="font-size:12px;padding:8px 16px;background:#1a1a2e;border:1px solid #333;border-radius:8px;color:#666;cursor:pointer;">초기화</button>
-    <button id="ed-apply" style="font-size:13px;padding:8px 20px;background:#EF9F27;border:none;border-radius:8px;color:#000;font-weight:600;cursor:pointer;">적용 후 플레이</button>
-  </div>
-</div>`;
-
-document.body.appendChild(overlay);
-
-// Editor button in ctrl area
-const edBtn = document.createElement('button');
-edBtn.textContent = '패턴 편집';
-edBtn.style.cssText = 'flex:1;padding:9px;font-size:13px;font-weight:500;background:rgba(239,159,39,.18);border:1px solid rgba(239,159,39,.45);border-radius:8px;color:#EF9F27;cursor:pointer;';
-edBtn.addEventListener('click', openEditor);
-document.getElementById('ctrl').appendChild(edBtn);
-
-// Editor CSS
-const edStyle = document.createElement('style');
-edStyle.textContent = `
-.ed-cell{width:100%;aspect-ratio:1;min-width:14px;border-radius:3px;border:1px solid #1a1a2e;background:#111;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:8px;transition:background .1s;}
-.ed-cell:hover{background:#1a1a2e;}
-.ed-bad{background:rgba(216,90,48,.35)!important;border-color:#D85A30!important;color:#D85A30;}
-.ed-good{background:rgba(29,158,117,.35)!important;border-color:#1D9E75!important;color:#1D9E75;}
-`;
-document.head.appendChild(edStyle);
-
-document.getElementById('ed-close').addEventListener('click', closeEditor);
-document.getElementById('ed-clear').addEventListener('click', clearEditor);
-document.getElementById('ed-apply').addEventListener('click', applyCustomStage);
-document.getElementById('ed-resize').addEventListener('click', () => {
-  editorBeats = Math.max(8, Math.min(64, parseInt(document.getElementById('ed-beats').value) || 32));
-  editorBpm   = Math.max(60, Math.min(220, parseInt(document.getElementById('ed-bpm').value) || 120));
-  editorPattern = editorPattern.filter(p => p.beat < editorBeats);
-  document.getElementById('ed-beats').value = editorBeats;
-  renderEditor();
+document.getElementById('ed-open-btn').addEventListener('click',openEditor);
+document.getElementById('ed-close').addEventListener('click',closeEditor);
+document.getElementById('ed-clear').addEventListener('click',()=>{edPattern=[];renderEditorGrid();});
+document.getElementById('ed-apply').addEventListener('click',edApply);
+document.getElementById('ed-resize').addEventListener('click',()=>{
+  edBeats=Math.max(8,Math.min(64,parseInt(document.getElementById('ed-beats').value)||32));
+  edBpm=Math.max(60,Math.min(220,parseInt(document.getElementById('ed-bpm').value)||120));
+  edPattern=edPattern.filter(p=>p.beat<edBeats);
+  renderEditorGrid();
 });
-
-renderEditor();
 </script>
+</body>
+</html>
