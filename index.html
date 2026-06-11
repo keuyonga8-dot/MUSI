@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Beat Dodge v4.2</title>
+<title>Beat Dodge v4.3</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;user-select:none;}
 body{background:#000;display:flex;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#fff;}
@@ -54,7 +54,7 @@ body{background:#000;display:flex;justify-content:center;font-family:-apple-syst
 </head>
 <body>
 <div id="gw">
-  <div id="ver">v4.2</div>
+  <div id="ver">v4.3</div>
   <div id="hud">
     <div class="stat">점수<b id="sv">0</b></div>
     <div class="stat">콤보<b id="cv">0</b></div>
@@ -101,37 +101,37 @@ body{background:#000;display:flex;justify-content:center;font-family:-apple-syst
 
 <script>
 const SONGS = [
-  { title:'Hugo 번외곡 | Melting down', ytId:'p4spKijRcAw', bpm:96, color:'#F4A0A0', totalBeats:992,
+  { title:'Hugo 번외곡 | Melting down', ytId:'p4spKijRcAw', beatsPerDiff:{easy:396,normal:595,hard:992}, bpm:96, color:'#F4A0A0', totalBeats:992,
     pattern(b,diff){const r=[],w=[0,1,2,1,0,2,0,1,2,0,2,1,2,0,1,0,2,1,1,0,2,1,2,0];const prog=b/992,base=prog<0.3?8:prog<0.7?6:4;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%16===13);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
-  { title:'Eden 번외곡 | Freedomless', ytId:'3PpedpOIW28', bpm:112, color:'#7DD3FC', totalBeats:1409,
+  { title:'Eden 번외곡 | Freedomless', ytId:'3PpedpOIW28', beatsPerDiff:{easy:563,normal:845,hard:1409}, bpm:112, color:'#7DD3FC', totalBeats:1409,
     pattern(b,diff){const r=[],w=[0,2,1,0,2,1,2,0,1,0,1,2,1,2,0,2,0,1,1,0,2,1,0,2];const prog=b/1409,base=prog<0.3?8:prog<0.7?5:3;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%14===11);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
-  { title:'Liam 번외곡 | Word', ytId:'KvWs7PzYgwY', bpm:118, color:'#1D9E75', totalBeats:1170,
+  { title:'Liam 번외곡 | Word', ytId:'KvWs7PzYgwY', beatsPerDiff:{easy:468,normal:702,hard:1170}, bpm:118, color:'#1D9E75', totalBeats:1170,
     pattern(b,diff){const r=[],w=[0,1,2,0,2,1,2,0,1,2,1,0,1,2,0,1,0,2,0,2,1,0,1,2];const prog=b/1170,base=prog<0.3?8:prog<0.7?6:4;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%12===9);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
-  { title:'Ash 번외곡 | 가까이 오지 말라고 말했잖아!', ytId:'umx2NvAX1qY', bpm:135, color:'#DC2626', totalBeats:1130,
+  { title:'Ash 번외곡 | 가까이 오지 말라고 말했잖아!', ytId:'umx2NvAX1qY', beatsPerDiff:{easy:452,normal:678,hard:1130}, bpm:135, color:'#DC2626', totalBeats:1130,
     pattern(b,diff){const r=[],w=[0,2,1,0,2,0,1,2,0,1,2,1,0,2,1,0,2,1,0,1,2,0,2,1];const prog=b/1130,base=prog<0.25?8:prog<0.5?5:prog<0.75?4:3;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%10===8);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
-  { title:'Santa 번외곡 | AWAKE', ytId:'590xIhxAoiU', bpm:128, color:'#F5C842', totalBeats:1189,
+  { title:'Santa 번외곡 | AWAKE', ytId:'590xIhxAoiU', beatsPerDiff:{easy:475,normal:713,hard:1189}, bpm:128, color:'#F5C842', totalBeats:1189,
     pattern(b,diff){const r=[],w=[0,1,2,0,1,2,1,0,2,1,2,0,0,2,1,0,2,1,2,0,1,2,1,0];const prog=b/1189,base=prog<0.3?8:prog<0.7?6:4;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%13===10);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
-  { title:'Syndrome 번외곡 | Set me free', ytId:'C2ccLTTkgIE', bpm:124, color:'#991B1B', totalBeats:1389,
+  { title:'Syndrome 번외곡 | Set me free', ytId:'C2ccLTTkgIE', beatsPerDiff:{easy:555,normal:833,hard:1389}, bpm:124, color:'#991B1B', totalBeats:1389,
     pattern(b,diff){const r=[],w=[2,0,1,2,0,2,1,0,2,0,1,2,1,2,0,1,0,2,0,1,2,1,0,2];const prog=b/1389,base=prog<0.3?8:prog<0.7?6:4;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%12===9);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
-  { title:'Pure 번외곡 | 맞아, 난 네가 좋아', ytId:'9teD-_Yx1Cg', bpm:102, color:'#F9A8D4', totalBeats:909,
+  { title:'Pure 번외곡 | 맞아, 난 네가 좋아', ytId:'9teD-_Yx1Cg', beatsPerDiff:{easy:363,normal:545,hard:909}, bpm:102, color:'#F9A8D4', totalBeats:909,
     pattern(b,diff){const r=[],w=[1,0,2,1,2,0,0,1,2,0,2,1,2,1,0,2,0,1,1,2,0,1,0,2];const prog=b/909,base=prog<0.3?9:prog<0.7?7:5;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%14===11);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
-  { title:'Amore 번외곡 | ROSA NERA', ytId:'HYcXDO0U1zY', bpm:118, color:'#84A840', totalBeats:1283,
+  { title:'Amore 번외곡 | ROSA NERA', ytId:'HYcXDO0U1zY', beatsPerDiff:{easy:513,normal:769,hard:1283}, bpm:118, color:'#84A840', totalBeats:1283,
     pattern(b,diff){const r=[],w=[0,2,0,1,2,1,2,0,1,0,2,1,1,0,2,1,2,0,2,1,0,2,0,1];const prog=b/1283,base=prog<0.3?8:prog<0.7?6:4;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%13===10);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
-  { title:'Overload 번외곡 | Feel it, electricity', ytId:'f-eWzfmaJlo', bpm:138, color:'#FDE047', totalBeats:1265,
+  { title:'Overload 번외곡 | Feel it, electricity', ytId:'f-eWzfmaJlo', beatsPerDiff:{easy:506,normal:759,hard:1265}, bpm:138, color:'#FDE047', totalBeats:1265,
     pattern(b,diff){const r=[],w=[0,2,1,2,0,1,0,1,2,1,0,2,2,0,1,0,2,1,1,2,0,2,1,0];const prog=b/1265,base=prog<0.25?7:prog<0.6?5:3;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%11===8);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
-  { title:'Stray 번외곡 | 아직은 아니야', ytId:'gkaB51mPqhA', bpm:95, color:'#C5B358', totalBeats:965,
+  { title:'Stray 번외곡 | 아직은 아니야', ytId:'gkaB51mPqhA', beatsPerDiff:{easy:386,normal:579,hard:965}, bpm:95, color:'#C5B358', totalBeats:965,
     pattern(b,diff){const r=[],w=[1,2,0,1,0,2,2,1,0,2,0,1,0,1,2,0,2,1,1,0,2,1,2,0];const prog=b/965,base=prog<0.4?9:prog<0.75?7:5;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%15===12);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
-  { title:'Vibe 번외곡 | Home sweet home', ytId:'juWw7PqGZiI', bpm:100, color:'#34D399', totalBeats:1062,
+  { title:'Vibe 번외곡 | Home sweet home', ytId:'juWw7PqGZiI', beatsPerDiff:{easy:425,normal:637,hard:1062}, bpm:100, color:'#34D399', totalBeats:1062,
     pattern(b,diff){const r=[],w=[0,1,2,1,0,1,2,0,1,0,2,1,1,2,0,2,1,0,0,2,1,2,0,1];const prog=b/1062,base=prog<0.3?9:prog<0.7?7:5;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%14===11);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
-  { title:'Pika 번외곡', ytId:'HFl4VqD4IcQ', bpm:110, color:'#FACC15', totalBeats:875,
+  { title:'Pika 번외곡', ytId:'HFl4VqD4IcQ', beatsPerDiff:{easy:350,normal:525,hard:875}, bpm:110, color:'#FACC15', totalBeats:875,
     pattern(b,diff){const r=[],w=[0,1,2,0,2,1,1,0,2,1,2,0,2,0,1,2,1,0,0,2,1,0,1,2];const prog=b/875,base=prog<0.3?8:prog<0.7?6:4;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%13===10);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
-  { title:'Icarus | smiling', ytId:'y1gs8sPRe8s', bpm:105, color:'#7DD3FC', totalBeats:1115,
+  { title:'Icarus | smiling', ytId:'y1gs8sPRe8s', beatsPerDiff:{easy:446,normal:669,hard:1115}, bpm:105, color:'#7DD3FC', totalBeats:1115,
     pattern(b,diff){const r=[],w=[1,0,2,1,0,2,0,2,1,0,1,2,2,1,0,1,2,0,0,1,2,1,0,2];const prog=b/1115,base=prog<0.35?9:prog<0.7?7:5;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%15===12);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
-  { title:'Oasis 번외곡 | 오아시스', ytId:'2hpwi4MzPfg', bpm:108, color:'#38BDF8', totalBeats:877,
+  { title:'Oasis 번외곡 | 오아시스', ytId:'2hpwi4MzPfg', beatsPerDiff:{easy:351,normal:526,hard:877}, bpm:108, color:'#38BDF8', totalBeats:877,
     pattern(b,diff){const r=[],w=[0,2,1,0,1,2,2,0,1,2,0,1,1,2,0,0,1,2,1,0,2,0,2,1];const prog=b/877,base=prog<0.3?8:prog<0.7?6:4;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%12===9);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
-  { title:'Kato 번외곡 | Losing control', ytId:'hO3oQ7pmssQ', bpm:120, color:'#22C55E', totalBeats:1200,
+  { title:'Kato 번외곡 | Losing control', ytId:'hO3oQ7pmssQ', beatsPerDiff:{easy:480,normal:720,hard:1200}, bpm:120, color:'#22C55E', totalBeats:1200,
     pattern(b,diff){const r=[],w=[2,0,1,2,1,0,0,2,1,0,1,2,1,0,2,1,2,0,2,1,0,1,2,0];const prog=b/1200,base=prog<0.25?8:prog<0.6?6:4;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%13===10);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
-  { title:'Karma 번외곡 | ただの Karma', ytId:'weCSq9xCDEk', bpm:148, color:'#EAB308', totalBeats:1504,
+  { title:'Karma 번외곡 | ただの Karma', ytId:'weCSq9xCDEk', beatsPerDiff:{easy:601,normal:902,hard:1504}, bpm:148, color:'#EAB308', totalBeats:1504,
     pattern(b, diff) {
       const r = [];
       if(b===1) r.push({lane:1,type:'good'});
@@ -312,7 +312,7 @@ const SONGS = [
       return r;
     }
   },
-  { title:'Shane 번외곡 | Come closer, if you want', ytId:'8EogmcRw0UI', bpm:98, color:'#16A34A', totalBeats:1102,
+  { title:'Shane 번외곡 | Come closer, if you want', ytId:'8EogmcRw0UI', beatsPerDiff:{easy:441,normal:661,hard:1102}, bpm:98, color:'#16A34A', totalBeats:1102,
     pattern(b,diff){const r=[],w=[0,2,1,0,2,0,1,2,1,0,2,1,2,0,1,2,1,0,0,1,2,0,2,1];const prog=b/1102,base=prog<0.3?9:prog<0.65?7:5;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%14===11);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}}
 ];
 
@@ -387,10 +387,10 @@ function drawHUD(){
   ctx.fillStyle=`rgba(${hexRgb(sc)},.4)`;ctx.fillRect(0,H-4,W*Math.min(combo/20,1),4);
   for(let l=0;l<LANES;l++){ctx.fillStyle=l===playerLane?'rgba(127,119,221,.17)':'rgba(255,255,255,.02)';ctx.beginPath();ctx.roundRect(l*LW+4,H-PR*2.6,LW-8,PR*2.2,5);ctx.fill();}
   ctx.fillStyle='rgba(255,255,255,.04)';ctx.fillRect(0,0,W,3);
-  ctx.fillStyle=sc;ctx.fillRect(0,0,W*(selectedSong?stageBeat/selectedSong.totalBeats:0),3);
+  ctx.fillStyle=sc;ctx.fillRect(0,0,W*(selectedSong?stageBeat/(selectedSong.beatsPerDiff?selectedSong.beatsPerDiff[difficulty]:selectedSong.totalBeats):0),3);
   // 남은 시간
   if(selectedSong&&state==='playing'){
-    const remaining=Math.max(0,Math.ceil((selectedSong.totalBeats-stageBeat)*beatInt/1000));
+    const remaining=Math.max(0,Math.ceil(((selectedSong.beatsPerDiff?selectedSong.beatsPerDiff[difficulty]:selectedSong.totalBeats)-stageBeat)*beatInt/1000));
     const rm=Math.floor(remaining/60),rs=remaining%60;
     ctx.font=`${Math.max(9,Math.round(W*.018))}px sans-serif`;ctx.textAlign='right';ctx.textBaseline='top';
     ctx.fillStyle='rgba(255,255,255,.35)';ctx.fillText(`${rm}:${String(rs).padStart(2,'0')}`,W-8,24);
@@ -414,7 +414,7 @@ function update(now){
     lastBeat=now;stageBeat++;bgPulse=1;
     const items=selectedSong.pattern(stageBeat,difficulty);
     if(items.length>0)spawnFromPattern(items);
-    if(stageBeat>=selectedSong.totalBeats){stageClearing=true;setTimeout(()=>endGame(true),1200);}
+    if(stageBeat>=(selectedSong.beatsPerDiff?selectedSong.beatsPerDiff[difficulty]:selectedSong.totalBeats)){stageClearing=true;setTimeout(()=>endGame(true),1200);}
     scheduleBeat();
   }
   objects.forEach(o=>{o.y+=o.speed;o.pulse=bgPulse;});
