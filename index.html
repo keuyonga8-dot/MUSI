@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Beat Dodge v1.3</title>
+<title>Beat Dodge v1.4</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;user-select:none;}
 body{background:#000;display:flex;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#fff;}
@@ -25,17 +25,18 @@ body{background:#000;display:flex;justify-content:center;font-family:-apple-syst
 #result-score{font-size:28px;font-weight:600;}
 #result-detail{font-size:12px;color:#666;}
 /* 곡 목록 */
-#song-section{background:#0a0a0f;border-top:1px solid #1a1a2e;padding:10px 12px;}
-#song-label{font-size:11px;color:#444;margin-bottom:8px;}
-#song-list{display:flex;flex-direction:column;gap:4px;max-height:220px;overflow-y:auto;padding-right:4px;}
-#song-list::-webkit-scrollbar{width:3px;}
-#song-list::-webkit-scrollbar-thumb{background:#333;border-radius:2px;}
-.sc{display:flex;gap:10px;align-items:center;cursor:pointer;border-radius:8px;border:1px solid #1a1a2e;background:#111;padding:6px 8px;transition:border-color .15s;}
-.sc:hover{border-color:#534AB7;background:#161620;}.sc.active{border:1px solid #534AB7;background:rgba(83,74,183,.15);}
-.sc img{width:64px;flex:0 0 64px;aspect-ratio:16/9;object-fit:cover;display:block;background:#1a1a2e;border-radius:4px;}
-.sc-info{flex:1;min-width:0;}
-.sc-title{font-size:12px;color:#ccc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.sc-meta{font-size:10px;color:#555;margin-top:2px;}
+#song-section{background:#0a0a0f;border-top:1px solid #1a1a2e;padding:12px;}
+#song-label{font-size:11px;color:#444;margin-bottom:8px;letter-spacing:.04em;}
+#song-list{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;scroll-snap-type:x mandatory;}
+#song-list::-webkit-scrollbar{height:3px;}
+#song-list::-webkit-scrollbar-track{background:transparent;}
+#song-list::-webkit-scrollbar-thumb{background:#2a2a3a;border-radius:2px;}
+.sc{flex:0 0 auto;width:120px;cursor:pointer;border-radius:10px;border:1px solid #1e1e2e;background:#111;overflow:hidden;transition:border-color .15s,transform .15s;scroll-snap-align:start;}
+.sc:hover{border-color:#534AB7;transform:translateY(-2px);}
+.sc.active{border:1.5px solid #7F77DD;background:#15152a;}
+.sc img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:#1a1a2e;}
+.sc-title{font-size:10px;color:#ccc;padding:6px 7px 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
+.sc-meta{font-size:9px;color:#4a4a6a;padding:0 7px 6px;}
 #song-preview{display:none;margin-top:8px;background:#111;border:1px solid #1a1a2e;border-radius:8px;padding:10px;gap:10px;align-items:center;}
 #pv-img{width:88px;flex:0 0 88px;border-radius:6px;overflow:hidden;}
 #pv-img img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;}
@@ -57,7 +58,7 @@ body{background:#000;display:flex;justify-content:center;font-family:-apple-syst
 </head>
 <body>
 <div id="gw">
-  <div id="ver">v1.3</div>
+  <div id="ver">v1.4</div>
   <div id="hud">
     <div class="stat">점수<b id="sv">0</b></div>
     <div class="stat">콤보<b id="cv">0</b></div>
@@ -509,10 +510,9 @@ function buildSongList(){
     const img=document.createElement('img');
     img.src=song.ytId?`https://img.youtube.com/vi/${song.ytId}/mqdefault.jpg`:'';
     img.alt=song.title;
-    const info=document.createElement('div');info.className='sc-info';
     const t=document.createElement('div');t.className='sc-title';t.textContent=song.title;
     const m=document.createElement('div');m.className='sc-meta';m.textContent=`${song.bpm} BPM`;
-    info.append(t,m);card.append(img,info);card.addEventListener('click',()=>selectSong(i,allSongs));list.appendChild(card);
+    card.append(img,t,m);card.addEventListener('click',()=>selectSong(i,allSongs));list.appendChild(card);
   });
 }
 function selectSong(idx,allSongs){
