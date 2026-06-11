@@ -430,7 +430,6 @@ function startGame(){
   document.getElementById('cv').textContent=0;
   document.getElementById('lv').textContent=lives;
   document.getElementById('mv').textContent='x1';
-  document.getElementById('stv').textContent='—';
   document.getElementById('grade-display').textContent='—';
   document.getElementById('grade-display').style.color='#fff';
   beatInt=60000/(selectedSong.bpm*DIFF[difficulty].bpmMult);
@@ -453,7 +452,6 @@ function endGame(clear=false){
   document.getElementById('sv').textContent=0;
   document.getElementById('cv').textContent=0;
   document.getElementById('mv').textContent='x1';
-  document.getElementById('stv').textContent=1;
   document.getElementById('lv').textContent='—';
   document.getElementById('grade-display').textContent='—';
   document.getElementById('grade-display').style.color='#fff';
