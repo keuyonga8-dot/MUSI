@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Beat Dodge v5.5</title>
+<title>Beat Dodge v5.7</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;user-select:none;}
 body{background:#000;display:flex;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#fff;}
@@ -54,7 +54,7 @@ body{background:#000;display:flex;justify-content:center;font-family:-apple-syst
 </head>
 <body>
 <div id="gw">
-  <div id="ver">v5.5</div>
+  <div id="ver">v5.7</div>
   <div id="hud">
     <div class="stat">점수<b id="sv">0</b></div>
     <div class="stat">콤보<b id="cv">0</b></div>
@@ -100,42 +100,48 @@ body{background:#000;display:flex;justify-content:center;font-family:-apple-syst
 </div>
 
 <script>
+// ──────────────────────────────────────────────────────────
+// FIX #2 & #4: laneLastBeat와 karmaBadCount를 SONGS 선언보다
+// 앞에 배치 → TDZ 없음, pattern() 내에서 안전하게 참조 가능
+// ──────────────────────────────────────────────────────────
+let laneLastBeat = [0, 0, 0];
+let karmaBadCount = 0; // FIX #4: Karma 패턴 bad 카운터를 외부 상태로 분리
+
 const SONGS = [
   { title:'Hugo 번외곡 | Melting down', ytId:'p4spKijRcAw', beatsPerDiff:{easy:396,normal:595,hard:992}, bpm:96, color:'#F4A0A0', totalBeats:992,
-    pattern(b,diff){const r=[],w=[0,1,2,1,0,2,0,1,2,0,2,1,2,0,1,0,2,1,1,0,2,1,2,0];const prog=b/992,base=prog<0.3?8:prog<0.7?6:4;const cd=diff==='easy'?10:diff==='hard'?3:6;const goodBeat=diff==='hard'?(b%8===5):(b%16===13);if(goodBeat){r.push({lane:w[b%24],type:'good'});laneLastBeat[w[b%24]]=b;}else{const ready=[0,1,2].filter(l=>b-laneLastBeat[l]>=cd);if(ready.length>0){const lane=ready.reduce((a,l)=>laneLastBeat[l]<laneLastBeat[a]?l:a);r.push({lane,type:'bad'});laneLastBeat[lane]=b;}}return r;}},
+    pattern(b,diff){const r=[],w=[0,1,2,1,0,2,0,1,2,0,2,1,2,0,1,0,2,1,1,0,2,1,2,0];const prog=b/992;const cd=diff==='easy'?10:diff==='hard'?3:6;const goodBeat=diff==='hard'?(b%8===5):(b%16===13);if(goodBeat){r.push({lane:w[b%24],type:'good'});laneLastBeat[w[b%24]]=b;}else{const ready=[0,1,2].filter(l=>b-laneLastBeat[l]>=cd);if(ready.length>0){const lane=ready.reduce((a,l)=>laneLastBeat[l]<laneLastBeat[a]?l:a);r.push({lane,type:'bad'});laneLastBeat[lane]=b;}}return r;}},
   { title:'Eden 번외곡 | Freedomless', ytId:'3PpedpOIW28', beatsPerDiff:{easy:563,normal:845,hard:1409}, bpm:112, color:'#7DD3FC', totalBeats:1409,
-    pattern(b,diff){const r=[],w=[0,2,1,0,2,1,2,0,1,0,1,2,1,2,0,2,0,1,1,0,2,1,0,2];const prog=b/1409,base=prog<0.3?8:prog<0.7?5:3;const cd=diff==='easy'?10:diff==='hard'?3:6;const goodBeat=diff==='hard'?(b%7===4):(b%14===11);if(goodBeat){r.push({lane:w[b%24],type:'good'});laneLastBeat[w[b%24]]=b;}else{const ready=[0,1,2].filter(l=>b-laneLastBeat[l]>=cd);if(ready.length>0){const lane=ready.reduce((a,l)=>laneLastBeat[l]<laneLastBeat[a]?l:a);r.push({lane,type:'bad'});laneLastBeat[lane]=b;}}return r;}},
+    pattern(b,diff){const r=[],w=[0,2,1,0,2,1,2,0,1,0,1,2,1,2,0,2,0,1,1,0,2,1,0,2];const prog=b/1409;const cd=diff==='easy'?10:diff==='hard'?3:6;const goodBeat=diff==='hard'?(b%7===4):(b%14===11);if(goodBeat){r.push({lane:w[b%24],type:'good'});laneLastBeat[w[b%24]]=b;}else{const ready=[0,1,2].filter(l=>b-laneLastBeat[l]>=cd);if(ready.length>0){const lane=ready.reduce((a,l)=>laneLastBeat[l]<laneLastBeat[a]?l:a);r.push({lane,type:'bad'});laneLastBeat[lane]=b;}}return r;}},
   { title:'Liam 번외곡 | Word', ytId:'KvWs7PzYgwY', beatsPerDiff:{easy:468,normal:702,hard:1170}, bpm:118, color:'#E2E8F0', totalBeats:1170,
-    pattern(b,diff){const r=[],w=[0,1,2,0,2,1,2,0,1,2,1,0,1,2,0,1,0,2,0,2,1,0,1,2];const prog=b/1170,base=prog<0.3?8:prog<0.7?6:4;const cd=diff==='easy'?10:diff==='hard'?3:6;const goodBeat=diff==='hard'?(b%6===3):(b%12===9);if(goodBeat){r.push({lane:w[b%24],type:'good'});laneLastBeat[w[b%24]]=b;}else{const ready=[0,1,2].filter(l=>b-laneLastBeat[l]>=cd);if(ready.length>0){const lane=ready.reduce((a,l)=>laneLastBeat[l]<laneLastBeat[a]?l:a);r.push({lane,type:'bad'});laneLastBeat[lane]=b;}}return r;}},
+    pattern(b,diff){const r=[],w=[0,1,2,0,2,1,2,0,1,2,1,0,1,2,0,1,0,2,0,2,1,0,1,2];const prog=b/1170;const cd=diff==='easy'?10:diff==='hard'?3:6;const goodBeat=diff==='hard'?(b%6===3):(b%12===9);if(goodBeat){r.push({lane:w[b%24],type:'good'});laneLastBeat[w[b%24]]=b;}else{const ready=[0,1,2].filter(l=>b-laneLastBeat[l]>=cd);if(ready.length>0){const lane=ready.reduce((a,l)=>laneLastBeat[l]<laneLastBeat[a]?l:a);r.push({lane,type:'bad'});laneLastBeat[lane]=b;}}return r;}},
   { title:'Ash 번외곡 | 가까이 오지 말라고 말했잖아!', ytId:'umx2NvAX1qY', beatsPerDiff:{easy:452,normal:678,hard:1130}, bpm:135, color:'#DC2626', totalBeats:1130,
-    pattern(b,diff){const r=[],w=[0,2,1,0,2,0,1,2,0,1,2,1,0,2,1,0,2,1,0,1,2,0,2,1];const prog=b/1130,base=prog<0.25?8:prog<0.5?5:prog<0.75?4:3;const cd=diff==='easy'?10:diff==='hard'?3:6;const goodBeat=diff==='hard'?(b%5===3):(b%10===8);if(goodBeat){r.push({lane:w[b%24],type:'good'});laneLastBeat[w[b%24]]=b;}else{const ready=[0,1,2].filter(l=>b-laneLastBeat[l]>=cd);if(ready.length>0){const lane=ready.reduce((a,l)=>laneLastBeat[l]<laneLastBeat[a]?l:a);r.push({lane,type:'bad'});laneLastBeat[lane]=b;}}return r;}},
+    pattern(b,diff){const r=[],w=[0,2,1,0,2,0,1,2,0,1,2,1,0,2,1,0,2,1,0,1,2,0,2,1];const prog=b/1130;const cd=diff==='easy'?10:diff==='hard'?3:6;const goodBeat=diff==='hard'?(b%5===3):(b%10===8);if(goodBeat){r.push({lane:w[b%24],type:'good'});laneLastBeat[w[b%24]]=b;}else{const ready=[0,1,2].filter(l=>b-laneLastBeat[l]>=cd);if(ready.length>0){const lane=ready.reduce((a,l)=>laneLastBeat[l]<laneLastBeat[a]?l:a);r.push({lane,type:'bad'});laneLastBeat[lane]=b;}}return r;}},
   { title:'Santa 번외곡 | AWAKE', ytId:'590xIhxAoiU', beatsPerDiff:{easy:475,normal:713,hard:1189}, bpm:128, color:'#F5C842', totalBeats:1189,
-    pattern(b,diff){const r=[],w=[0,1,2,0,1,2,1,0,2,1,2,0,0,2,1,0,2,1,2,0,1,2,1,0];const prog=b/1189,base=prog<0.3?8:prog<0.7?6:4;const cd=diff==='easy'?10:diff==='hard'?3:6;const goodBeat=diff==='hard'?(b%6===4):(b%13===10);if(goodBeat){r.push({lane:w[b%24],type:'good'});laneLastBeat[w[b%24]]=b;}else{const ready=[0,1,2].filter(l=>b-laneLastBeat[l]>=cd);if(ready.length>0){const lane=ready.reduce((a,l)=>laneLastBeat[l]<laneLastBeat[a]?l:a);r.push({lane,type:'bad'});laneLastBeat[lane]=b;}}return r;}},
+    pattern(b,diff){const r=[],w=[0,1,2,0,1,2,1,0,2,1,2,0,0,2,1,0,2,1,2,0,1,2,1,0];const prog=b/1189;const cd=diff==='easy'?10:diff==='hard'?3:6;const goodBeat=diff==='hard'?(b%6===4):(b%13===10);if(goodBeat){r.push({lane:w[b%24],type:'good'});laneLastBeat[w[b%24]]=b;}else{const ready=[0,1,2].filter(l=>b-laneLastBeat[l]>=cd);if(ready.length>0){const lane=ready.reduce((a,l)=>laneLastBeat[l]<laneLastBeat[a]?l:a);r.push({lane,type:'bad'});laneLastBeat[lane]=b;}}return r;}},
   { title:'Syndrome 번외곡 | Set me free', ytId:'C2ccLTTkgIE', beatsPerDiff:{easy:555,normal:833,hard:1389}, bpm:124, color:'#991B1B', totalBeats:1389,
-    pattern(b,diff){const r=[],w=[2,0,1,2,0,2,1,0,2,0,1,2,1,2,0,1,0,2,0,1,2,1,0,2];const prog=b/1389,base=prog<0.3?8:prog<0.7?6:4;const cd=diff==='easy'?10:diff==='hard'?3:6;const goodBeat=diff==='hard'?(b%6===3):(b%12===9);if(goodBeat){r.push({lane:w[b%24],type:'good'});laneLastBeat[w[b%24]]=b;}else{const ready=[0,1,2].filter(l=>b-laneLastBeat[l]>=cd);if(ready.length>0){const lane=ready.reduce((a,l)=>laneLastBeat[l]<laneLastBeat[a]?l:a);r.push({lane,type:'bad'});laneLastBeat[lane]=b;}}return r;}},
+    pattern(b,diff){const r=[],w=[2,0,1,2,0,2,1,0,2,0,1,2,1,2,0,1,0,2,0,1,2,1,0,2];const prog=b/1389;const cd=diff==='easy'?10:diff==='hard'?3:6;const goodBeat=diff==='hard'?(b%6===3):(b%12===9);if(goodBeat){r.push({lane:w[b%24],type:'good'});laneLastBeat[w[b%24]]=b;}else{const ready=[0,1,2].filter(l=>b-laneLastBeat[l]>=cd);if(ready.length>0){const lane=ready.reduce((a,l)=>laneLastBeat[l]<laneLastBeat[a]?l:a);r.push({lane,type:'bad'});laneLastBeat[lane]=b;}}return r;}},
   { title:'Pure 번외곡 | 맞아, 난 네가 좋아', ytId:'9teD-_Yx1Cg', beatsPerDiff:{easy:363,normal:545,hard:909}, bpm:102, color:'#F9A8D4', totalBeats:909,
-    pattern(b,diff){const r=[],w=[1,0,2,1,2,0,0,1,2,0,2,1,2,1,0,2,0,1,1,2,0,1,0,2];const prog=b/909,base=prog<0.3?9:prog<0.7?7:5;const cd=diff==='easy'?10:diff==='hard'?3:6;const goodBeat=diff==='hard'?(b%7===4):(b%14===11);if(goodBeat){r.push({lane:w[b%24],type:'good'});laneLastBeat[w[b%24]]=b;}else{const ready=[0,1,2].filter(l=>b-laneLastBeat[l]>=cd);if(ready.length>0){const lane=ready.reduce((a,l)=>laneLastBeat[l]<laneLastBeat[a]?l:a);r.push({lane,type:'bad'});laneLastBeat[lane]=b;}}return r;}},
+    pattern(b,diff){const r=[],w=[1,0,2,1,2,0,0,1,2,0,2,1,2,1,0,2,0,1,1,2,0,1,0,2];const prog=b/909;const cd=diff==='easy'?10:diff==='hard'?3:6;const goodBeat=diff==='hard'?(b%7===4):(b%14===11);if(goodBeat){r.push({lane:w[b%24],type:'good'});laneLastBeat[w[b%24]]=b;}else{const ready=[0,1,2].filter(l=>b-laneLastBeat[l]>=cd);if(ready.length>0){const lane=ready.reduce((a,l)=>laneLastBeat[l]<laneLastBeat[a]?l:a);r.push({lane,type:'bad'});laneLastBeat[lane]=b;}}return r;}},
   { title:'Amore 번외곡 | ROSA NERA', ytId:'HYcXDO0U1zY', beatsPerDiff:{easy:513,normal:769,hard:1283}, bpm:118, color:'#84A840', totalBeats:1283,
-    pattern(b,diff){const r=[],w=[0,2,0,1,2,1,2,0,1,0,2,1,1,0,2,1,2,0,2,1,0,2,0,1];const prog=b/1283,base=prog<0.3?8:prog<0.7?6:4;const cd=diff==='easy'?10:diff==='hard'?3:6;const goodBeat=diff==='hard'?(b%6===4):(b%13===10);if(goodBeat){r.push({lane:w[b%24],type:'good'});laneLastBeat[w[b%24]]=b;}else{const ready=[0,1,2].filter(l=>b-laneLastBeat[l]>=cd);if(ready.length>0){const lane=ready.reduce((a,l)=>laneLastBeat[l]<laneLastBeat[a]?l:a);r.push({lane,type:'bad'});laneLastBeat[lane]=b;}}return r;}},
+    pattern(b,diff){const r=[],w=[0,2,0,1,2,1,2,0,1,0,2,1,1,0,2,1,2,0,2,1,0,2,0,1];const prog=b/1283;const cd=diff==='easy'?10:diff==='hard'?3:6;const goodBeat=diff==='hard'?(b%6===4):(b%13===10);if(goodBeat){r.push({lane:w[b%24],type:'good'});laneLastBeat[w[b%24]]=b;}else{const ready=[0,1,2].filter(l=>b-laneLastBeat[l]>=cd);if(ready.length>0){const lane=ready.reduce((a,l)=>laneLastBeat[l]<laneLastBeat[a]?l:a);r.push({lane,type:'bad'});laneLastBeat[lane]=b;}}return r;}},
   { title:'Overload 번외곡 | Feel it, electricity', ytId:'f-eWzfmaJlo', beatsPerDiff:{easy:506,normal:759,hard:1265}, bpm:138, color:'#FDE047', totalBeats:1265,
-    pattern(b,diff){const r=[],w=[0,2,1,2,0,1,0,1,2,1,0,2,2,0,1,0,2,1,1,2,0,2,1,0];const prog=b/1265,base=prog<0.25?7:prog<0.6?5:3;const cd=diff==='easy'?10:diff==='hard'?3:6;const goodBeat=diff==='hard'?(b%5===3):(b%11===8);if(goodBeat){r.push({lane:w[b%24],type:'good'});laneLastBeat[w[b%24]]=b;}else{const ready=[0,1,2].filter(l=>b-laneLastBeat[l]>=cd);if(ready.length>0){const lane=ready.reduce((a,l)=>laneLastBeat[l]<laneLastBeat[a]?l:a);r.push({lane,type:'bad'});laneLastBeat[lane]=b;}}return r;}},
+    pattern(b,diff){const r=[],w=[0,2,1,2,0,1,0,1,2,1,0,2,2,0,1,0,2,1,1,2,0,2,1,0];const prog=b/1265;const cd=diff==='easy'?10:diff==='hard'?3:6;const goodBeat=diff==='hard'?(b%5===3):(b%11===8);if(goodBeat){r.push({lane:w[b%24],type:'good'});laneLastBeat[w[b%24]]=b;}else{const ready=[0,1,2].filter(l=>b-laneLastBeat[l]>=cd);if(ready.length>0){const lane=ready.reduce((a,l)=>laneLastBeat[l]<laneLastBeat[a]?l:a);r.push({lane,type:'bad'});laneLastBeat[lane]=b;}}return r;}},
   { title:'Stray 번외곡 | 아직은 아니야', ytId:'gkaB51mPqhA', beatsPerDiff:{easy:386,normal:579,hard:965}, bpm:95, color:'#C5B358', totalBeats:965,
-    pattern(b,diff){const r=[],w=[1,2,0,1,0,2,2,1,0,2,0,1,0,1,2,0,2,1,1,0,2,1,2,0];const prog=b/965,base=prog<0.4?9:prog<0.75?7:5;const cd=diff==='easy'?10:diff==='hard'?3:6;const goodBeat=diff==='hard'?(b%7===5):(b%15===12);if(goodBeat){r.push({lane:w[b%24],type:'good'});laneLastBeat[w[b%24]]=b;}else{const ready=[0,1,2].filter(l=>b-laneLastBeat[l]>=cd);if(ready.length>0){const lane=ready.reduce((a,l)=>laneLastBeat[l]<laneLastBeat[a]?l:a);r.push({lane,type:'bad'});laneLastBeat[lane]=b;}}return r;}},
+    pattern(b,diff){const r=[],w=[1,2,0,1,0,2,2,1,0,2,0,1,0,1,2,0,2,1,1,0,2,1,2,0];const prog=b/965;const cd=diff==='easy'?10:diff==='hard'?3:6;const goodBeat=diff==='hard'?(b%7===5):(b%15===12);if(goodBeat){r.push({lane:w[b%24],type:'good'});laneLastBeat[w[b%24]]=b;}else{const ready=[0,1,2].filter(l=>b-laneLastBeat[l]>=cd);if(ready.length>0){const lane=ready.reduce((a,l)=>laneLastBeat[l]<laneLastBeat[a]?l:a);r.push({lane,type:'bad'});laneLastBeat[lane]=b;}}return r;}},
   { title:'Vibe 번외곡 | Home sweet home', ytId:'juWw7PqGZiI', beatsPerDiff:{easy:425,normal:637,hard:1062}, bpm:100, color:'#86EFAC', totalBeats:1062,
-    pattern(b,diff){const r=[],w=[0,1,2,1,0,1,2,0,1,0,2,1,1,2,0,2,1,0,0,2,1,2,0,1];const prog=b/1062,base=prog<0.3?9:prog<0.7?7:5;const cd=diff==='easy'?10:diff==='hard'?3:6;const goodBeat=diff==='hard'?(b%7===4):(b%14===11);if(goodBeat){r.push({lane:w[b%24],type:'good'});laneLastBeat[w[b%24]]=b;}else{const ready=[0,1,2].filter(l=>b-laneLastBeat[l]>=cd);if(ready.length>0){const lane=ready.reduce((a,l)=>laneLastBeat[l]<laneLastBeat[a]?l:a);r.push({lane,type:'bad'});laneLastBeat[lane]=b;}}return r;}},
+    pattern(b,diff){const r=[],w=[0,1,2,1,0,1,2,0,1,0,2,1,1,2,0,2,1,0,0,2,1,2,0,1];const prog=b/1062;const cd=diff==='easy'?10:diff==='hard'?3:6;const goodBeat=diff==='hard'?(b%7===4):(b%14===11);if(goodBeat){r.push({lane:w[b%24],type:'good'});laneLastBeat[w[b%24]]=b;}else{const ready=[0,1,2].filter(l=>b-laneLastBeat[l]>=cd);if(ready.length>0){const lane=ready.reduce((a,l)=>laneLastBeat[l]<laneLastBeat[a]?l:a);r.push({lane,type:'bad'});laneLastBeat[lane]=b;}}return r;}},
   { title:'Pika 번외곡', ytId:'HFl4VqD4IcQ', beatsPerDiff:{easy:350,normal:525,hard:875}, bpm:110, color:'#FACC15', totalBeats:875,
-    pattern(b,diff){const r=[],w=[0,1,2,0,2,1,1,0,2,1,2,0,2,0,1,2,1,0,0,2,1,0,1,2];const prog=b/875,base=prog<0.3?8:prog<0.7?6:4;const cd=diff==='easy'?10:diff==='hard'?3:6;const goodBeat=diff==='hard'?(b%6===4):(b%13===10);if(goodBeat){r.push({lane:w[b%24],type:'good'});laneLastBeat[w[b%24]]=b;}else{const ready=[0,1,2].filter(l=>b-laneLastBeat[l]>=cd);if(ready.length>0){const lane=ready.reduce((a,l)=>laneLastBeat[l]<laneLastBeat[a]?l:a);r.push({lane,type:'bad'});laneLastBeat[lane]=b;}}return r;}},
+    pattern(b,diff){const r=[],w=[0,1,2,0,2,1,1,0,2,1,2,0,2,0,1,2,1,0,0,2,1,0,1,2];const prog=b/875;const cd=diff==='easy'?10:diff==='hard'?3:6;const goodBeat=diff==='hard'?(b%6===4):(b%13===10);if(goodBeat){r.push({lane:w[b%24],type:'good'});laneLastBeat[w[b%24]]=b;}else{const ready=[0,1,2].filter(l=>b-laneLastBeat[l]>=cd);if(ready.length>0){const lane=ready.reduce((a,l)=>laneLastBeat[l]<laneLastBeat[a]?l:a);r.push({lane,type:'bad'});laneLastBeat[lane]=b;}}return r;}},
   { title:'Icarus | smiling', ytId:'y1gs8sPRe8s', beatsPerDiff:{easy:446,normal:669,hard:1115}, bpm:105, color:'#7DD3FC', totalBeats:1115,
-    pattern(b,diff){const r=[],w=[1,0,2,1,0,2,0,2,1,0,1,2,2,1,0,1,2,0,0,1,2,1,0,2];const prog=b/1115,base=prog<0.35?9:prog<0.7?7:5;const cd=diff==='easy'?10:diff==='hard'?3:6;const goodBeat=diff==='hard'?(b%7===5):(b%15===12);if(goodBeat){r.push({lane:w[b%24],type:'good'});laneLastBeat[w[b%24]]=b;}else{const ready=[0,1,2].filter(l=>b-laneLastBeat[l]>=cd);if(ready.length>0){const lane=ready.reduce((a,l)=>laneLastBeat[l]<laneLastBeat[a]?l:a);r.push({lane,type:'bad'});laneLastBeat[lane]=b;}}return r;}},
+    pattern(b,diff){const r=[],w=[1,0,2,1,0,2,0,2,1,0,1,2,2,1,0,1,2,0,0,1,2,1,0,2];const prog=b/1115;const cd=diff==='easy'?10:diff==='hard'?3:6;const goodBeat=diff==='hard'?(b%7===5):(b%15===12);if(goodBeat){r.push({lane:w[b%24],type:'good'});laneLastBeat[w[b%24]]=b;}else{const ready=[0,1,2].filter(l=>b-laneLastBeat[l]>=cd);if(ready.length>0){const lane=ready.reduce((a,l)=>laneLastBeat[l]<laneLastBeat[a]?l:a);r.push({lane,type:'bad'});laneLastBeat[lane]=b;}}return r;}},
   { title:'Oasis 번외곡 | 오아시스', ytId:'2hpwi4MzPfg', beatsPerDiff:{easy:351,normal:526,hard:877}, bpm:108, color:'#38BDF8', totalBeats:877,
-    pattern(b,diff){const r=[],w=[0,2,1,0,1,2,2,0,1,2,0,1,1,2,0,0,1,2,1,0,2,0,2,1];const prog=b/877,base=prog<0.3?8:prog<0.7?6:4;const cd=diff==='easy'?10:diff==='hard'?3:6;const goodBeat=diff==='hard'?(b%6===3):(b%12===9);if(goodBeat){r.push({lane:w[b%24],type:'good'});laneLastBeat[w[b%24]]=b;}else{const ready=[0,1,2].filter(l=>b-laneLastBeat[l]>=cd);if(ready.length>0){const lane=ready.reduce((a,l)=>laneLastBeat[l]<laneLastBeat[a]?l:a);r.push({lane,type:'bad'});laneLastBeat[lane]=b;}}return r;}},
+    pattern(b,diff){const r=[],w=[0,2,1,0,1,2,2,0,1,2,0,1,1,2,0,0,1,2,1,0,2,0,2,1];const prog=b/877;const cd=diff==='easy'?10:diff==='hard'?3:6;const goodBeat=diff==='hard'?(b%6===3):(b%12===9);if(goodBeat){r.push({lane:w[b%24],type:'good'});laneLastBeat[w[b%24]]=b;}else{const ready=[0,1,2].filter(l=>b-laneLastBeat[l]>=cd);if(ready.length>0){const lane=ready.reduce((a,l)=>laneLastBeat[l]<laneLastBeat[a]?l:a);r.push({lane,type:'bad'});laneLastBeat[lane]=b;}}return r;}},
   { title:'Kato 번외곡 | Losing control', ytId:'hO3oQ7pmssQ', beatsPerDiff:{easy:480,normal:720,hard:1200}, bpm:120, color:'#22C55E', totalBeats:1200,
-    pattern(b,diff){const r=[],w=[2,0,1,2,1,0,0,2,1,0,1,2,1,0,2,1,2,0,2,1,0,1,2,0];const prog=b/1200,base=prog<0.25?8:prog<0.6?6:4;const cd=diff==='easy'?10:diff==='hard'?3:6;const goodBeat=diff==='hard'?(b%6===4):(b%13===10);if(goodBeat){r.push({lane:w[b%24],type:'good'});laneLastBeat[w[b%24]]=b;}else{const ready=[0,1,2].filter(l=>b-laneLastBeat[l]>=cd);if(ready.length>0){const lane=ready.reduce((a,l)=>laneLastBeat[l]<laneLastBeat[a]?l:a);r.push({lane,type:'bad'});laneLastBeat[lane]=b;}}return r;}},
+    pattern(b,diff){const r=[],w=[2,0,1,2,1,0,0,2,1,0,1,2,1,0,2,1,2,0,2,1,0,1,2,0];const prog=b/1200;const cd=diff==='easy'?10:diff==='hard'?3:6;const goodBeat=diff==='hard'?(b%6===4):(b%13===10);if(goodBeat){r.push({lane:w[b%24],type:'good'});laneLastBeat[w[b%24]]=b;}else{const ready=[0,1,2].filter(l=>b-laneLastBeat[l]>=cd);if(ready.length>0){const lane=ready.reduce((a,l)=>laneLastBeat[l]<laneLastBeat[a]?l:a);r.push({lane,type:'bad'});laneLastBeat[lane]=b;}}return r;}},
   { title:'Karma 번외곡 | ただの Karma', ytId:'weCSq9xCDEk', beatsPerDiff:{easy:601,normal:902,hard:1504}, bpm:148, color:'#EAB308', totalBeats:1504,
     pattern(b, diff) {
-      // hard 기준 전체 패턴. easy는 bad를 2개 중 1개, normal은 3개 중 2개만 스폰
+      // FIX #4: badCount를 외부 karmaBadCount로 교체 → 매 호출마다 리셋되지 않음
       const r = [];
-      // [b, lane, type] — good은 항상 스폰, bad는 난이도에 따라 필터
       const allEvents = [
         [1,1,'good'],[2,1,'good'],[6,0,'bad'],[7,1,'bad'],[8,2,'bad'],[12,0,'good'],
         [13,0,'good'],[14,2,'bad'],[15,0,'bad'],[19,0,'good'],[21,1,'bad'],[22,1,'bad'],
@@ -182,22 +188,22 @@ const SONGS = [
         [564,0,'bad'],[567,0,'bad'],[569,1,'good'],[570,1,'bad'],[573,1,'bad'],[576,1,'bad'],
         [579,1,'bad'],[580,2,'good'],[582,2,'bad'],[585,2,'bad'],[588,0,'bad'],[591,0,'good'],
       ];
-      // bad 인덱스 카운터로 난이도별 필터: easy=짝수만(50%), normal=3개중2개(67%), hard=전부
-      let badCount=0;
       for(const [beat,lane,type] of allEvents){
-        if(beat!==b) continue;
-        if(type==='good'){r.push({lane,type});}
-        else{
-          badCount++;
-          const skip = diff==='easy'?(badCount%2===0):diff==='normal'?(badCount%3===0):false;
-          if(!skip) r.push({lane,type});
+        if(beat !== b) continue;
+        if(type === 'good'){
+          r.push({lane, type});
+        } else {
+          karmaBadCount++;
+          // FIX #4: 외부 카운터를 사용하므로 게임 전체에 걸쳐 누적됨
+          const skip = diff==='easy' ? (karmaBadCount%2===0) : diff==='normal' ? (karmaBadCount%3===0) : false;
+          if(!skip) r.push({lane, type});
         }
       }
       return r;
     }
   },
   { title:'Shane 번외곡 | Come closer, if you want', ytId:'8EogmcRw0UI', beatsPerDiff:{easy:441,normal:661,hard:1102}, bpm:98, color:'#BEF264', totalBeats:1102,
-    pattern(b,diff){const r=[],w=[0,2,1,0,2,0,1,2,1,0,2,1,2,0,1,2,1,0,0,1,2,0,2,1];const prog=b/1102,base=prog<0.3?9:prog<0.65?7:5;const cd=diff==='easy'?10:diff==='hard'?3:6;const goodBeat=diff==='hard'?(b%7===4):(b%14===11);if(goodBeat){r.push({lane:w[b%24],type:'good'});laneLastBeat[w[b%24]]=b;}else{const ready=[0,1,2].filter(l=>b-laneLastBeat[l]>=cd);if(ready.length>0){const lane=ready.reduce((a,l)=>laneLastBeat[l]<laneLastBeat[a]?l:a);r.push({lane,type:'bad'});laneLastBeat[lane]=b;}}return r;}}
+    pattern(b,diff){const r=[],w=[0,2,1,0,2,0,1,2,1,0,2,1,2,0,1,2,1,0,0,1,2,0,2,1];const prog=b/1102;const cd=diff==='easy'?10:diff==='hard'?3:6;const goodBeat=diff==='hard'?(b%7===4):(b%14===11);if(goodBeat){r.push({lane:w[b%24],type:'good'});laneLastBeat[w[b%24]]=b;}else{const ready=[0,1,2].filter(l=>b-laneLastBeat[l]>=cd);if(ready.length>0){const lane=ready.reduce((a,l)=>laneLastBeat[l]<laneLastBeat[a]?l:a);r.push({lane,type:'bad'});laneLastBeat[lane]=b;}}return r;}}
 ];
 
 const DIFF = {
@@ -212,31 +218,49 @@ function getTotalBeats(){
   return selectedSong.totalBeats||500;
 }
 
-function balancedLane(b, w, type){
-  // 가장 오래 안 나온 레인 우선, w배열로 타이브레이크
-  const preferred = w[b%24];
-  if(type==='good') return preferred; // good은 w배열 그대로
-  // bad는 가장 오래된 레인 우선
-  const ages = laneLastBeat.map((last,i)=>({lane:i, age:b-last}));
-  ages.sort((a,z)=>z.age-a.age);
-  // 최장 공백 레인, 단 preferred와 너무 다르면 절충
-  const oldest = ages[0].lane;
-  laneLastBeat[oldest] = b;
-  return oldest;
-}
 function freeLane(items,b){const bad=items.filter(i=>i.type==='bad').map(i=>i.lane);const free=[0,1,2].filter(l=>!bad.includes(l));if(free.length===0)return 1;const seq=[0,2,1,2,0,1,0,1,2,1,2,0,2,0,1,0,2,1,1,0,2,1,0,2];const opts=seq.filter(l=>free.includes(l));return opts[b%opts.length];}
 
 const canvas=document.getElementById('canvas');
 const ctx=canvas.getContext('2d');
 const LANES=3;
 let W,H,LW,PR,PY;
-function resizeCanvas(){const w=document.getElementById('canvas-wrap');W=w.clientWidth;H=w.clientHeight;canvas.width=W;canvas.height=H;LW=W/LANES;PR=Math.round(W*0.028);PY=H-Math.round(H*0.17);}
-window.addEventListener('load',resizeCanvas);
-window.addEventListener('resize',resizeCanvas);
-setTimeout(resizeCanvas,50);
+
+function resizeCanvas(){
+  const w=document.getElementById('canvas-wrap');
+  W=w.clientWidth; H=w.clientHeight;
+  canvas.width=W; canvas.height=H;
+  LW=W/LANES;
+  PR=Math.round(W*0.028);
+  PY=H-Math.round(H*0.17);
+}
+window.addEventListener('load', resizeCanvas);
+window.addEventListener('resize', resizeCanvas);
+// FIX #5: 초기 렌더링 전 resizeCanvas를 즉시 + setTimeout 두 번 실행해 PR/PY=0 방지
+resizeCanvas();
+setTimeout(resizeCanvas, 50);
 
 let state='idle',score=0,combo=0,multiplier=1,lives=6;
-let laneLastBeat=[0,0,0]; // 각 레인 마지막 스폰 비트
+let pausedAt=0; // 탭 숨김 시각 기록용
+
+// ── Page Visibility API: 탭 전환 시 자동 일시정지 / 재개 ──
+document.addEventListener('visibilitychange', () => {
+  if(state !== 'playing') return;
+  if(document.hidden) {
+    // 탭이 숨겨짐 → 타이머 멈추고 시각 기록
+    pausedAt = performance.now();
+    clearTimeout(beatTimer);
+    cancelAnimationFrame(animId);
+    setMsg('⏸ 일시정지 (탭을 다시 클릭하면 재개)');
+  } else {
+    // 탭이 다시 보임 → lastBeat를 앞으로 당겨 공백 시간 제거
+    const gap = performance.now() - pausedAt;
+    lastBeat += gap;           // 비트 타이머 보정
+    pausedAt = 0;
+    setMsg('★ 별은 피하고  ● 초록 원은 먹으세요!');
+    scheduleBeat();            // 오디오 재개
+    requestAnimationFrame(loop); // 렌더 재개
+  }
+});
 let stageBeat=0,stageClearing=false,stageHits=0,stageTotal=0;
 let objects=[],particles=[],floatTexts=[];
 let lastBeat=0,beatInt=750,bgPulse=0;
@@ -260,17 +284,14 @@ function showBanner(t,s,c,d=2000){bannerData={t,s,c};bannerAlpha=1;clearTimeout(
 function spawnFromPattern(items){
   const goods=items.filter(i=>i.type==='good');
   let bads=items.filter(i=>i.type==='bad');
-  // 현재 화면에 살아있는 bad 레인 파악
   const activeBadLanes=new Set(objects.filter(o=>o.type==='bad').map(o=>o.lane));
-  // 새 bad를 스폰했을 때 3레인 전부 막히지 않도록 필터
   const safeBads=[];
   for(const b of bads){
     const testLanes=new Set([...activeBadLanes,...safeBads.map(i=>i.lane),b.lane]);
-    if(testLanes.size<3) safeBads.push(b); // 추가해도 최대 2레인 이하면 허용
+    if(testLanes.size<3) safeBads.push(b);
   }
   const finalItems=[...safeBads,...goods];
   finalItems.forEach(i=>{
-    // 같은 레인 상단에 이미 오브젝트 있으면 스킵 (겹침 방지)
     if(objects.some(o=>o.lane===i.lane&&o.y<H*0.2)) return;
     objects.push({lane:i.lane,y:-20,r:i.type==='good'?PR*.65:PR*.85,type:i.type,color:i.type==='good'?'#1D9E75':selectedSong.color,speed:(H/320)*(selectedSong.bpm/80)*DIFF[difficulty].bpmMult,pulse:0});
     if(i.type==='bad')stageTotal++;
@@ -301,7 +322,6 @@ function drawHUD(){
   for(let l=0;l<LANES;l++){ctx.fillStyle=l===playerLane?'rgba(127,119,221,.17)':'rgba(255,255,255,.02)';ctx.beginPath();ctx.roundRect(l*LW+4,H-PR*2.6,LW-8,PR*2.2,5);ctx.fill();}
   ctx.fillStyle='rgba(255,255,255,.04)';ctx.fillRect(0,0,W,3);
   ctx.fillStyle=sc;ctx.fillRect(0,0,W*(selectedSong?stageBeat/getTotalBeats():0),3);
-  // 남은 시간
   if(selectedSong&&state==='playing'){
     const remaining=Math.max(0,Math.ceil((getTotalBeats()-stageBeat)*beatInt/1000));
     const rm=Math.floor(remaining/60),rs=remaining%60;
@@ -320,16 +340,29 @@ function drawBanner(){if(!bannerData||bannerAlpha<=0)return;ctx.save();ctx.globa
 function showResult(clear){const{g,c}=getGrade();document.getElementById('result-title').textContent=clear?'ALL CLEAR!':'GAME OVER';document.getElementById('result-title').style.color=clear?'#FFD700':'#aaa';document.getElementById('result-grade').textContent=g;document.getElementById('result-grade').style.color=c;document.getElementById('result-score').textContent=`${score.toLocaleString()}점`;const pct=stageTotal>0?Math.round((1-stageHits/stageTotal)*100):0;document.getElementById('result-detail').textContent=`회피율 ${pct}% · 최대 콤보 ${combo}`;document.getElementById('result-overlay').style.display='flex';}
 function hideResult(){document.getElementById('result-overlay').style.display='none';}
 
+// FIX #3: while 루프에서 scheduleBeat() 제거 → 루프 밖에서 단일 호출로 통합
 function update(now){
-  bgPulse*=.88;hitFlash=Math.max(0,hitFlash-.05);shakeX*=.7;shakeY*=.7;
-  if(bannerAlpha>0)bannerAlpha=Math.max(0,bannerAlpha-.007);
-  while(!stageClearing&&now-lastBeat>beatInt){
-    lastBeat+=beatInt;stageBeat++;bgPulse=1;
-    const items=selectedSong.pattern(stageBeat,difficulty);
-    if(items.length>0)spawnFromPattern(items);
-    if(stageBeat>=getTotalBeats()){stageClearing=true;setTimeout(()=>endGame(true),1200);break;}
-    scheduleBeat();
+  bgPulse*=.88; hitFlash=Math.max(0,hitFlash-.05); shakeX*=.7; shakeY*=.7;
+  if(bannerAlpha>0) bannerAlpha=Math.max(0,bannerAlpha-.007);
+
+  // 비트 처리: 놓친 비트를 따라잡되, scheduleBeat는 루프 밖에서 한 번만
+  let beatProcessed = false;
+  while(!stageClearing && now-lastBeat > beatInt){
+    lastBeat += beatInt;
+    stageBeat++;
+    bgPulse = 1;
+    beatProcessed = true;
+    const items = selectedSong.pattern(stageBeat, difficulty);
+    if(items.length > 0) spawnFromPattern(items);
+    if(stageBeat >= getTotalBeats()){
+      stageClearing = true;
+      setTimeout(()=>endGame(true), 1200);
+      break;
+    }
   }
+  // FIX #3: while 루프 종료 후 한 번만 스케줄 등록 (중복 등록 방지)
+  if(beatProcessed && !stageClearing) scheduleBeat();
+
   objects.forEach(o=>{o.y+=o.speed;o.pulse=bgPulse;});
   particles.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.1;p.life-=p.decay;});
   particles=particles.filter(p=>p.life>0);
@@ -359,7 +392,11 @@ function startGame(){
   cancelAnimationFrame(animId);hideResult();resizeCanvas();
   score=0;combo=0;multiplier=1;lives=DIFF[difficulty].livesStart;
   stageBeat=0;stageClearing=false;stageHits=0;stageTotal=0;
-  objects=[];particles=[];floatTexts=[];playerLane=1;laneLastBeat=[0,0,0];
+  objects=[];particles=[];floatTexts=[];playerLane=1;
+  // FIX #2: startGame 시 laneLastBeat 초기화 (전역 변수이므로 여기서 리셋)
+  laneLastBeat=[0,0,0];
+  // FIX #4: Karma 패턴 카운터도 게임 시작마다 리셋
+  karmaBadCount=0;
   hitFlash=0;shakeX=0;shakeY=0;bgPulse=0;bannerData=null;
   document.getElementById('sv').textContent=0;document.getElementById('cv').textContent=0;
   document.getElementById('lv').textContent=lives;document.getElementById('mv').textContent='x1';
@@ -374,6 +411,8 @@ function startGame(){
   state='playing';lastBeat=performance.now();
   stopAudio();startAudio();ytPlay();
   showBanner(selectedSong.title,'',selectedSong.color||'#534AB7',2000);
+  // FIX #1: 첫 번째 비트 오디오 스케줄을 startGame에서 명시적으로 등록
+  scheduleBeat();
   requestAnimationFrame(loop);
 }
 function endGame(clear=false){
@@ -401,8 +440,34 @@ canvas.addEventListener('click',e=>{if(state!=='playing')return;const rect=canva
 function startAudio(){try{audioCtx=new(window.AudioContext||window.webkitAudioContext)();beatCount=0;}catch(e){}}
 function stopAudio(){if(beatTimer)clearTimeout(beatTimer);if(audioCtx){audioCtx.close();audioCtx=null;}}
 function scheduleBeat(){
-  if(!audioCtx||state!=='playing')return;clearTimeout(beatTimer);
-  beatTimer=setTimeout(()=>{if(state!=='playing')return;const t=audioCtx.currentTime,p=beatCount%4;if(p===0||p===2){const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.frequency.setValueAtTime(p===0?150:120,t);o.frequency.exponentialRampToValueAtTime(40,t+.1);g.gain.setValueAtTime(ytActive?.07:.4,t);g.gain.exponentialRampToValueAtTime(.001,t+.2);o.start(t);o.stop(t+.2);}if(!ytActive&&(p===1||p===3)){const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='triangle';o.frequency.value=[220,277,330,415][Math.floor(beatCount/4)%4];o.connect(g);g.connect(audioCtx.destination);g.gain.setValueAtTime(.06,t);g.gain.exponentialRampToValueAtTime(.001,t+.1);o.start(t);o.stop(t+.12);}beatCount++;},beatInt*.05);
+  if(!audioCtx||state!=='playing')return;
+  clearTimeout(beatTimer);
+  beatTimer=setTimeout(()=>{
+    if(state!=='playing')return;
+    const t=audioCtx.currentTime,p=beatCount%4;
+    if(p===0||p===2){
+      const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+      o.connect(g);g.connect(audioCtx.destination);
+      o.frequency.setValueAtTime(p===0?150:120,t);
+      o.frequency.exponentialRampToValueAtTime(40,t+.1);
+      g.gain.setValueAtTime(ytActive?.07:.4,t);
+      g.gain.exponentialRampToValueAtTime(.001,t+.2);
+      o.start(t);o.stop(t+.2);
+    }
+    if(!ytActive&&(p===1||p===3)){
+      const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+      o.type='triangle';
+      o.frequency.value=[220,277,330,415][Math.floor(beatCount/4)%4];
+      o.connect(g);g.connect(audioCtx.destination);
+      g.gain.setValueAtTime(.06,t);
+      g.gain.exponentialRampToValueAtTime(.001,t+.1);
+      o.start(t);o.stop(t+.12);
+    }
+    beatCount++;
+    // FIX #1 & #3: scheduleBeat 체인은 오디오 콜백에서만 재귀 호출
+    // (update() while 루프에서 호출하지 않으므로 여기서 연속 예약)
+    scheduleBeat();
+  }, beatInt * 0.95); // 약간 일찍 스케줄해 드리프트 방지
 }
 
 (function(){const el=document.getElementById('song-list');let down=false,startX,scrollLeft;el.addEventListener('mousedown',e=>{down=true;startX=e.pageX-el.offsetLeft;scrollLeft=el.scrollLeft;el.style.cursor='grabbing';});el.addEventListener('mouseleave',()=>{down=false;el.style.cursor='grab';});el.addEventListener('mouseup',()=>{down=false;el.style.cursor='grab';});el.addEventListener('mousemove',e=>{if(!down)return;e.preventDefault();const x=e.pageX-el.offsetLeft;el.scrollLeft=scrollLeft-(x-startX)*1.5;});})();
