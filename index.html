@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Beat Dodge v4.7</title>
+<title>Beat Dodge v4.8</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;user-select:none;}
 body{background:#000;display:flex;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#fff;}
@@ -54,7 +54,7 @@ body{background:#000;display:flex;justify-content:center;font-family:-apple-syst
 </head>
 <body>
 <div id="gw">
-  <div id="ver">v4.7</div>
+  <div id="ver">v4.8</div>
   <div id="hud">
     <div class="stat">점수<b id="sv">0</b></div>
     <div class="stat">콤보<b id="cv">0</b></div>
@@ -133,186 +133,56 @@ const SONGS = [
     pattern(b,diff){const r=[],w=[2,0,1,2,1,0,0,2,1,0,1,2,1,0,2,1,2,0,2,1,0,1,2,0];const prog=b/1200,base=prog<0.25?8:prog<0.6?6:4;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%13===10);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}},
   { title:'Karma 번외곡 | ただの Karma', ytId:'weCSq9xCDEk', beatsPerDiff:{easy:601,normal:902,hard:1504}, bpm:148, color:'#EAB308', totalBeats:1504,
     pattern(b, diff) {
+      // hard 기준 전체 패턴. easy는 bad를 2개 중 1개, normal은 3개 중 2개만 스폰
       const r = [];
-      if(b===1) r.push({lane:1,type:'good'});
-      if(b===2) r.push({lane:1,type:'good'});
-      if(b===7) r.push({lane:1,type:'bad'});
-      if(b===12) r.push({lane:0,type:'good'});
-      if(b===13) r.push({lane:0,type:'good'});
-      if(b===14) r.push({lane:2,type:'bad'});
-      if(b===19) r.push({lane:0,type:'good'});
-      if(b===21) r.push({lane:1,type:'bad'});
-      if(b===28) r.push({lane:2,type:'bad'});
-      if(b===30) r.push({lane:2,type:'good'});
-      if(b===35) r.push({lane:1,type:'bad'});
-      if(b===41) r.push({lane:1,type:'good'});
-      if(b===42) r.push({lane:1,type:'bad'});
-      if(b===49) r.push({lane:2,type:'bad'});
-      if(b===52) r.push({lane:2,type:'good'});
-      if(b===56) r.push({lane:0,type:'bad'});
-      if(b===63) r.push({lane:0,type:'good'});
-      if(b===70) r.push({lane:2,type:'bad'});
-      if(b===74) r.push({lane:0,type:'good'});
-      if(b===77) r.push({lane:0,type:'bad'});
-      if(b===84) r.push({lane:0,type:'bad'});
-      if(b===85) r.push({lane:1,type:'good'});
-      if(b===91) r.push({lane:0,type:'bad'});
-      if(b===96) r.push({lane:1,type:'good'});
-      if(b===98) r.push({lane:0,type:'bad'});
-      if(b===105) r.push({lane:2,type:'bad'});
-      if(b===107) r.push({lane:1,type:'good'});
-      if(b===112) r.push({lane:2,type:'bad'});
-      if(b===118) r.push({lane:2,type:'good'});
-      if(b===119) r.push({lane:0,type:'bad'});
-      if(b===126) r.push({lane:2,type:'bad'});
-      if(b===129) r.push({lane:2,type:'good'});
-      if(b===133) r.push({lane:1,type:'bad'});
-      if(b===140) r.push({lane:2,type:'good'});
-      if(b===147) r.push({lane:1,type:'bad'});
-      if(b===151) r.push({lane:1,type:'good'});
-      if(b===154) r.push({lane:0,type:'bad'});
-      if(b===161) r.push({lane:1,type:'bad'});
-      if(b===162) r.push({lane:1,type:'good'});
-      if(b===168) r.push({lane:1,type:'bad'});
-      if(b===173) r.push({lane:0,type:'good'});
-      if(b===175) r.push({lane:1,type:'bad'});
-      if(b===182) r.push({lane:2,type:'bad'});
-      if(b===184) r.push({lane:2,type:'good'});
-      if(b===189) r.push({lane:1,type:'bad'});
-      if(b===195) r.push({lane:1,type:'good'});
-      if(b===196) r.push({lane:2,type:'bad'});
-      if(b===203) r.push({lane:1,type:'bad'});
-      if(b===206) r.push({lane:2,type:'good'});
-      if(b===210) r.push({lane:1,type:'bad'});
-      if(b===215) r.push({lane:0,type:'bad'});
-      if(b===217) r.push({lane:2,type:'good'});
-      if(b===220) r.push({lane:2,type:'bad'});
-      if(b===225) r.push({lane:2,type:'bad'});
-      if(b===228) r.push({lane:0,type:'good'});
-      if(b===230) r.push({lane:2,type:'bad'});
-      if(b===235) r.push({lane:0,type:'bad'});
-      if(b===239) r.push({lane:0,type:'good'});
-      if(b===240) r.push({lane:1,type:'bad'});
-      if(b===245) r.push({lane:0,type:'bad'});
-      if(b===250) r.push({lane:0,type:'good'});
-      if(b===255) r.push({lane:0,type:'bad'});
-      if(b===260) r.push({lane:2,type:'bad'});
-      if(b===261) r.push({lane:1,type:'good'});
-      if(b===265) r.push({lane:2,type:'bad'});
-      if(b===270) r.push({lane:2,type:'bad'});
-      if(b===272) r.push({lane:0,type:'good'});
-      if(b===275) r.push({lane:1,type:'bad'});
-      if(b===280) r.push({lane:2,type:'bad'});
-      if(b===283) r.push({lane:0,type:'good'});
-      if(b===285) r.push({lane:1,type:'bad'});
-      if(b===290) r.push({lane:0,type:'bad'});
-      if(b===294) r.push({lane:2,type:'good'});
-      if(b===295) r.push({lane:1,type:'bad'});
-      if(b===300) r.push({lane:0,type:'bad'});
-      if(b===305) r.push({lane:1,type:'good'});
-      if(b===310) r.push({lane:2,type:'bad'});
-      if(b===315) r.push({lane:1,type:'bad'});
-      if(b===316) r.push({lane:2,type:'good'});
-      if(b===320) r.push({lane:0,type:'bad'});
-      if(b===325) r.push({lane:1,type:'bad'});
-      if(b===327) r.push({lane:0,type:'good'});
-      if(b===330) r.push({lane:1,type:'bad'});
-      if(b===335) r.push({lane:0,type:'bad'});
-      if(b===338) r.push({lane:0,type:'good'});
-      if(b===340) r.push({lane:2,type:'bad'});
-      if(b===345) r.push({lane:2,type:'bad'});
-      if(b===349) r.push({lane:1,type:'good'});
-      if(b===350) r.push({lane:2,type:'bad'});
-      if(b===355) r.push({lane:0,type:'bad'});
-      if(b===360) r.push({lane:1,type:'good'});
-      if(b===365) r.push({lane:0,type:'bad'});
-      if(b===370) r.push({lane:0,type:'bad'});
-      if(b===371) r.push({lane:1,type:'good'});
-      if(b===375) r.push({lane:0,type:'bad'});
-      if(b===380) r.push({lane:2,type:'bad'});
-      if(b===382) r.push({lane:2,type:'good'});
-      if(b===385) r.push({lane:2,type:'bad'});
-      if(b===390) r.push({lane:2,type:'bad'});
-      if(b===393) r.push({lane:2,type:'good'});
-      if(b===395) r.push({lane:1,type:'bad'});
-      if(b===400) r.push({lane:2,type:'bad'});
-      if(b===404) r.push({lane:2,type:'good'});
-      if(b===405) r.push({lane:1,type:'bad'});
-      if(b===410) r.push({lane:0,type:'bad'});
-      if(b===415) r.push({lane:1,type:'good'});
-      if(b===417) r.push({lane:2,type:'bad'});
-      if(b===420) r.push({lane:0,type:'bad'});
-      if(b===423) r.push({lane:0,type:'bad'});
-      if(b===426) r.push({lane:1,type:'good'});
-      if(b===429) r.push({lane:1,type:'bad'});
-      if(b===432) r.push({lane:1,type:'bad'});
-      if(b===435) r.push({lane:1,type:'bad'});
-      if(b===437) r.push({lane:0,type:'good'});
-      if(b===438) r.push({lane:2,type:'bad'});
-      if(b===441) r.push({lane:2,type:'bad'});
-      if(b===444) r.push({lane:0,type:'bad'});
-      if(b===447) r.push({lane:0,type:'bad'});
-      if(b===448) r.push({lane:2,type:'good'});
-      if(b===450) r.push({lane:1,type:'bad'});
-      if(b===453) r.push({lane:1,type:'bad'});
-      if(b===456) r.push({lane:1,type:'bad'});
-      if(b===459) r.push({lane:1,type:'good'});
-      if(b===462) r.push({lane:2,type:'bad'});
-      if(b===465) r.push({lane:2,type:'bad'});
-      if(b===468) r.push({lane:0,type:'bad'});
-      if(b===470) r.push({lane:2,type:'good'});
-      if(b===471) r.push({lane:0,type:'bad'});
-      if(b===474) r.push({lane:1,type:'bad'});
-      if(b===477) r.push({lane:1,type:'bad'});
-      if(b===480) r.push({lane:1,type:'bad'});
-      if(b===481) r.push({lane:2,type:'good'});
-      if(b===483) r.push({lane:1,type:'bad'});
-      if(b===486) r.push({lane:2,type:'bad'});
-      if(b===489) r.push({lane:2,type:'bad'});
-      if(b===492) r.push({lane:0,type:'good'});
-      if(b===495) r.push({lane:0,type:'bad'});
-      if(b===498) r.push({lane:1,type:'bad'});
-      if(b===501) r.push({lane:1,type:'bad'});
-      if(b===503) r.push({lane:0,type:'good'});
-      if(b===504) r.push({lane:1,type:'bad'});
-      if(b===507) r.push({lane:1,type:'bad'});
-      if(b===510) r.push({lane:2,type:'bad'});
-      if(b===513) r.push({lane:2,type:'bad'});
-      if(b===514) r.push({lane:0,type:'good'});
-      if(b===516) r.push({lane:0,type:'bad'});
-      if(b===519) r.push({lane:0,type:'bad'});
-      if(b===522) r.push({lane:1,type:'bad'});
-      if(b===525) r.push({lane:1,type:'good'});
-      if(b===528) r.push({lane:1,type:'bad'});
-      if(b===531) r.push({lane:1,type:'bad'});
-      if(b===534) r.push({lane:2,type:'bad'});
-      if(b===536) r.push({lane:0,type:'good'});
-      if(b===537) r.push({lane:2,type:'bad'});
-      if(b===540) r.push({lane:0,type:'bad'});
-      if(b===543) r.push({lane:0,type:'bad'});
-      if(b===546) r.push({lane:1,type:'bad'});
-      if(b===547) r.push({lane:0,type:'good'});
-      if(b===549) r.push({lane:1,type:'bad'});
-      if(b===552) r.push({lane:1,type:'bad'});
-      if(b===555) r.push({lane:1,type:'bad'});
-      if(b===558) r.push({lane:2,type:'good'});
-      if(b===561) r.push({lane:2,type:'bad'});
-      if(b===564) r.push({lane:0,type:'bad'});
-      if(b===567) r.push({lane:0,type:'bad'});
-      if(b===569) r.push({lane:1,type:'good'});
-      if(b===570) r.push({lane:1,type:'bad'});
-      if(b===573) r.push({lane:1,type:'bad'});
-      if(b===576) r.push({lane:1,type:'bad'});
-      if(b===579) r.push({lane:1,type:'bad'});
-      if(b===580) r.push({lane:2,type:'good'});
-      if(b===582) r.push({lane:2,type:'bad'});
-      if(b===585) r.push({lane:2,type:'bad'});
-      if(b===588) r.push({lane:0,type:'bad'});
-      if(b===591) r.push({lane:0,type:'good'});
+      // [b, lane, type] — good은 항상 스폰, bad는 난이도에 따라 필터
+      const allEvents = [
+        [1,1,'good'],[2,1,'good'],[7,1,'bad'],[12,0,'good'],[13,0,'good'],[14,2,'bad'],
+        [19,0,'good'],[21,1,'bad'],[28,2,'bad'],[30,2,'good'],[35,1,'bad'],[41,1,'good'],
+        [42,1,'bad'],[49,2,'bad'],[52,2,'good'],[56,0,'bad'],[63,0,'good'],[70,2,'bad'],
+        [74,0,'good'],[77,0,'bad'],[84,0,'bad'],[85,1,'good'],[91,0,'bad'],[96,1,'good'],
+        [98,0,'bad'],[105,2,'bad'],[107,1,'good'],[112,2,'bad'],[118,2,'good'],[119,0,'bad'],
+        [126,2,'bad'],[129,2,'good'],[133,1,'bad'],[140,2,'good'],[147,1,'bad'],[151,1,'good'],
+        [154,0,'bad'],[161,1,'bad'],[162,1,'good'],[168,1,'bad'],[173,0,'good'],[175,1,'bad'],
+        [182,2,'bad'],[184,2,'good'],[189,1,'bad'],[195,1,'good'],[196,2,'bad'],[203,1,'bad'],
+        [206,2,'good'],[210,1,'bad'],[215,0,'bad'],[217,2,'good'],[220,2,'bad'],[225,2,'bad'],
+        [228,0,'good'],[230,2,'bad'],[235,0,'bad'],[239,0,'good'],[240,1,'bad'],[245,0,'bad'],
+        [250,0,'good'],[255,0,'bad'],[260,2,'bad'],[261,1,'good'],[265,2,'bad'],[270,2,'bad'],
+        [272,0,'good'],[275,1,'bad'],[280,2,'bad'],[283,0,'good'],[285,1,'bad'],[290,0,'bad'],
+        [294,2,'good'],[295,1,'bad'],[300,0,'bad'],[305,1,'good'],[310,2,'bad'],[315,1,'bad'],
+        [316,2,'good'],[320,0,'bad'],[325,1,'bad'],[327,0,'good'],[330,1,'bad'],[335,0,'bad'],
+        [338,0,'good'],[340,2,'bad'],[345,2,'bad'],[349,1,'good'],[350,2,'bad'],[355,0,'bad'],
+        [360,1,'good'],[365,0,'bad'],[370,0,'bad'],[371,1,'good'],[375,0,'bad'],[380,2,'bad'],
+        [382,2,'good'],[385,2,'bad'],[390,2,'bad'],[393,2,'good'],[395,1,'bad'],[400,2,'bad'],
+        [404,2,'good'],[405,1,'bad'],[410,0,'bad'],[415,1,'good'],[417,2,'bad'],[420,0,'bad'],
+        [423,0,'bad'],[426,1,'good'],[429,1,'bad'],[432,1,'bad'],[435,1,'bad'],[437,0,'good'],
+        [438,2,'bad'],[441,2,'bad'],[444,0,'bad'],[447,0,'bad'],[448,2,'good'],[450,1,'bad'],
+        [453,1,'bad'],[456,1,'bad'],[459,1,'good'],[462,2,'bad'],[465,2,'bad'],[468,0,'bad'],
+        [470,2,'good'],[471,0,'bad'],[474,1,'bad'],[477,1,'bad'],[480,1,'bad'],[481,2,'good'],
+        [483,1,'bad'],[486,2,'bad'],[489,2,'bad'],[492,0,'good'],[495,0,'bad'],[498,1,'bad'],
+        [501,1,'bad'],[503,0,'good'],[504,1,'bad'],[507,1,'bad'],[510,2,'bad'],[513,2,'bad'],
+        [514,0,'good'],[516,0,'bad'],[519,0,'bad'],[522,1,'bad'],[525,1,'good'],[528,1,'bad'],
+        [531,1,'bad'],[534,2,'bad'],[536,0,'good'],[537,2,'bad'],[540,0,'bad'],[543,0,'bad'],
+        [546,1,'bad'],[547,0,'good'],[549,1,'bad'],[552,1,'bad'],[555,1,'bad'],[558,2,'good'],
+        [561,2,'bad'],[564,0,'bad'],[567,0,'bad'],[569,1,'good'],[570,1,'bad'],[573,1,'bad'],
+        [576,1,'bad'],[579,1,'bad'],[580,2,'good'],[582,2,'bad'],[585,2,'bad'],[588,0,'bad'],
+        [591,0,'good']
+      ];
+      // bad 인덱스 카운터로 난이도별 필터: easy=짝수만(50%), normal=3개중2개(67%), hard=전부
+      let badCount=0;
+      for(const [beat,lane,type] of allEvents){
+        if(beat!==b) continue;
+        if(type==='good'){r.push({lane,type});}
+        else{
+          badCount++;
+          const skip = diff==='easy'?(badCount%2===0):diff==='normal'?(badCount%3===0):false;
+          if(!skip) r.push({lane,type});
+        }
+      }
       return r;
     }
   },
-  { title:'Shane 번외곡 | Come closer, if you want', ytId:'8EogmcRw0UI', beatsPerDiff:{easy:441,normal:661,hard:1102}, bpm:98, color:'#166534', totalBeats:1102,
+  { title:'Shane 번외곡 | Come closer, if you want', ytId:'8EogmcRw0UI', beatsPerDiff:{easy:441,normal:661,hard:1102}, bpm:98, color:'#BEF264', totalBeats:1102,
     pattern(b,diff){const r=[],w=[0,2,1,0,2,0,1,2,1,0,2,1,2,0,1,2,1,0,0,1,2,0,2,1];const prog=b/1102,base=prog<0.3?9:prog<0.65?7:5;const gap=diff==='easy'?base+3:diff==='hard'?Math.max(2,base-2):base;const goodBeat=(b%14===11);if(!goodBeat&&b%gap===0)r.push({lane:w[b%24],type:'bad'});if(goodBeat)r.push({lane:w[b%24],type:'good'});return r;}}
 ];
 
@@ -351,7 +221,7 @@ let difficulty='normal';
 let selectedSong=null,selectedIdx=-1;
 let bannerData=null,bannerAlpha=0,bannerTid=0;
 
-function hexRgb(h){return[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)].join(',');}
+function hexRgb(h){if(h.length===4)h='#'+h[1]+h[1]+h[2]+h[2]+h[3]+h[3];return[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)].join(',');}
 function calcGrade(r){if(r>=.95)return{g:'S',c:'#FFD700'};if(r>=.85)return{g:'A',c:'#AFA9EC'};if(r>=.70)return{g:'B',c:'#1D9E75'};if(r>=.50)return{g:'C',c:'#D85A30'};return{g:'D',c:'#E24B4A'};}
 function getGrade(){if(stageTotal===0)return{g:'—',c:'#555'};const dodged=1-stageHits/stageTotal;const penalty=lives<=0?0.6:1.0;return calcGrade(Math.max(0,dodged*penalty));}
 function updMult(){multiplier=combo>=20?4:combo>=10?3:combo>=5?2:1;document.getElementById('mv').textContent=`x${multiplier}`;}
@@ -417,7 +287,7 @@ function update(now){
   bgPulse*=.88;hitFlash=Math.max(0,hitFlash-.05);shakeX*=.7;shakeY*=.7;
   if(bannerAlpha>0)bannerAlpha=Math.max(0,bannerAlpha-.007);
   if(!stageClearing&&now-lastBeat>beatInt){
-    lastBeat=now;stageBeat++;bgPulse=1;
+    lastBeat+=beatInt;stageBeat++;bgPulse=1;
     const items=selectedSong.pattern(stageBeat,difficulty);
     if(items.length>0)spawnFromPattern(items);
     if(stageBeat>=getTotalBeats()){stageClearing=true;setTimeout(()=>endGame(true),1200);}
@@ -471,14 +341,14 @@ function startGame(){
 }
 function endGame(clear=false){
   state='idle';cancelAnimationFrame(animId);ytStop();
-  document.getElementById('sv').textContent=0;document.getElementById('cv').textContent=0;
-  document.getElementById('mv').textContent='x1';document.getElementById('lv').textContent='—';
-  document.getElementById('grade-display').textContent='—';document.getElementById('grade-display').style.color='#fff';
   setMsg(clear?`ALL CLEAR! 점수: ${score}점`:`게임 오버! 점수: ${score}점`);
   document.getElementById('stop-btn').style.display='none';
   document.getElementById('diff-bar').style.display='flex';
   document.getElementById('diff-desc').style.display='block';
   document.getElementById('song-section').style.display='block';
+  document.getElementById('sv').textContent=0;document.getElementById('cv').textContent=0;
+  document.getElementById('mv').textContent='x1';document.getElementById('lv').textContent='—';
+  document.getElementById('grade-display').textContent='—';document.getElementById('grade-display').style.color='#fff';
   ctx.clearRect(0,0,W,H);showResult(clear);stopAudio();
 }
 document.getElementById('start-btn').addEventListener('click',startGame);
@@ -488,7 +358,7 @@ function moveTo(l){if(state!=='playing')return;const n=Date.now();if(n-lastMoveT
 function move(d){if(state!=='playing')return;const n=Date.now();if(n-lastMoveTime<80)return;lastMoveTime=n;playerLane=Math.max(0,Math.min(2,playerLane+d));}
 document.addEventListener('keydown',e=>{if(state!=='playing')return;if(e.key==='1'||e.key==='z'||e.key==='Z')moveTo(0);else if(e.key==='2'||e.key==='x'||e.key==='X')moveTo(1);else if(e.key==='3'||e.key==='c'||e.key==='C')moveTo(2);else if(e.key==='ArrowLeft'||e.key==='a'||e.key==='A')move(-1);else if(e.key==='ArrowRight'||e.key==='d'||e.key==='D')move(1);});
 canvas.addEventListener('touchstart',e=>{touchStartX=e.touches[0].clientX;},{passive:true});
-canvas.addEventListener('touchend',e=>{if(state!=='playing')return;const dx=e.changedTouches[0].clientX-touchStartX,now=Date.now();if(Math.abs(dx)<15&&now-lastMoveTime>150){const rect=canvas.getBoundingClientRect(),tl=Math.floor((e.changedTouches[0].clientX-rect.left)/rect.width*3);playerLane=tl!==playerLane?Math.max(0,Math.min(2,tl)):(playerLane===1?(Math.random()<.5?0:2):1);}else if(dx<-20)move(-1);else if(dx>20)move(1);lastMoveTime=Date.now();},{passive:true});
+canvas.addEventListener('touchend',e=>{if(state!=='playing')return;const dx=e.changedTouches[0].clientX-touchStartX,now=Date.now();if(Math.abs(dx)<15&&now-lastMoveTime>150){const rect=canvas.getBoundingClientRect(),tl=Math.floor((e.changedTouches[0].clientX-rect.left)/rect.width*3);playerLane=Math.max(0,Math.min(2,tl));}else if(dx<-20)move(-1);else if(dx>20)move(1);lastMoveTime=Date.now();},{passive:true});
 canvas.addEventListener('click',e=>{if(state!=='playing')return;const rect=canvas.getBoundingClientRect(),tl=Math.floor((e.clientX-rect.left)/rect.width*3);if(tl!==playerLane)playerLane=Math.max(0,Math.min(2,tl));});
 
 function startAudio(){try{audioCtx=new(window.AudioContext||window.webkitAudioContext)();beatCount=0;}catch(e){}}
