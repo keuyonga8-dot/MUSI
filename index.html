@@ -235,7 +235,7 @@ function spawnFromPattern(items){
   const goods=items.filter(i=>i.type==='good');
   const finalItems=[...(bads.length>0?[bads[0]]:[]),...goods];
   finalItems.forEach(i=>{
-    objects.push({lane:i.lane,y:-20,r:i.type==='good'?PR*.65:PR*.85,type:i.type,color:i.type==='good'?'#1D9E75':selectedSong.color,speed:(H/320)*(selectedSong.bpm/80)*Math.sqrt(DIFF[difficulty].bpmMult),pulse:0});
+    objects.push({lane:i.lane,y:-20,r:i.type==='good'?PR*.65:PR*.85,type:i.type,color:i.type==='good'?'#1D9E75':selectedSong.color,speed:(H/320)*(selectedSong.bpm/80)*DIFF[difficulty].bpmMult,pulse:0});
     if(i.type==='bad')stageTotal++;
   });
 }
