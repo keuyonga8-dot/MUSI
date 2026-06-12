@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Beat Dodge v5.7</title>
+<title>Beat Dodge v5.8</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;user-select:none;}
 body{background:#000;display:flex;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#fff;}
@@ -54,7 +54,7 @@ body{background:#000;display:flex;justify-content:center;font-family:-apple-syst
 </head>
 <body>
 <div id="gw">
-  <div id="ver">v5.7</div>
+  <div id="ver">v5.8</div>
   <div id="hud">
     <div class="stat">점수<b id="sv">0</b></div>
     <div class="stat">콤보<b id="cv">0</b></div>
@@ -105,7 +105,6 @@ body{background:#000;display:flex;justify-content:center;font-family:-apple-syst
 // 앞에 배치 → TDZ 없음, pattern() 내에서 안전하게 참조 가능
 // ──────────────────────────────────────────────────────────
 let laneLastBeat = [0, 0, 0];
-let karmaBadCount = 0; // FIX #4: Karma 패턴 bad 카운터를 외부 상태로 분리
 
 const SONGS = [
   { title:'Hugo 번외곡 | Melting down', ytId:'p4spKijRcAw', beatsPerDiff:{easy:396,normal:595,hard:992}, bpm:96, color:'#F4A0A0', totalBeats:992,
@@ -138,65 +137,24 @@ const SONGS = [
     pattern(b,diff){const r=[],w=[0,2,1,0,1,2,2,0,1,2,0,1,1,2,0,0,1,2,1,0,2,0,2,1];const prog=b/877;const cd=diff==='easy'?10:diff==='hard'?3:6;const goodBeat=diff==='hard'?(b%6===3):(b%12===9);if(goodBeat){r.push({lane:w[b%24],type:'good'});laneLastBeat[w[b%24]]=b;}else{const ready=[0,1,2].filter(l=>b-laneLastBeat[l]>=cd);if(ready.length>0){const lane=ready.reduce((a,l)=>laneLastBeat[l]<laneLastBeat[a]?l:a);r.push({lane,type:'bad'});laneLastBeat[lane]=b;}}return r;}},
   { title:'Kato 번외곡 | Losing control', ytId:'hO3oQ7pmssQ', beatsPerDiff:{easy:480,normal:720,hard:1200}, bpm:120, color:'#22C55E', totalBeats:1200,
     pattern(b,diff){const r=[],w=[2,0,1,2,1,0,0,2,1,0,1,2,1,0,2,1,2,0,2,1,0,1,2,0];const prog=b/1200;const cd=diff==='easy'?10:diff==='hard'?3:6;const goodBeat=diff==='hard'?(b%6===4):(b%13===10);if(goodBeat){r.push({lane:w[b%24],type:'good'});laneLastBeat[w[b%24]]=b;}else{const ready=[0,1,2].filter(l=>b-laneLastBeat[l]>=cd);if(ready.length>0){const lane=ready.reduce((a,l)=>laneLastBeat[l]<laneLastBeat[a]?l:a);r.push({lane,type:'bad'});laneLastBeat[lane]=b;}}return r;}},
-  { title:'Karma 번외곡 | ただの Karma', ytId:'weCSq9xCDEk', beatsPerDiff:{easy:601,normal:902,hard:1504}, bpm:148, color:'#EAB308', totalBeats:1504,
+  // Karma: allEvents 방식 폐기 → 매 비트 동적 생성 (다른 곡과 동일 방식)
+  { title:'Karma 번외곡 | ただの Karma', ytId:'weCSq9xCDEk', beatsPerDiff:{easy:592,normal:592,hard:592}, bpm:148, color:'#EAB308', totalBeats:592,
     pattern(b, diff) {
-      // FIX #4: badCount를 외부 karmaBadCount로 교체 → 매 호출마다 리셋되지 않음
-      const r = [];
-      const allEvents = [
-        [1,1,'good'],[2,1,'good'],[6,0,'bad'],[7,1,'bad'],[8,2,'bad'],[12,0,'good'],
-        [13,0,'good'],[14,2,'bad'],[15,0,'bad'],[19,0,'good'],[21,1,'bad'],[22,1,'bad'],
-        [25,2,'bad'],[28,2,'bad'],[30,2,'good'],[34,0,'bad'],[35,1,'bad'],[36,2,'bad'],
-        [39,0,'bad'],[41,1,'good'],[42,1,'bad'],[43,2,'bad'],[46,1,'bad'],[49,2,'bad'],
-        [52,2,'good'],[56,0,'bad'],[57,1,'bad'],[60,2,'bad'],[63,0,'good'],[67,2,'bad'],
-        [70,2,'bad'],[71,0,'bad'],[74,0,'good'],[77,0,'bad'],[78,0,'bad'],[81,1,'bad'],
-        [84,0,'bad'],[85,1,'good'],[89,1,'bad'],[91,0,'bad'],[92,0,'bad'],[96,1,'good'],
-        [98,0,'bad'],[99,2,'bad'],[102,0,'bad'],[105,2,'bad'],[107,1,'good'],[111,0,'bad'],
-        [112,2,'bad'],[113,1,'bad'],[116,0,'bad'],[118,2,'good'],[119,0,'bad'],[120,0,'bad'],
-        [123,2,'bad'],[126,2,'bad'],[129,2,'good'],[133,1,'bad'],[134,1,'bad'],[137,1,'bad'],
-        [140,2,'good'],[144,0,'bad'],[147,1,'bad'],[148,0,'bad'],[151,1,'good'],[154,0,'bad'],
-        [155,2,'bad'],[158,1,'bad'],[161,1,'bad'],[162,1,'good'],[166,1,'bad'],[168,1,'bad'],
-        [169,2,'bad'],[173,0,'good'],[175,1,'bad'],[176,2,'bad'],[179,2,'bad'],[182,2,'bad'],
-        [184,2,'good'],[188,0,'bad'],[189,1,'bad'],[190,1,'bad'],[193,2,'bad'],[195,1,'good'],
-        [196,2,'bad'],[197,1,'bad'],[200,2,'bad'],[203,1,'bad'],[206,2,'good'],[210,1,'bad'],
-        [211,2,'bad'],[214,1,'bad'],[215,0,'bad'],[217,2,'good'],[220,2,'bad'],[221,1,'bad'],
-        [224,2,'bad'],[225,2,'bad'],[228,0,'good'],[230,2,'bad'],[231,0,'bad'],[234,1,'bad'],
-        [235,0,'bad'],[236,0,'bad'],[239,0,'good'],[240,1,'bad'],[241,2,'bad'],[244,0,'bad'],
-        [245,0,'bad'],[246,0,'bad'],[250,0,'good'],[254,1,'bad'],[255,0,'bad'],[256,2,'bad'],
-        [259,2,'bad'],[260,2,'bad'],[261,1,'good'],[265,2,'bad'],[266,1,'bad'],[269,1,'bad'],
-        [270,2,'bad'],[272,0,'good'],[275,1,'bad'],[276,2,'bad'],[279,0,'bad'],[280,2,'bad'],
-        [283,0,'good'],[285,1,'bad'],[286,1,'bad'],[289,2,'bad'],[290,0,'bad'],[291,2,'bad'],
-        [294,2,'good'],[295,1,'bad'],[296,2,'bad'],[299,2,'bad'],[300,0,'bad'],[301,0,'bad'],
-        [305,1,'good'],[309,2,'bad'],[310,2,'bad'],[311,0,'bad'],[314,1,'bad'],[315,1,'bad'],
-        [316,2,'good'],[320,0,'bad'],[321,1,'bad'],[324,2,'bad'],[325,1,'bad'],[327,0,'good'],
-        [330,1,'bad'],[331,2,'bad'],[334,1,'bad'],[335,0,'bad'],[338,0,'good'],[340,2,'bad'],
-        [341,1,'bad'],[344,2,'bad'],[345,2,'bad'],[346,0,'bad'],[349,1,'good'],[350,2,'bad'],
-        [351,0,'bad'],[354,1,'bad'],[355,0,'bad'],[356,0,'bad'],[360,1,'good'],[364,0,'bad'],
-        [365,0,'bad'],[366,0,'bad'],[369,1,'bad'],[370,0,'bad'],[371,1,'good'],[375,0,'bad'],
-        [376,2,'bad'],[379,2,'bad'],[380,2,'bad'],[382,2,'good'],[385,2,'bad'],[386,1,'bad'],
-        [389,1,'bad'],[390,2,'bad'],[393,2,'good'],[395,1,'bad'],[396,2,'bad'],[399,0,'bad'],
-        [400,2,'bad'],[401,1,'bad'],[404,2,'good'],[405,1,'bad'],[406,1,'bad'],[409,2,'bad'],
-        [410,0,'bad'],[411,2,'bad'],[415,1,'good'],[417,2,'bad'],[420,0,'bad'],[423,0,'bad'],
-        [426,1,'good'],[429,1,'bad'],[432,1,'bad'],[435,1,'bad'],[437,0,'good'],[438,2,'bad'],
-        [441,2,'bad'],[444,0,'bad'],[447,0,'bad'],[448,2,'good'],[450,1,'bad'],[453,1,'bad'],
-        [456,1,'bad'],[459,1,'good'],[462,2,'bad'],[465,2,'bad'],[468,0,'bad'],[470,2,'good'],
-        [471,0,'bad'],[474,1,'bad'],[477,1,'bad'],[480,1,'bad'],[481,2,'good'],[483,1,'bad'],
-        [486,2,'bad'],[489,2,'bad'],[492,0,'good'],[495,0,'bad'],[498,1,'bad'],[501,1,'bad'],
-        [503,0,'good'],[504,1,'bad'],[507,1,'bad'],[510,2,'bad'],[513,2,'bad'],[514,0,'good'],
-        [516,0,'bad'],[519,0,'bad'],[522,1,'bad'],[525,1,'good'],[528,1,'bad'],[531,1,'bad'],
-        [534,2,'bad'],[536,0,'good'],[537,2,'bad'],[540,0,'bad'],[543,0,'bad'],[546,1,'bad'],
-        [547,0,'good'],[549,1,'bad'],[552,1,'bad'],[555,1,'bad'],[558,2,'good'],[561,2,'bad'],
-        [564,0,'bad'],[567,0,'bad'],[569,1,'good'],[570,1,'bad'],[573,1,'bad'],[576,1,'bad'],
-        [579,1,'bad'],[580,2,'good'],[582,2,'bad'],[585,2,'bad'],[588,0,'bad'],[591,0,'good'],
-      ];
-      for(const [beat,lane,type] of allEvents){
-        if(beat !== b) continue;
-        if(type === 'good'){
-          r.push({lane, type});
-        } else {
-          karmaBadCount++;
-          // FIX #4: 외부 카운터를 사용하므로 게임 전체에 걸쳐 누적됨
-          const skip = diff==='easy' ? (karmaBadCount%2===0) : diff==='normal' ? (karmaBadCount%3===0) : false;
-          if(!skip) r.push({lane, type});
+      const r = [], w=[2,0,1,2,1,0,1,2,0,2,1,0,0,2,1,2,0,1,1,0,2,0,1,2];
+      const total=592, prog=b/total;
+      const goodPeriod=diff==='hard'?7:diff==='normal'?13:18;
+      const goodOffset=diff==='hard'?4:9;
+      const isGood=(b%goodPeriod===goodOffset);
+      if(isGood){
+        r.push({lane:w[b%24],type:'good'});
+        laneLastBeat[w[b%24]]=b;
+      } else {
+        const dynCd=diff==='easy'?10:diff==='hard'?Math.max(2,3-Math.floor(prog*2)):Math.max(4,6-Math.floor(prog*3));
+        const ready=[0,1,2].filter(l=>b-laneLastBeat[l]>=dynCd);
+        if(ready.length>0){
+          const lane=ready.reduce((a,l)=>laneLastBeat[l]<laneLastBeat[a]?l:a);
+          r.push({lane,type:'bad'});
+          laneLastBeat[lane]=b;
         }
       }
       return r;
@@ -395,8 +353,6 @@ function startGame(){
   objects=[];particles=[];floatTexts=[];playerLane=1;
   // FIX #2: startGame 시 laneLastBeat 초기화 (전역 변수이므로 여기서 리셋)
   laneLastBeat=[0,0,0];
-  // FIX #4: Karma 패턴 카운터도 게임 시작마다 리셋
-  karmaBadCount=0;
   hitFlash=0;shakeX=0;shakeY=0;bgPulse=0;bannerData=null;
   document.getElementById('sv').textContent=0;document.getElementById('cv').textContent=0;
   document.getElementById('lv').textContent=lives;document.getElementById('mv').textContent='x1';
