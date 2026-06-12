@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Beat Dodge v5.8</title>
+<title>Beat Dodge v5.9</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;user-select:none;}
 body{background:#000;display:flex;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#fff;}
@@ -54,7 +54,7 @@ body{background:#000;display:flex;justify-content:center;font-family:-apple-syst
 </head>
 <body>
 <div id="gw">
-  <div id="ver">v5.8</div>
+  <div id="ver">v5.9</div>
   <div id="hud">
     <div class="stat">점수<b id="sv">0</b></div>
     <div class="stat">콤보<b id="cv">0</b></div>
@@ -453,6 +453,7 @@ function selectSong(idx){
   setMsg(`"${selectedSong.title}" 선택됨. 난이도 고르고 시작!`);
 }
 buildSongList();
+selectSong(0); // 첫 번째 곡 기본 선택 → 접속 시 X박스 방지
 
 function selectDiff(d){
   difficulty=d;const info=DIFF[d];
