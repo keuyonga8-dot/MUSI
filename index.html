@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Beat Dodge v5.1</title>
+<title>Beat Dodge v5.2</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;user-select:none;}
 body{background:#000;display:flex;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#fff;}
@@ -54,7 +54,7 @@ body{background:#000;display:flex;justify-content:center;font-family:-apple-syst
 </head>
 <body>
 <div id="gw">
-  <div id="ver">v5.1</div>
+  <div id="ver">v5.2</div>
   <div id="hud">
     <div class="stat">점수<b id="sv">0</b></div>
     <div class="stat">콤보<b id="cv">0</b></div>
@@ -245,10 +245,16 @@ function setMsg(t){document.getElementById('msg').textContent=t;}
 function showBanner(t,s,c,d=2000){bannerData={t,s,c};bannerAlpha=1;clearTimeout(bannerTid);bannerTid=setTimeout(()=>bannerData=null,d);}
 
 function spawnFromPattern(items){
-  const bads=items.filter(i=>i.type==='bad');
   const goods=items.filter(i=>i.type==='good');
-  const finalItems=[...(bads.length>0?[bads[0]]:[]),...goods];
+  let bads=items.filter(i=>i.type==='bad');
+  // bad는 최대 2개, 반드시 피할 레인 1개 보장
+  const badLanes=new Set(bads.map(i=>i.lane));
+  if(badLanes.size>=3) bads=bads.filter((i,idx)=>idx<2);
+  const finalItems=[...bads,...goods];
   finalItems.forEach(i=>{
+    // 같은 레인 상단 근처에 이미 오브젝트 있으면 스킵 (겹침 방지)
+    const dup=objects.some(o=>o.lane===i.lane&&o.y<H*0.15);
+    if(dup) return;
     objects.push({lane:i.lane,y:-20,r:i.type==='good'?PR*.65:PR*.85,type:i.type,color:i.type==='good'?'#1D9E75':selectedSong.color,speed:(H/320)*(selectedSong.bpm/80)*DIFF[difficulty].bpmMult,pulse:0});
     if(i.type==='bad')stageTotal++;
   });
